@@ -33,6 +33,9 @@ class Opportunity with _$Opportunity {
     AccountRef? account,
     OwnerRef? owner,
     @Default(<ContactRef>[]) List<ContactRef> contacts,
+    // Only present on `getOpportunityById` (detail), not the list endpoint —
+    // same list-vs-detail duality as `account.accountProducts` above.
+    LeadRef? lead,
     EmiSchedule? emiSchedule,
     @Default(<PaymentRecord>[]) List<PaymentRecord> paymentRecords,
   }) = _Opportunity;

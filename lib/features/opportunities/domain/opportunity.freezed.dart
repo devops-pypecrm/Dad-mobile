@@ -34,7 +34,10 @@ mixin _$Opportunity {
   String? get accountId => throw _privateConstructorUsedError;
   AccountRef? get account => throw _privateConstructorUsedError;
   OwnerRef? get owner => throw _privateConstructorUsedError;
-  List<ContactRef> get contacts => throw _privateConstructorUsedError;
+  List<ContactRef> get contacts =>
+      throw _privateConstructorUsedError; // Only present on `getOpportunityById` (detail), not the list endpoint —
+  // same list-vs-detail duality as `account.accountProducts` above.
+  LeadRef? get lead => throw _privateConstructorUsedError;
   EmiSchedule? get emiSchedule => throw _privateConstructorUsedError;
   List<PaymentRecord> get paymentRecords => throw _privateConstructorUsedError;
 
@@ -70,12 +73,14 @@ abstract class $OpportunityCopyWith<$Res> {
     AccountRef? account,
     OwnerRef? owner,
     List<ContactRef> contacts,
+    LeadRef? lead,
     EmiSchedule? emiSchedule,
     List<PaymentRecord> paymentRecords,
   });
 
   $AccountRefCopyWith<$Res>? get account;
   $OwnerRefCopyWith<$Res>? get owner;
+  $LeadRefCopyWith<$Res>? get lead;
   $EmiScheduleCopyWith<$Res>? get emiSchedule;
 }
 
@@ -108,6 +113,7 @@ class _$OpportunityCopyWithImpl<$Res, $Val extends Opportunity>
     Object? account = freezed,
     Object? owner = freezed,
     Object? contacts = null,
+    Object? lead = freezed,
     Object? emiSchedule = freezed,
     Object? paymentRecords = null,
   }) {
@@ -169,6 +175,10 @@ class _$OpportunityCopyWithImpl<$Res, $Val extends Opportunity>
                 ? _value.contacts
                 : contacts // ignore: cast_nullable_to_non_nullable
                       as List<ContactRef>,
+            lead: freezed == lead
+                ? _value.lead
+                : lead // ignore: cast_nullable_to_non_nullable
+                      as LeadRef?,
             emiSchedule: freezed == emiSchedule
                 ? _value.emiSchedule
                 : emiSchedule // ignore: cast_nullable_to_non_nullable
@@ -214,6 +224,20 @@ class _$OpportunityCopyWithImpl<$Res, $Val extends Opportunity>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
+  $LeadRefCopyWith<$Res>? get lead {
+    if (_value.lead == null) {
+      return null;
+    }
+
+    return $LeadRefCopyWith<$Res>(_value.lead!, (value) {
+      return _then(_value.copyWith(lead: value) as $Val);
+    });
+  }
+
+  /// Create a copy of Opportunity
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
   $EmiScheduleCopyWith<$Res>? get emiSchedule {
     if (_value.emiSchedule == null) {
       return null;
@@ -249,6 +273,7 @@ abstract class _$$OpportunityImplCopyWith<$Res>
     AccountRef? account,
     OwnerRef? owner,
     List<ContactRef> contacts,
+    LeadRef? lead,
     EmiSchedule? emiSchedule,
     List<PaymentRecord> paymentRecords,
   });
@@ -257,6 +282,8 @@ abstract class _$$OpportunityImplCopyWith<$Res>
   $AccountRefCopyWith<$Res>? get account;
   @override
   $OwnerRefCopyWith<$Res>? get owner;
+  @override
+  $LeadRefCopyWith<$Res>? get lead;
   @override
   $EmiScheduleCopyWith<$Res>? get emiSchedule;
 }
@@ -289,6 +316,7 @@ class __$$OpportunityImplCopyWithImpl<$Res>
     Object? account = freezed,
     Object? owner = freezed,
     Object? contacts = null,
+    Object? lead = freezed,
     Object? emiSchedule = freezed,
     Object? paymentRecords = null,
   }) {
@@ -350,6 +378,10 @@ class __$$OpportunityImplCopyWithImpl<$Res>
             ? _value._contacts
             : contacts // ignore: cast_nullable_to_non_nullable
                   as List<ContactRef>,
+        lead: freezed == lead
+            ? _value.lead
+            : lead // ignore: cast_nullable_to_non_nullable
+                  as LeadRef?,
         emiSchedule: freezed == emiSchedule
             ? _value.emiSchedule
             : emiSchedule // ignore: cast_nullable_to_non_nullable
@@ -381,6 +413,7 @@ class _$OpportunityImpl implements _Opportunity {
     this.account,
     this.owner,
     final List<ContactRef> contacts = const <ContactRef>[],
+    this.lead,
     this.emiSchedule,
     final List<PaymentRecord> paymentRecords = const <PaymentRecord>[],
   }) : _contacts = contacts,
@@ -428,6 +461,10 @@ class _$OpportunityImpl implements _Opportunity {
     return EqualUnmodifiableListView(_contacts);
   }
 
+  // Only present on `getOpportunityById` (detail), not the list endpoint —
+  // same list-vs-detail duality as `account.accountProducts` above.
+  @override
+  final LeadRef? lead;
   @override
   final EmiSchedule? emiSchedule;
   final List<PaymentRecord> _paymentRecords;
@@ -441,7 +478,7 @@ class _$OpportunityImpl implements _Opportunity {
 
   @override
   String toString() {
-    return 'Opportunity(id: $id, name: $name, amount: $amount, stage: $stage, probability: $probability, closeDate: $closeDate, leadSource: $leadSource, description: $description, paymentStatus: $paymentStatus, type: $type, accountId: $accountId, account: $account, owner: $owner, contacts: $contacts, emiSchedule: $emiSchedule, paymentRecords: $paymentRecords)';
+    return 'Opportunity(id: $id, name: $name, amount: $amount, stage: $stage, probability: $probability, closeDate: $closeDate, leadSource: $leadSource, description: $description, paymentStatus: $paymentStatus, type: $type, accountId: $accountId, account: $account, owner: $owner, contacts: $contacts, lead: $lead, emiSchedule: $emiSchedule, paymentRecords: $paymentRecords)';
   }
 
   @override
@@ -469,6 +506,7 @@ class _$OpportunityImpl implements _Opportunity {
             (identical(other.account, account) || other.account == account) &&
             (identical(other.owner, owner) || other.owner == owner) &&
             const DeepCollectionEquality().equals(other._contacts, _contacts) &&
+            (identical(other.lead, lead) || other.lead == lead) &&
             (identical(other.emiSchedule, emiSchedule) ||
                 other.emiSchedule == emiSchedule) &&
             const DeepCollectionEquality().equals(
@@ -495,6 +533,7 @@ class _$OpportunityImpl implements _Opportunity {
     account,
     owner,
     const DeepCollectionEquality().hash(_contacts),
+    lead,
     emiSchedule,
     const DeepCollectionEquality().hash(_paymentRecords),
   );
@@ -529,6 +568,7 @@ abstract class _Opportunity implements Opportunity {
     final AccountRef? account,
     final OwnerRef? owner,
     final List<ContactRef> contacts,
+    final LeadRef? lead,
     final EmiSchedule? emiSchedule,
     final List<PaymentRecord> paymentRecords,
   }) = _$OpportunityImpl;
@@ -563,7 +603,10 @@ abstract class _Opportunity implements Opportunity {
   @override
   OwnerRef? get owner;
   @override
-  List<ContactRef> get contacts;
+  List<ContactRef> get contacts; // Only present on `getOpportunityById` (detail), not the list endpoint —
+  // same list-vs-detail duality as `account.accountProducts` above.
+  @override
+  LeadRef? get lead;
   @override
   EmiSchedule? get emiSchedule;
   @override

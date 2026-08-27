@@ -34,6 +34,14 @@ mixin _$Organisation {
   List<LeadStatusOption>? get leadStatuses =>
       throw _privateConstructorUsedError;
 
+  /// Same idea as [leadStatuses] but for `Opportunity.stage` — backend
+  /// field is `opportunityLeadStatuses` (Dad-backend/CLAUDE.md flags this
+  /// as the same free-string-keyed-off-org-config pattern as leads). May
+  /// be null/empty for orgs that never configured a custom pipeline.
+  @JsonKey(name: 'opportunityLeadStatuses')
+  List<LeadStatusOption>? get opportunityStages =>
+      throw _privateConstructorUsedError;
+
   /// Serializes this Organisation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -58,6 +66,8 @@ abstract class $OrganisationCopyWith<$Res> {
     String? logo,
     String? currency,
     List<LeadStatusOption>? leadStatuses,
+    @JsonKey(name: 'opportunityLeadStatuses')
+    List<LeadStatusOption>? opportunityStages,
   });
 }
 
@@ -82,6 +92,7 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
     Object? logo = freezed,
     Object? currency = freezed,
     Object? leadStatuses = freezed,
+    Object? opportunityStages = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -109,6 +120,10 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
                 ? _value.leadStatuses
                 : leadStatuses // ignore: cast_nullable_to_non_nullable
                       as List<LeadStatusOption>?,
+            opportunityStages: freezed == opportunityStages
+                ? _value.opportunityStages
+                : opportunityStages // ignore: cast_nullable_to_non_nullable
+                      as List<LeadStatusOption>?,
           )
           as $Val,
     );
@@ -131,6 +146,8 @@ abstract class _$$OrganisationImplCopyWith<$Res>
     String? logo,
     String? currency,
     List<LeadStatusOption>? leadStatuses,
+    @JsonKey(name: 'opportunityLeadStatuses')
+    List<LeadStatusOption>? opportunityStages,
   });
 }
 
@@ -154,6 +171,7 @@ class __$$OrganisationImplCopyWithImpl<$Res>
     Object? logo = freezed,
     Object? currency = freezed,
     Object? leadStatuses = freezed,
+    Object? opportunityStages = freezed,
   }) {
     return _then(
       _$OrganisationImpl(
@@ -181,6 +199,10 @@ class __$$OrganisationImplCopyWithImpl<$Res>
             ? _value._leadStatuses
             : leadStatuses // ignore: cast_nullable_to_non_nullable
                   as List<LeadStatusOption>?,
+        opportunityStages: freezed == opportunityStages
+            ? _value._opportunityStages
+            : opportunityStages // ignore: cast_nullable_to_non_nullable
+                  as List<LeadStatusOption>?,
       ),
     );
   }
@@ -196,7 +218,10 @@ class _$OrganisationImpl implements _Organisation {
     this.logo,
     this.currency,
     final List<LeadStatusOption>? leadStatuses,
-  }) : _leadStatuses = leadStatuses;
+    @JsonKey(name: 'opportunityLeadStatuses')
+    final List<LeadStatusOption>? opportunityStages,
+  }) : _leadStatuses = leadStatuses,
+       _opportunityStages = opportunityStages;
 
   factory _$OrganisationImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrganisationImplFromJson(json);
@@ -231,9 +256,30 @@ class _$OrganisationImpl implements _Organisation {
     return EqualUnmodifiableListView(value);
   }
 
+  /// Same idea as [leadStatuses] but for `Opportunity.stage` — backend
+  /// field is `opportunityLeadStatuses` (Dad-backend/CLAUDE.md flags this
+  /// as the same free-string-keyed-off-org-config pattern as leads). May
+  /// be null/empty for orgs that never configured a custom pipeline.
+  final List<LeadStatusOption>? _opportunityStages;
+
+  /// Same idea as [leadStatuses] but for `Opportunity.stage` — backend
+  /// field is `opportunityLeadStatuses` (Dad-backend/CLAUDE.md flags this
+  /// as the same free-string-keyed-off-org-config pattern as leads). May
+  /// be null/empty for orgs that never configured a custom pipeline.
+  @override
+  @JsonKey(name: 'opportunityLeadStatuses')
+  List<LeadStatusOption>? get opportunityStages {
+    final value = _opportunityStages;
+    if (value == null) return null;
+    if (_opportunityStages is EqualUnmodifiableListView)
+      return _opportunityStages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   String toString() {
-    return 'Organisation(id: $id, name: $name, slug: $slug, logo: $logo, currency: $currency, leadStatuses: $leadStatuses)';
+    return 'Organisation(id: $id, name: $name, slug: $slug, logo: $logo, currency: $currency, leadStatuses: $leadStatuses, opportunityStages: $opportunityStages)';
   }
 
   @override
@@ -250,6 +296,10 @@ class _$OrganisationImpl implements _Organisation {
             const DeepCollectionEquality().equals(
               other._leadStatuses,
               _leadStatuses,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._opportunityStages,
+              _opportunityStages,
             ));
   }
 
@@ -263,6 +313,7 @@ class _$OrganisationImpl implements _Organisation {
     logo,
     currency,
     const DeepCollectionEquality().hash(_leadStatuses),
+    const DeepCollectionEquality().hash(_opportunityStages),
   );
 
   /// Create a copy of Organisation
@@ -287,6 +338,8 @@ abstract class _Organisation implements Organisation {
     final String? logo,
     final String? currency,
     final List<LeadStatusOption>? leadStatuses,
+    @JsonKey(name: 'opportunityLeadStatuses')
+    final List<LeadStatusOption>? opportunityStages,
   }) = _$OrganisationImpl;
 
   factory _Organisation.fromJson(Map<String, dynamic> json) =
@@ -309,6 +362,14 @@ abstract class _Organisation implements Organisation {
   /// that never configured a custom pipeline.
   @override
   List<LeadStatusOption>? get leadStatuses;
+
+  /// Same idea as [leadStatuses] but for `Opportunity.stage` — backend
+  /// field is `opportunityLeadStatuses` (Dad-backend/CLAUDE.md flags this
+  /// as the same free-string-keyed-off-org-config pattern as leads). May
+  /// be null/empty for orgs that never configured a custom pipeline.
+  @override
+  @JsonKey(name: 'opportunityLeadStatuses')
+  List<LeadStatusOption>? get opportunityStages;
 
   /// Create a copy of Organisation
   /// with the given fields replaced by the non-null parameter values.

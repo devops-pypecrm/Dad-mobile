@@ -3,8 +3,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_provider.dart';
+import '../domain/convert_lead_result.dart';
 import '../domain/create_lead_result.dart';
+import '../domain/interaction.dart';
 import '../domain/lead.dart';
+import '../domain/lead_product.dart';
 import '../domain/leads_page.dart';
 
 part 'leads_repository.g.dart';
@@ -156,6 +159,7 @@ class LeadsRepository {
     String? assignedTo,
     DateTime? nextFollowUp,
     double? potentialValue,
+    List<LeadProductItem>? products,
   }) async {
     try {
       final response = await _dio.put<Map<String, dynamic>>(
@@ -172,9 +176,88 @@ class LeadsRepository {
           if (assignedTo != null) 'assignedTo': assignedTo,
           if (nextFollowUp != null) 'nextFollowUp': nextFollowUp.toIso8601String(),
           if (potentialValue != null) 'potentialValue': potentialValue,
+          // Full-replace, same as Dad-frontend's AddProductToLeadDialog —
+          // there's no incremental add/remove endpoint, the whole array is
+          // sent every time.
+          if (products != null)
+            'products': [
+              for (final p in products)
+                {
+                  'productId': p.productId,
+                  'quantity': p.quantity,
+                  'price': p.price,
+                  if (p.customName != null) 'customName': p.customName,
+                },
+            ],
         },
       );
       return Lead.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `POST /api/leads/:id/convert` — creates/reuses an Account, creates a
+  /// Contact and Opportunity, migrates this lead's products/interactions/
+  /// tasks, and updates `Lead.status` to `converted` (or `won`/`lost` if
+  /// [stage] is a closed one) — all server-side; this call is a black box,
+  /// not logic to mirror. Backend hard-blocks with 400 if the lead has zero
+  /// products (`Lead.hasProducts`/`kProductGatedStatuses` mirror this
+  /// client-side as a pre-emptive UX guard, not the real enforcement).
+  Future<ConvertLeadResult> convertLead(
+    String id, {
+    required String dealName,
+    required double amount,
+    String? accountName,
+    String? contactName,
+    String? stage,
+    String? lostReason,
+  }) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/leads/$id/convert',
+        data: {
+          'dealName': dealName,
+          'amount': amount,
+          if (accountName != null && accountName.isNotEmpty) 'accountName': accountName,
+          if (contactName != null && contactName.isNotEmpty) 'contactName': contactName,
+          if (stage != null) 'stage': stage,
+          if (lostReason != null) 'lostReason': lostReason,
+        },
+      );
+      return ConvertLeadResult.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/interactions/leads/:leadId/interactions` — full activity
+  /// feed for this lead (calls/emails/notes/etc, most-recent first); mobile
+  /// only ever creates `type: 'note'` rows via [addLeadNote], but shows
+  /// whatever's actually there (e.g. call logs from other integrations).
+  Future<List<Interaction>> getLeadInteractions(String leadId) async {
+    try {
+      final response = await _dio.get<List<dynamic>>('/interactions/leads/$leadId/interactions');
+      return response.data!.cast<Map<String, dynamic>>().map(Interaction.fromJson).toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `POST /api/interactions/leads/:leadId/interactions` — leadId is implicit
+  /// in the URL for this endpoint (unlike the generic `/interactions`
+  /// endpoint used for opportunity notes, see OpportunitiesRepository).
+  Future<void> addLeadNote(String leadId, String description) async {
+    try {
+      await _dio.post<Map<String, dynamic>>(
+        '/interactions/leads/$leadId/interactions',
+        data: {
+          'type': 'note',
+          'subject': 'Note',
+          'description': description,
+          'date': DateTime.now().toIso8601String(),
+        },
+      );
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

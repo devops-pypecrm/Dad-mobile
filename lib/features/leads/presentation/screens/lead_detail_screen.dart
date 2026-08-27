@@ -10,6 +10,9 @@ import '../../domain/lead.dart';
 import '../../providers/lead_detail_provider.dart';
 import '../../providers/lead_status_controller.dart';
 import '../widgets/assign_lead_sheet.dart';
+import '../widgets/convert_lead_sheet.dart';
+import '../widgets/lead_notes_section.dart';
+import '../widgets/lead_products_editor_sheet.dart';
 import '../widgets/lead_quick_actions.dart';
 
 class LeadDetailScreen extends ConsumerWidget {
@@ -241,6 +244,24 @@ class LeadDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: 16),
+              // "Move to Pipeline" — converts this lead into an Account +
+              // Contact + Opportunity server-side. Disabled until at least
+              // one product is attached (backend hard-blocks this too, see
+              // showConvertLeadSheet's doc comment).
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () async {
+                    final opportunityId = await showConvertLeadSheet(context, ref, lead);
+                    if (opportunityId != null && context.mounted) {
+                      context.go('/opportunities/$opportunityId');
+                    }
+                  },
+                  icon: const Icon(Icons.trending_up),
+                  label: const Text('Move to Pipeline'),
+                ),
+              ),
+              const SizedBox(height: 16),
               if (lead.potentialValue > 0)
                 Card(
                   child: ListTile(
@@ -250,8 +271,21 @@ class LeadDetailScreen extends ConsumerWidget {
                   ),
                 ),
               const SizedBox(height: 16),
-              Text('Products', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(child: Text('Products', style: theme.textTheme.titleMedium)),
+                  TextButton.icon(
+                    onPressed: () => showLeadProductsEditorSheet(
+                      context,
+                      ref,
+                      leadId: leadId,
+                      current: lead.products ?? const [],
+                    ),
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: const Text('Edit'),
+                  ),
+                ],
+              ),
               if (!lead.hasProducts)
                 const Text('No products attached yet.')
               else
@@ -264,6 +298,8 @@ class LeadDetailScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+              const SizedBox(height: 16),
+              LeadNotesSection(leadId: leadId),
             ],
           ),
         ),

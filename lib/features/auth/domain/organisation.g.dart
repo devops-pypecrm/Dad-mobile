@@ -16,6 +16,9 @@ _$OrganisationImpl _$$OrganisationImplFromJson(Map<String, dynamic> json) =>
       leadStatuses: (json['leadStatuses'] as List<dynamic>?)
           ?.map((e) => LeadStatusOption.fromJson(e as Map<String, dynamic>))
           .toList(),
+      opportunityStages: (json['opportunityLeadStatuses'] as List<dynamic>?)
+          ?.map((e) => LeadStatusOption.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
@@ -26,6 +29,7 @@ Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
       'logo': instance.logo,
       'currency': instance.currency,
       'leadStatuses': instance.leadStatuses,
+      'opportunityLeadStatuses': instance.opportunityStages,
     };
 
 _$LeadStatusOptionImpl _$$LeadStatusOptionImplFromJson(

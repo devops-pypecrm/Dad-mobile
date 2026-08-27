@@ -19,3 +19,17 @@ bool isManagerRole(String? role) {
   if (role == null) return false;
   return _managerRoles.contains(role.toLowerCase().replaceAll(RegExp(r'[\s-]'), '_'));
 }
+
+/// Same role check as `isOrgAdmin()` in Dad-backend/src/utils/roleUtils.ts —
+/// deliberately a broader set than [isAdminRole] (adds `org_admin`/
+/// `organisation_admin`). Product create/update/delete are gated by this
+/// exact check server-side (403 otherwise, confirmed in
+/// `productController.ts`), so mobile hides those actions using the same
+/// set rather than the narrower [isAdminRole], which would incorrectly
+/// hide them for an `org_admin` who the backend actually allows.
+const _orgAdminRoles = {'org_admin', 'organisation_admin', 'admin', 'super_admin'};
+
+bool isOrgAdminRole(String? role) {
+  if (role == null) return false;
+  return _orgAdminRoles.contains(role.toLowerCase().replaceAll(RegExp(r'[\s-]'), '_'));
+}

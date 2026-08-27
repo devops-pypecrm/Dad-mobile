@@ -18,6 +18,11 @@ class Organisation with _$Organisation {
     /// fixed enum — see Dad-backend/CLAUDE.md. May be null/empty for orgs
     /// that never configured a custom pipeline.
     List<LeadStatusOption>? leadStatuses,
+    /// Same idea as [leadStatuses] but for `Opportunity.stage` — backend
+    /// field is `opportunityLeadStatuses` (Dad-backend/CLAUDE.md flags this
+    /// as the same free-string-keyed-off-org-config pattern as leads). May
+    /// be null/empty for orgs that never configured a custom pipeline.
+    @JsonKey(name: 'opportunityLeadStatuses') List<LeadStatusOption>? opportunityStages,
   }) = _Organisation;
 
   factory Organisation.fromJson(Map<String, dynamic> json) => _$OrganisationFromJson(json);

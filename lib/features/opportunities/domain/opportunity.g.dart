@@ -32,6 +32,9 @@ _$OpportunityImpl _$$OpportunityImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => ContactRef.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const <ContactRef>[],
+      lead: json['lead'] == null
+          ? null
+          : LeadRef.fromJson(json['lead'] as Map<String, dynamic>),
       emiSchedule: json['emiSchedule'] == null
           ? null
           : EmiSchedule.fromJson(json['emiSchedule'] as Map<String, dynamic>),
@@ -58,6 +61,7 @@ Map<String, dynamic> _$$OpportunityImplToJson(_$OpportunityImpl instance) =>
       'account': instance.account,
       'owner': instance.owner,
       'contacts': instance.contacts,
+      'lead': instance.lead,
       'emiSchedule': instance.emiSchedule,
       'paymentRecords': instance.paymentRecords,
     };

@@ -27,6 +27,7 @@ mixin _$Product {
   double get basePrice => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
   String? get category => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
   bool get isActive => throw _privateConstructorUsedError;
   bool get isCustom => throw _privateConstructorUsedError;
   String? get brochureUrl => throw _privateConstructorUsedError;
@@ -52,6 +53,7 @@ abstract class $ProductCopyWith<$Res> {
     double basePrice,
     String currency,
     String? category,
+    String? description,
     bool isActive,
     bool isCustom,
     String? brochureUrl,
@@ -79,6 +81,7 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? basePrice = null,
     Object? currency = null,
     Object? category = freezed,
+    Object? description = freezed,
     Object? isActive = null,
     Object? isCustom = null,
     Object? brochureUrl = freezed,
@@ -108,6 +111,10 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
             category: freezed == category
                 ? _value.category
                 : category // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
                       as String?,
             isActive: null == isActive
                 ? _value.isActive
@@ -142,6 +149,7 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
     double basePrice,
     String currency,
     String? category,
+    String? description,
     bool isActive,
     bool isCustom,
     String? brochureUrl,
@@ -168,6 +176,7 @@ class __$$ProductImplCopyWithImpl<$Res>
     Object? basePrice = null,
     Object? currency = null,
     Object? category = freezed,
+    Object? description = freezed,
     Object? isActive = null,
     Object? isCustom = null,
     Object? brochureUrl = freezed,
@@ -198,6 +207,10 @@ class __$$ProductImplCopyWithImpl<$Res>
             ? _value.category
             : category // ignore: cast_nullable_to_non_nullable
                   as String?,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
         isActive: null == isActive
             ? _value.isActive
             : isActive // ignore: cast_nullable_to_non_nullable
@@ -225,6 +238,7 @@ class _$ProductImpl implements _Product {
     this.basePrice = 0,
     this.currency = 'INR',
     this.category,
+    this.description,
     this.isActive = false,
     this.isCustom = false,
     this.brochureUrl,
@@ -248,6 +262,8 @@ class _$ProductImpl implements _Product {
   @override
   final String? category;
   @override
+  final String? description;
+  @override
   @JsonKey()
   final bool isActive;
   @override
@@ -258,7 +274,7 @@ class _$ProductImpl implements _Product {
 
   @override
   String toString() {
-    return 'Product(id: $id, name: $name, sku: $sku, basePrice: $basePrice, currency: $currency, category: $category, isActive: $isActive, isCustom: $isCustom, brochureUrl: $brochureUrl)';
+    return 'Product(id: $id, name: $name, sku: $sku, basePrice: $basePrice, currency: $currency, category: $category, description: $description, isActive: $isActive, isCustom: $isCustom, brochureUrl: $brochureUrl)';
   }
 
   @override
@@ -275,6 +291,8 @@ class _$ProductImpl implements _Product {
                 other.currency == currency) &&
             (identical(other.category, category) ||
                 other.category == category) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
             (identical(other.isCustom, isCustom) ||
@@ -293,6 +311,7 @@ class _$ProductImpl implements _Product {
     basePrice,
     currency,
     category,
+    description,
     isActive,
     isCustom,
     brochureUrl,
@@ -320,6 +339,7 @@ abstract class _Product implements Product {
     final double basePrice,
     final String currency,
     final String? category,
+    final String? description,
     final bool isActive,
     final bool isCustom,
     final String? brochureUrl,
@@ -339,6 +359,8 @@ abstract class _Product implements Product {
   String get currency;
   @override
   String? get category;
+  @override
+  String? get description;
   @override
   bool get isActive;
   @override
