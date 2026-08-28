@@ -6,9 +6,12 @@ part of 'call_logs_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$callLogsListHash() => r'07f7add9d88140899a5a302257b090712f625634';
+String _$callLogsListHash() => r'1dd9667b9364746eb9cf71f5ce586dd403d3a49e';
 
-/// Infinite-scroll Call Logs list — same shape as `AccountsList`/`ProductsList`.
+/// Infinite-scroll Call Logs list — same shape as `AccountsList`/`ProductsList`,
+/// extended with the same filter set (direction/status/branch/agent) the
+/// web `/calls` page offers (Phase 5 follow-up — this list started as
+/// search-only).
 ///
 /// Copied from [CallLogsList].
 @ProviderFor(CallLogsList)

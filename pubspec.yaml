@@ -82,6 +82,10 @@ dependencies:
   # Loading skeletons (Phase 5 — hardening pass)
   shimmer: ^3.0.0
 
+  # Call recording playback (Phase 5 of CALL_RECORDING_PLAN.md) — plays
+  # CallLog.recordingUrl, which was modeled but never rendered until now.
+  audioplayers: ^6.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

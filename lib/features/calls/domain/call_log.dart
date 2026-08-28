@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/config/app_config.dart';
 import 'call_log_person.dart';
 
 part 'call_log.freezed.dart';
@@ -34,6 +35,20 @@ class CallLog with _$CallLog {
   factory CallLog.fromJson(Map<String, dynamic> json) => _$CallLogFromJson(json);
 
   bool get hasRecording => recordingUrl != null && recordingUrl!.isNotEmpty;
+
+  /// `recordingUrl` from the backend is always origin-relative (e.g.
+  /// `/uploads/recordings/xyz.mp3` — see
+  /// Dad-backend/src/controllers/callController.ts and androidController.ts,
+  /// both of which build it as `/uploads/recordings/${filename}`), so it
+  /// needs [AppConfig.apiOrigin] (NOT [AppConfig.apiBaseUrl], which has the
+  /// `/api` suffix `/uploads` isn't under) prefixed to become playable.
+  /// `/uploads` is served by Express with no auth middleware (just CORS
+  /// headers — see Dad-backend/src/index.ts), so no bearer token is needed
+  /// to fetch it.
+  String? get playableRecordingUrl {
+    if (!hasRecording) return null;
+    return '${AppConfig.instance.apiOrigin}$recordingUrl';
+  }
 
   /// Prefers `recordingDuration` (seconds, the more accurate figure) over
   /// the legacy `duration` field, which `Dad-frontend/src/pages/calls/index.tsx`

@@ -22,6 +22,10 @@ mixin _$CallLogsListState {
   int get pages => throw _privateConstructorUsedError;
   bool get isLoadingMore => throw _privateConstructorUsedError;
   String? get search => throw _privateConstructorUsedError;
+  String? get direction => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  String? get branchId => throw _privateConstructorUsedError;
+  String? get userId => throw _privateConstructorUsedError;
 
   /// Create a copy of CallLogsListState
   /// with the given fields replaced by the non-null parameter values.
@@ -43,6 +47,10 @@ abstract class $CallLogsListStateCopyWith<$Res> {
     int pages,
     bool isLoadingMore,
     String? search,
+    String? direction,
+    String? status,
+    String? branchId,
+    String? userId,
   });
 }
 
@@ -66,6 +74,10 @@ class _$CallLogsListStateCopyWithImpl<$Res, $Val extends CallLogsListState>
     Object? pages = null,
     Object? isLoadingMore = null,
     Object? search = freezed,
+    Object? direction = freezed,
+    Object? status = freezed,
+    Object? branchId = freezed,
+    Object? userId = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -89,6 +101,22 @@ class _$CallLogsListStateCopyWithImpl<$Res, $Val extends CallLogsListState>
                 ? _value.search
                 : search // ignore: cast_nullable_to_non_nullable
                       as String?,
+            direction: freezed == direction
+                ? _value.direction
+                : direction // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: freezed == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            branchId: freezed == branchId
+                ? _value.branchId
+                : branchId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userId: freezed == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -110,6 +138,10 @@ abstract class _$$CallLogsListStateImplCopyWith<$Res>
     int pages,
     bool isLoadingMore,
     String? search,
+    String? direction,
+    String? status,
+    String? branchId,
+    String? userId,
   });
 }
 
@@ -132,6 +164,10 @@ class __$$CallLogsListStateImplCopyWithImpl<$Res>
     Object? pages = null,
     Object? isLoadingMore = null,
     Object? search = freezed,
+    Object? direction = freezed,
+    Object? status = freezed,
+    Object? branchId = freezed,
+    Object? userId = freezed,
   }) {
     return _then(
       _$CallLogsListStateImpl(
@@ -155,6 +191,22 @@ class __$$CallLogsListStateImplCopyWithImpl<$Res>
             ? _value.search
             : search // ignore: cast_nullable_to_non_nullable
                   as String?,
+        direction: freezed == direction
+            ? _value.direction
+            : direction // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: freezed == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        branchId: freezed == branchId
+            ? _value.branchId
+            : branchId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userId: freezed == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -169,6 +221,10 @@ class _$CallLogsListStateImpl extends _CallLogsListState {
     this.pages = 1,
     this.isLoadingMore = false,
     this.search,
+    this.direction,
+    this.status,
+    this.branchId,
+    this.userId,
   }) : _calls = calls,
        super._();
 
@@ -192,10 +248,18 @@ class _$CallLogsListStateImpl extends _CallLogsListState {
   final bool isLoadingMore;
   @override
   final String? search;
+  @override
+  final String? direction;
+  @override
+  final String? status;
+  @override
+  final String? branchId;
+  @override
+  final String? userId;
 
   @override
   String toString() {
-    return 'CallLogsListState(calls: $calls, page: $page, pages: $pages, isLoadingMore: $isLoadingMore, search: $search)';
+    return 'CallLogsListState(calls: $calls, page: $page, pages: $pages, isLoadingMore: $isLoadingMore, search: $search, direction: $direction, status: $status, branchId: $branchId, userId: $userId)';
   }
 
   @override
@@ -208,7 +272,13 @@ class _$CallLogsListStateImpl extends _CallLogsListState {
             (identical(other.pages, pages) || other.pages == pages) &&
             (identical(other.isLoadingMore, isLoadingMore) ||
                 other.isLoadingMore == isLoadingMore) &&
-            (identical(other.search, search) || other.search == search));
+            (identical(other.search, search) || other.search == search) &&
+            (identical(other.direction, direction) ||
+                other.direction == direction) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.branchId, branchId) ||
+                other.branchId == branchId) &&
+            (identical(other.userId, userId) || other.userId == userId));
   }
 
   @override
@@ -219,6 +289,10 @@ class _$CallLogsListStateImpl extends _CallLogsListState {
     pages,
     isLoadingMore,
     search,
+    direction,
+    status,
+    branchId,
+    userId,
   );
 
   /// Create a copy of CallLogsListState
@@ -240,6 +314,10 @@ abstract class _CallLogsListState extends CallLogsListState {
     final int pages,
     final bool isLoadingMore,
     final String? search,
+    final String? direction,
+    final String? status,
+    final String? branchId,
+    final String? userId,
   }) = _$CallLogsListStateImpl;
   const _CallLogsListState._() : super._();
 
@@ -253,6 +331,14 @@ abstract class _CallLogsListState extends CallLogsListState {
   bool get isLoadingMore;
   @override
   String? get search;
+  @override
+  String? get direction;
+  @override
+  String? get status;
+  @override
+  String? get branchId;
+  @override
+  String? get userId;
 
   /// Create a copy of CallLogsListState
   /// with the given fields replaced by the non-null parameter values.

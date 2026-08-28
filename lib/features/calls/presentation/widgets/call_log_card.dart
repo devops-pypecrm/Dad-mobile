@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/utils/role_utils.dart';
+import '../../../auth/providers/session_provider.dart';
+import '../../data/calls_repository.dart';
 import '../../domain/call_log.dart';
+import '../../providers/call_logs_list_provider.dart';
+import 'call_recording_player_sheet.dart';
 
 String _formatDuration(int seconds) {
   final m = seconds ~/ 60;
@@ -25,16 +32,58 @@ const _statusColors = {
   'initiated': Color(0xFF2563EB),
 };
 
-class CallLogCard extends StatelessWidget {
+class CallLogCard extends ConsumerWidget {
   const CallLogCard({super.key, required this.call});
 
   final CallLog call;
 
+  Future<void> _download(BuildContext context) async {
+    final url = call.playableRecordingUrl;
+    if (url == null) return;
+    final messenger = ScaffoldMessenger.of(context);
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      // Opens externally (browser/media app) rather than in-app — the
+      // simplest correct "download" on mobile without adding a
+      // file-storage/share dependency: the browser handles saving it.
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (context.mounted) {
+      messenger.showSnackBar(const SnackBar(content: Text('Could not open the recording.')));
+    }
+  }
+
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete recording?'),
+        content: const Text('This permanently deletes the audio file. The call log entry stays.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(callsRepositoryProvider).deleteRecording(call.id);
+      ref.read(callLogsListProvider.notifier).removeRecordingLocally(call.id);
+      messenger.showSnackBar(const SnackBar(content: Text('Recording deleted')));
+    } catch (_) {
+      messenger.showSnackBar(const SnackBar(content: Text('Failed to delete recording')));
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isOutbound = call.direction == 'outbound';
     final statusColor = _statusColors[call.callStatus] ?? theme.colorScheme.onSurfaceVariant;
+    final isAdmin = isAdminRole(ref.watch(sessionControllerProvider).valueOrNull?.role);
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -65,8 +114,32 @@ class CallLogCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      if (call.hasRecording)
-                        Icon(Icons.mic_outlined, size: 16, color: theme.colorScheme.onSurfaceVariant),
+                      if (call.hasRecording) ...[
+                        InkWell(
+                          borderRadius: BorderRadius.circular(16),
+                          onTap: () => showCallRecordingPlayer(context, call),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4),
+                            child: Icon(Icons.play_circle_outline, size: 18, color: theme.colorScheme.primary),
+                          ),
+                        ),
+                        PopupMenuButton<String>(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(Icons.more_vert, size: 18, color: theme.colorScheme.onSurfaceVariant),
+                          onSelected: (value) {
+                            if (value == 'download') _download(context);
+                            if (value == 'delete') _confirmDelete(context, ref);
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(value: 'download', child: Text('Download')),
+                            if (isAdmin)
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete recording', style: TextStyle(color: Colors.red)),
+                              ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                   if (call.phoneNumber != null && call.phoneNumber!.isNotEmpty)
