@@ -1,5 +1,11 @@
 # Setup for a new developer
 
+## 0. Use the right Flutter version
+
+This project is built and tested against **Flutter 3.44.9** (pinned in `.fvmrc`). A newer Flutter install pulls in a newer bundled Dart SDK than the codegen packages (`freezed`/`riverpod_generator`, pinned via `analyzer` transitively) support, and `dart run build_runner build` will crash with something like `Missing implementation of visitDotShorthandPropertyAccess`. If you hit that error, **the fix is switching your Flutter version, not upgrading the project's packages** — this codebase intentionally stays on the older Riverpod typed-ref API throughout, and bumping `freezed`/`riverpod_annotation`/`riverpod_generator` to their next major versions would be a real breaking migration across nearly every provider file, not a real fix for a local SDK mismatch.
+
+Use [FVM](https://fvm.app/) if you manage multiple Flutter versions: `fvm install && fvm use` picks up `.fvmrc` automatically. Otherwise just make sure `flutter --version` reports `3.44.9` before running anything below.
+
 This repo won't build straight after `git clone` — two Firebase config files are deliberately **not** committed (see `.gitignore`) because they carry this org's live Firebase project identifiers. You'll receive them separately from whoever gave you access to this repo (Slack DM / secure share, not email/plaintext).
 
 ## 1. Place the two Firebase config files
