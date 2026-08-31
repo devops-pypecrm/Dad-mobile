@@ -20,6 +20,7 @@ mixin _$LeadsListState {
   List<Lead> get leads => throw _privateConstructorUsedError;
   int get page => throw _privateConstructorUsedError;
   int get pages => throw _privateConstructorUsedError;
+  int get total => throw _privateConstructorUsedError;
   bool get isLoadingMore => throw _privateConstructorUsedError;
   String? get search => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
@@ -49,6 +50,7 @@ abstract class $LeadsListStateCopyWith<$Res> {
     List<Lead> leads,
     int page,
     int pages,
+    int total,
     bool isLoadingMore,
     String? search,
     String? status,
@@ -80,6 +82,7 @@ class _$LeadsListStateCopyWithImpl<$Res, $Val extends LeadsListState>
     Object? leads = null,
     Object? page = null,
     Object? pages = null,
+    Object? total = null,
     Object? isLoadingMore = null,
     Object? search = freezed,
     Object? status = freezed,
@@ -104,6 +107,10 @@ class _$LeadsListStateCopyWithImpl<$Res, $Val extends LeadsListState>
             pages: null == pages
                 ? _value.pages
                 : pages // ignore: cast_nullable_to_non_nullable
+                      as int,
+            total: null == total
+                ? _value.total
+                : total // ignore: cast_nullable_to_non_nullable
                       as int,
             isLoadingMore: null == isLoadingMore
                 ? _value.isLoadingMore
@@ -164,6 +171,7 @@ abstract class _$$LeadsListStateImplCopyWith<$Res>
     List<Lead> leads,
     int page,
     int pages,
+    int total,
     bool isLoadingMore,
     String? search,
     String? status,
@@ -194,6 +202,7 @@ class __$$LeadsListStateImplCopyWithImpl<$Res>
     Object? leads = null,
     Object? page = null,
     Object? pages = null,
+    Object? total = null,
     Object? isLoadingMore = null,
     Object? search = freezed,
     Object? status = freezed,
@@ -218,6 +227,10 @@ class __$$LeadsListStateImplCopyWithImpl<$Res>
         pages: null == pages
             ? _value.pages
             : pages // ignore: cast_nullable_to_non_nullable
+                  as int,
+        total: null == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
                   as int,
         isLoadingMore: null == isLoadingMore
             ? _value.isLoadingMore
@@ -271,6 +284,7 @@ class _$LeadsListStateImpl extends _LeadsListState {
     final List<Lead> leads = const <Lead>[],
     this.page = 1,
     this.pages = 1,
+    this.total = 0,
     this.isLoadingMore = false,
     this.search,
     this.status,
@@ -301,6 +315,9 @@ class _$LeadsListStateImpl extends _LeadsListState {
   final int pages;
   @override
   @JsonKey()
+  final int total;
+  @override
+  @JsonKey()
   final bool isLoadingMore;
   @override
   final String? search;
@@ -325,7 +342,7 @@ class _$LeadsListStateImpl extends _LeadsListState {
 
   @override
   String toString() {
-    return 'LeadsListState(leads: $leads, page: $page, pages: $pages, isLoadingMore: $isLoadingMore, search: $search, status: $status, source: $source, assignedTo: $assignedTo, branchId: $branchId, startDate: $startDate, endDate: $endDate, sortBy: $sortBy, sortOrder: $sortOrder)';
+    return 'LeadsListState(leads: $leads, page: $page, pages: $pages, total: $total, isLoadingMore: $isLoadingMore, search: $search, status: $status, source: $source, assignedTo: $assignedTo, branchId: $branchId, startDate: $startDate, endDate: $endDate, sortBy: $sortBy, sortOrder: $sortOrder)';
   }
 
   @override
@@ -336,6 +353,7 @@ class _$LeadsListStateImpl extends _LeadsListState {
             const DeepCollectionEquality().equals(other._leads, _leads) &&
             (identical(other.page, page) || other.page == page) &&
             (identical(other.pages, pages) || other.pages == pages) &&
+            (identical(other.total, total) || other.total == total) &&
             (identical(other.isLoadingMore, isLoadingMore) ||
                 other.isLoadingMore == isLoadingMore) &&
             (identical(other.search, search) || other.search == search) &&
@@ -359,6 +377,7 @@ class _$LeadsListStateImpl extends _LeadsListState {
     const DeepCollectionEquality().hash(_leads),
     page,
     pages,
+    total,
     isLoadingMore,
     search,
     status,
@@ -388,6 +407,7 @@ abstract class _LeadsListState extends LeadsListState {
     final List<Lead> leads,
     final int page,
     final int pages,
+    final int total,
     final bool isLoadingMore,
     final String? search,
     final String? status,
@@ -407,6 +427,8 @@ abstract class _LeadsListState extends LeadsListState {
   int get page;
   @override
   int get pages;
+  @override
+  int get total;
   @override
   bool get isLoadingMore;
   @override

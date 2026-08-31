@@ -9,11 +9,15 @@ import '../../providers/create_lead_controller.dart';
 import '../widgets/assignee_picker_field.dart';
 import '../widgets/lead_status_field.dart';
 
-/// Full-screen "New Lead" form — same field set as Dad-frontend's
-/// `QuickAddLeadDialog` (minus org custom fields and the phone country-code
-/// picker). Per .claude/CLAUDE.md's mobile guidance ("dedicated full-screen
-/// forms" over heavy modals), this replaced the old 4-field bottom sheet
-/// once parity with web's fuller form made a sheet too cramped.
+/// "New Lead" form — same field set as Dad-frontend's `QuickAddLeadDialog`
+/// (minus org custom fields and the phone country-code picker). Presented
+/// both as a full route (`/leads/new`) and as a tall `DraggableScrollableSheet`
+/// quick-add modal from the Leads list FAB (see `showQuickAddLeadSheet` in
+/// `leads_list_screen.dart`) — the previous iteration of this form was a
+/// short, fixed-height bottom sheet that got too cramped once the field set
+/// grew to match web's fuller form, so this reintroduces the sheet
+/// presentation with a generous scrollable height instead of reverting to
+/// that cramped version.
 class CreateLeadScreen extends ConsumerStatefulWidget {
   const CreateLeadScreen({super.key});
 
@@ -106,7 +110,14 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
         : 'new';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('New Lead')),
+      appBar: AppBar(
+        title: const Text('New Lead'),
+        // Explicit close button rather than relying on AppBar's automatic
+        // back-arrow detection — that's unreliable when this widget is
+        // shown inside a `showModalBottomSheet` route instead of a normal
+        // pushed route.
+        leading: IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -204,4 +215,22 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
       ),
     );
   }
+}
+
+/// Opens [CreateLeadScreen] as a tall, scrollable modal sheet rather than a
+/// full route push — the quick-add entry point from the Leads list's "+"
+/// FAB. `isScrollControlled: true` lets the sheet grow to (near) full
+/// height instead of the default half-screen cap, and `useSafeArea: true`
+/// keeps it clear of the status bar — both needed since this form has
+/// considerably more fields than a typical bottom sheet.
+Future<void> showQuickAddLeadSheet(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    builder: (context) => const FractionallySizedBox(
+      heightFactor: 0.92,
+      child: CreateLeadScreen(),
+    ),
+  );
 }

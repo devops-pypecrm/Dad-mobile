@@ -33,6 +33,18 @@ class CheckInSync extends _$CheckInSync {
     });
     ref.onDispose(() => _connectivitySub?.cancel());
 
+    // Only a connectivity *transition* triggers a sync above, so a queue
+    // left over from a previous session (app closed offline, reopened
+    // already on Wi-Fi — no transition ever fires) would otherwise sit
+    // stuck forever with no manual "Sync now" entry point in the current
+    // nav. Flush it once at startup if we're online and there's a backlog.
+    if (queue.length > 0) {
+      final connectivity = await Connectivity().checkConnectivity();
+      if (connectivity.any((r) => r != ConnectivityResult.none)) {
+        unawaited(trySyncAll());
+      }
+    }
+
     return queue.length;
   }
 

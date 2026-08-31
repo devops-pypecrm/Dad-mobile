@@ -13,6 +13,7 @@ class LeadsListState with _$LeadsListState {
     @Default(<Lead>[]) List<Lead> leads,
     @Default(1) int page,
     @Default(1) int pages,
+    @Default(0) int total,
     @Default(false) bool isLoadingMore,
     String? search,
     String? status,
@@ -48,7 +49,7 @@ class LeadsList extends _$LeadsList {
   Future<LeadsListState> build() async {
     final repository = ref.watch(leadsRepositoryProvider);
     final result = await repository.getLeads(page: 1);
-    return LeadsListState(leads: result.leads, page: result.page, pages: result.pages);
+    return LeadsListState(leads: result.leads, page: result.page, pages: result.pages, total: result.total);
   }
 
   Future<void> loadMore() async {
@@ -75,6 +76,7 @@ class LeadsList extends _$LeadsList {
           leads: [...current.leads, ...result.leads],
           page: result.page,
           pages: result.pages,
+          total: result.total,
           isLoadingMore: false,
         ),
       );
@@ -116,6 +118,7 @@ class LeadsList extends _$LeadsList {
         leads: result.leads,
         page: result.page,
         pages: result.pages,
+        total: result.total,
         search: search,
         status: status,
         source: source,
@@ -149,6 +152,7 @@ class LeadsList extends _$LeadsList {
         leads: result.leads,
         page: result.page,
         pages: result.pages,
+        total: result.total,
       );
     });
   }

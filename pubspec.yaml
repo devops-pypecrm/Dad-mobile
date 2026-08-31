@@ -35,6 +35,16 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Real brand icons (e.g. WhatsApp) — Flutter's built-in Material `Icons`
+  # has no actual WhatsApp glyph, only generic chat-bubble icons. Must be
+  # >=11.0.0 — versions before that subclass Flutter's `IconData`, which
+  # became a `final` class in a recent Flutter SDK release
+  # (flutter/flutter#181342) and no longer compiles; 11.0.0 fixed this by
+  # introducing a separate `FaIconData`/`FaIcon` pair instead (a breaking
+  # change from the plain `Icon(FontAwesomeIcons.x)` usage older versions
+  # allowed).
+  font_awesome_flutter: ^11.0.0
+
   # Locale-aware compact currency formatting (mirrors Dad-frontend's
   # Intl.NumberFormat-based formatCurrencyCompact in src/lib/utils.ts).
   intl: ^0.19.0

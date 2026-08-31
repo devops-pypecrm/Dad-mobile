@@ -47,6 +47,7 @@ class _MyPerformanceTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final myUserId = ref.watch(sessionControllerProvider).valueOrNull?.id;
     final performanceAsync = ref.watch(myPerformanceProvider);
     final funnelAsync = ref.watch(myLeadsFunnelProvider);
     final salesBookAsync = ref.watch(salesBookThisMonthProvider);
@@ -64,7 +65,13 @@ class _MyPerformanceTab extends ConsumerWidget {
           const SizedBox(height: 8),
           performanceAsync.when(
             data: (entries) {
-              final metrics = entries.isEmpty ? null : entries.first.metrics;
+              // The backend's `userId` query param on getUserPerformance is
+              // not applied server-side — it always returns every visible
+              // user (self + subordinates) in unspecified order, so picking
+              // `.first` risked showing a subordinate's stats as "mine".
+              // Find the caller's own entry explicitly instead.
+              final own = entries.where((e) => e.user.id == myUserId);
+              final metrics = own.isEmpty ? null : own.first.metrics;
               if (metrics == null) {
                 return const EmptyStateView(
                   message: 'No performance data yet.',

@@ -13,6 +13,9 @@ import '../../../users/providers/users_provider.dart';
 import '../../providers/leads_list_provider.dart';
 import '../widgets/lead_card.dart';
 import '../widgets/leads_filter_sheet.dart';
+import 'create_lead_screen.dart';
+
+const _brandPurple = Color(0xFF5B21B6);
 
 const _sortOptions = [
   ('createdAt', 'desc', 'Newest'),
@@ -34,20 +37,7 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
   final _searchController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      ref.read(leadsListProvider.notifier).loadMore();
-    }
-  }
-
-  @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
@@ -96,9 +86,18 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
 
     return Scaffold(
       appBar: const GlobalAppBar(title: 'Leads'),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/leads/new'),
-        child: const Icon(Icons.add),
+      // Padding clears the floating bottom nav bar (see AppShell — its
+      // ~75px bar + 8px margin isn't accounted for by this screen's own
+      // Scaffold, same reason the Dashboard's ListView needed bottom
+      // padding added). Placed "just above" the bar, at the right edge, per
+      // the reference design.
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 90),
+        child: FloatingActionButton(
+          backgroundColor: _brandPurple,
+          onPressed: () => showQuickAddLeadSheet(context),
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
       ),
       body: Column(
         children: [
@@ -117,7 +116,18 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
                     decoration: InputDecoration(
                       hintText: 'Search name, email, phone…',
                       prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+                      // The app-wide theme sets `filled: true` with no
+                      // explicit color (AppTheme's InputDecorationTheme),
+                      // which defaults to Material3's grayish
+                      // surfaceContainerHighest fill — override to white
+                      // just for this field rather than touching the
+                      // global theme.
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                        borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+                      ),
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                     ),
@@ -134,10 +144,18 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
                         ),
                   ),
                 ),
-                IconButton(
+                const SizedBox(width: 8),
+                _SquareIconButton(
+                  tooltip: 'Filters',
+                  icon: Icons.tune,
+                  badgeCount: data?.hasActiveFilters ?? false ? 1 : null,
+                  onTap: () => showLeadsFilterSheet(context, ref),
+                ),
+                const SizedBox(width: 8),
+                _SquareIconButton(
                   tooltip: 'Sort',
-                  icon: const Icon(Icons.sort),
-                  onPressed: () async {
+                  icon: Icons.filter_list,
+                  onTap: () async {
                     final choice = await showModalBottomSheet<(String, String)>(
                       context: context,
                       builder: (context) => SafeArea(
@@ -159,15 +177,6 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
                     if (choice != null) _applySort(choice.$1, choice.$2);
                   },
                 ),
-                IconButton(
-                  tooltip: 'Filters',
-                  icon: Badge(
-                    isLabelVisible: data?.hasActiveFilters ?? false,
-                    label: const Text(''),
-                    child: const Icon(Icons.filter_list),
-                  ),
-                  onPressed: () => showLeadsFilterSheet(context, ref),
-                ),
               ],
             ),
           ),
@@ -185,14 +194,11 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
                   onRefresh: () => ref.read(leadsListProvider.notifier).refresh(),
                   child: ListView.builder(
                     controller: _scrollController,
-                    padding: const EdgeInsets.only(top: 8, bottom: 88),
-                    itemCount: data.leads.length + (data.hasMore ? 1 : 0),
+                    padding: const EdgeInsets.only(top: 8, bottom: 100),
+                    itemCount: data.leads.length + 1,
                     itemBuilder: (context, index) {
                       if (index >= data.leads.length) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
+                        return _LoadMoreFooter(data: data);
                       }
                       final lead = data.leads[index];
                       return LeadCard(lead: lead, onTap: () => context.push('/leads/${lead.id}'));
@@ -207,6 +213,90 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SquareIconButton extends StatelessWidget {
+  const _SquareIconButton({required this.icon, required this.tooltip, required this.onTap, this.badgeCount});
+
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+  final int? badgeCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            border: Border.all(color: theme.colorScheme.outlineVariant),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Center(child: Icon(icon, color: theme.colorScheme.onSurfaceVariant)),
+              if (badgeCount != null)
+                Positioned(
+                  top: -6,
+                  right: -6,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(color: _brandPurple, shape: BoxShape.circle),
+                    constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                    child: Text(
+                      '$badgeCount',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Showing 1–N of Total leads" + a manual "Load more" button — replaces
+/// the previous auto-load-on-scroll behavior so pagination is an explicit,
+/// visible action instead of a silent background fetch.
+class _LoadMoreFooter extends ConsumerWidget {
+  const _LoadMoreFooter({required this.data});
+
+  final LeadsListState data;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: Row(
+        children: [
+          Text(
+            'Showing 1–${data.leads.length} of ${data.total} leads',
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          ),
+          const Spacer(),
+          if (data.hasMore)
+            OutlinedButton.icon(
+              onPressed: data.isLoadingMore ? null : () => ref.read(leadsListProvider.notifier).loadMore(),
+              icon: data.isLoadingMore
+                  ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.keyboard_arrow_down, size: 18),
+              label: const Text('Load more'),
+            ),
         ],
       ),
     );

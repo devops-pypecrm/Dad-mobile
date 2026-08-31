@@ -1,16 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/utils/hex_color.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
 
-/// Same card language as `FollowUpCard` (Follow Ups tab): a colored top
-/// accent bar for an attention-worthy state, a colored status chip, a
-/// muted metadata box, and a compact action row — kept visually consistent
-/// across the two list screens rather than each having its own ad hoc
-/// `Card`+`Chip` styling.
+const _brandPurple = Color(0xFF5B21B6);
+
+/// Short "2h ago"/"1d ago" form — distinct from `formatRelativeDate`
+/// (which does day-level "Today"/"Yesterday"/"N days ago" for the search
+/// screen); this card needs hour-level granularity for freshly-added leads.
+String _shortTimeAgo(DateTime date) {
+  final diff = DateTime.now().difference(date);
+  if (diff.inMinutes < 1) return 'just now';
+  if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+  if (diff.inHours < 24) return '${diff.inHours}h ago';
+  return '${diff.inDays}d ago';
+}
+
+/// One lead row: a status-colored left accent bar, a status pill + optional
+/// re-enquiry marker, name, assignee/campaign block, call/WhatsApp quick
+/// actions, and a bottom "Added"/"Last contacted" pill — all colored off
+/// the same `statusColor` so a warm (orange/red) status like "Not
+/// Responding" reads as a visibly tinted card while a cool one (purple)
+/// stays close to plain white, without hardcoding which statuses are
+/// "urgent" (statuses are a free, org-configurable string, see
+/// Dad-backend/CLAUDE.md's gotchas — this card has no business trying to
+/// know which ones mean "pay attention").
 class LeadCard extends ConsumerWidget {
   const LeadCard({super.key, required this.lead, required this.onTap});
 
@@ -34,143 +52,202 @@ class LeadCard extends ConsumerWidget {
       statusColor = hexToColor(match.first.color);
     }
 
-    final accentColor = lead.isHotLead
-        ? const Color(0xFFEA580C)
-        : lead.isReEnquiry
-            ? const Color(0xFFF59E0B)
-            : null;
+    final isFreshLead = lead.status.toLowerCase() == 'new';
+    final timeAgoLabel = isFreshLead ? 'Added' : 'Last contacted';
+    final timeAgoDate = isFreshLead ? lead.createdAt : (lead.updatedAt ?? lead.createdAt);
 
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+      ),
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (accentColor != null) Container(height: 3, color: accentColor),
-            Padding(
-              padding: const EdgeInsets.all(14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          // `CrossAxisAlignment.stretch` needs a bounded height to stretch
+          // the colored left bar to — everything above this (Material,
+          // InkWell, the outer Container) sizes itself to content inside a
+          // ListView, so without IntrinsicHeight the incoming constraint is
+          // unbounded and this Row throws at layout time (a runtime crash,
+          // not something `flutter analyze` catches — it broke rendering
+          // for every card, not just this one, hence the whole list going
+          // blank rather than one bad row).
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(width: 4, color: statusColor),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Chip(
-                        label: Text(statusLabel),
-                        backgroundColor: statusColor.withValues(alpha: 0.12),
-                        labelStyle: TextStyle(color: statusColor, fontWeight: FontWeight.w600, fontSize: 11),
-                        visualDensity: VisualDensity.compact,
-                        padding: EdgeInsets.zero,
-                        side: BorderSide.none,
-                      ),
-                      const Spacer(),
-                      if (lead.isReEnquiry)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 6),
-                          child: Text(
-                            'RE-ENQUIRY ×${lead.reEnquiryCount}',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: const Color(0xFFF59E0B),
-                              fontWeight: FontWeight.bold,
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: statusColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              statusLabel,
+                              style: theme.textTheme.labelSmall
+                                  ?.copyWith(color: statusColor, fontWeight: FontWeight.w700),
                             ),
                           ),
-                        ),
-                      if (lead.isHotLead)
-                        const Padding(
-                          padding: EdgeInsets.only(left: 6),
-                          child: Icon(Icons.local_fire_department, color: Color(0xFFEA580C), size: 18),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    lead.fullName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-                  ),
-                  if (lead.company != null && lead.company!.isNotEmpty)
-                    Text(
-                      lead.company!,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                    ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.person_outline, size: 14, color: theme.colorScheme.onSurfaceVariant),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                lead.assignedTo != null ? lead.assignedTo!.firstName : 'Unassigned',
-                                style: theme.textTheme.bodySmall,
-                                overflow: TextOverflow.ellipsis,
+                          const Spacer(),
+                          if (lead.isReEnquiry)
+                            Text(
+                              'RE-ENQUIRY ×${lead.reEnquiryCount}',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: const Color(0xFFEA580C),
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            if (lead.potentialValue > 0)
-                              Text(
-                                lead.potentialValue.toStringAsFixed(0),
-                                style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w700),
-                              ),
-                          ],
-                        ),
-                        if (lead.campaignName != null && lead.campaignName!.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Icon(Icons.campaign_outlined, size: 14, color: theme.colorScheme.onSurfaceVariant),
-                              const SizedBox(width: 4),
-                              Expanded(
-                                child: Text(
-                                  lead.campaignName!,
-                                  style: theme.textTheme.bodySmall,
-                                  overflow: TextOverflow.ellipsis,
+                          if (lead.isHotLead)
+                            const Padding(
+                              padding: EdgeInsets.only(left: 6),
+                              child: Icon(Icons.local_fire_department, color: Color(0xFFEA580C), size: 18),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        lead.fullName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.person_outline, size: 15, color: theme.colorScheme.onSurfaceVariant),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        lead.assignedTo != null ? lead.assignedTo!.firstName : 'Unassigned',
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                if (lead.campaignName != null && lead.campaignName!.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.campaign_outlined,
+                                          size: 15, color: theme.colorScheme.onSurfaceVariant),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          lead.campaignName!,
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          _RoundIconButton(
+                            icon: const Icon(Icons.call, size: 18, color: _brandPurple),
+                            background: _brandPurple.withValues(alpha: 0.12),
+                            onTap: () => _launch(Uri(scheme: 'tel', path: lead.phone)),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(width: 1, height: 24, color: theme.colorScheme.outlineVariant),
+                          const SizedBox(width: 8),
+                          _RoundIconButton(
+                            // `FontAwesomeIcons.whatsapp` is an `FaIconData`,
+                            // not a plain `IconData` (font_awesome_flutter
+                            // 11+ deliberately stopped implementing
+                            // `IconData` — see pubspec.yaml's comment), so it
+                            // needs the dedicated `FaIcon` widget rather than
+                            // a plain `Icon`.
+                            icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 18, color: Colors.white),
+                            background: const Color(0xFF25D366),
+                            onTap: () => _launch(
+                              Uri.parse('https://wa.me/${lead.phone.replaceAll(RegExp(r'[^0-9]'), '')}'),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant),
+                        ],
+                      ),
+                      if (timeAgoDate != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: statusColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.access_time, size: 13, color: statusColor),
+                              const SizedBox(width: 5),
+                              Text(
+                                '$timeAgoLabel ${_shortTimeAgo(timeAgoDate)}',
+                                style: theme.textTheme.labelSmall
+                                    ?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _launch(Uri(scheme: 'tel', path: lead.phone)),
-                          icon: const Icon(Icons.call, size: 16),
-                          label: const Text('Call'),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => _launch(
-                            Uri.parse('https://wa.me/${lead.phone.replaceAll(RegExp(r'[^0-9]'), '')}'),
-                          ),
-                          icon: const Icon(Icons.chat, size: 16),
-                          label: const Text('WhatsApp'),
-                        ),
-                      ),
                     ],
                   ),
-                ],
+                ),
               ),
+              ],
             ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _RoundIconButton extends StatelessWidget {
+  const _RoundIconButton({required this.icon, required this.background, required this.onTap});
+
+  /// A pre-built `Icon`/`FaIcon` (size/color already set by the caller) —
+  /// not an `IconData`, since `FontAwesomeIcons.whatsapp` (an `FaIconData`
+  /// in font_awesome_flutter 11+) isn't one and needs its own `FaIcon`
+  /// widget rather than the plain Material `Icon`.
+  final Widget icon;
+  final Color background;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      customBorder: const CircleBorder(),
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(color: background, shape: BoxShape.circle),
+        child: Center(child: icon),
       ),
     );
   }
