@@ -7,7 +7,7 @@ part of 'opportunity_actions_controller.dart';
 // **************************************************************************
 
 String _$opportunityActionsControllerHash() =>
-    r'e2a676354cfc56ed395ede105cc5e1d1feebd8af';
+    r'10459e8656f16c960b8ecdacf0bbb1ff7fd291a0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -38,10 +38,10 @@ abstract class _$OpportunityActionsController
 }
 
 /// Stage change, edit (amount/probability/close date), linked-lead status
-/// sync, and amount-sync-to-products — all funnel through
-/// `OpportunitiesRepository.updateOpportunity`. See that method's doc
-/// comment for the `stage` vs `leadStatus` distinction and the terminal-
-/// stage 400 the backend returns.
+/// sync, amount-sync-to-products, and Close Won/Lost — all funnel through
+/// `OpportunitiesRepository`. See that class's doc comments for the
+/// `stage` vs `leadStatus` distinction, the terminal-stage 400 the backend
+/// returns, and the exact payment-type contract `closeWon` wraps.
 ///
 /// Copied from [OpportunityActionsController].
 @ProviderFor(OpportunityActionsController)
@@ -49,27 +49,27 @@ const opportunityActionsControllerProvider =
     OpportunityActionsControllerFamily();
 
 /// Stage change, edit (amount/probability/close date), linked-lead status
-/// sync, and amount-sync-to-products — all funnel through
-/// `OpportunitiesRepository.updateOpportunity`. See that method's doc
-/// comment for the `stage` vs `leadStatus` distinction and the terminal-
-/// stage 400 the backend returns.
+/// sync, amount-sync-to-products, and Close Won/Lost — all funnel through
+/// `OpportunitiesRepository`. See that class's doc comments for the
+/// `stage` vs `leadStatus` distinction, the terminal-stage 400 the backend
+/// returns, and the exact payment-type contract `closeWon` wraps.
 ///
 /// Copied from [OpportunityActionsController].
 class OpportunityActionsControllerFamily extends Family<AsyncValue<void>> {
   /// Stage change, edit (amount/probability/close date), linked-lead status
-  /// sync, and amount-sync-to-products — all funnel through
-  /// `OpportunitiesRepository.updateOpportunity`. See that method's doc
-  /// comment for the `stage` vs `leadStatus` distinction and the terminal-
-  /// stage 400 the backend returns.
+  /// sync, amount-sync-to-products, and Close Won/Lost — all funnel through
+  /// `OpportunitiesRepository`. See that class's doc comments for the
+  /// `stage` vs `leadStatus` distinction, the terminal-stage 400 the backend
+  /// returns, and the exact payment-type contract `closeWon` wraps.
   ///
   /// Copied from [OpportunityActionsController].
   const OpportunityActionsControllerFamily();
 
   /// Stage change, edit (amount/probability/close date), linked-lead status
-  /// sync, and amount-sync-to-products — all funnel through
-  /// `OpportunitiesRepository.updateOpportunity`. See that method's doc
-  /// comment for the `stage` vs `leadStatus` distinction and the terminal-
-  /// stage 400 the backend returns.
+  /// sync, amount-sync-to-products, and Close Won/Lost — all funnel through
+  /// `OpportunitiesRepository`. See that class's doc comments for the
+  /// `stage` vs `leadStatus` distinction, the terminal-stage 400 the backend
+  /// returns, and the exact payment-type contract `closeWon` wraps.
   ///
   /// Copied from [OpportunityActionsController].
   OpportunityActionsControllerProvider call(String opportunityId) {
@@ -99,10 +99,10 @@ class OpportunityActionsControllerFamily extends Family<AsyncValue<void>> {
 }
 
 /// Stage change, edit (amount/probability/close date), linked-lead status
-/// sync, and amount-sync-to-products — all funnel through
-/// `OpportunitiesRepository.updateOpportunity`. See that method's doc
-/// comment for the `stage` vs `leadStatus` distinction and the terminal-
-/// stage 400 the backend returns.
+/// sync, amount-sync-to-products, and Close Won/Lost — all funnel through
+/// `OpportunitiesRepository`. See that class's doc comments for the
+/// `stage` vs `leadStatus` distinction, the terminal-stage 400 the backend
+/// returns, and the exact payment-type contract `closeWon` wraps.
 ///
 /// Copied from [OpportunityActionsController].
 class OpportunityActionsControllerProvider
@@ -112,10 +112,10 @@ class OpportunityActionsControllerProvider
           void
         > {
   /// Stage change, edit (amount/probability/close date), linked-lead status
-  /// sync, and amount-sync-to-products — all funnel through
-  /// `OpportunitiesRepository.updateOpportunity`. See that method's doc
-  /// comment for the `stage` vs `leadStatus` distinction and the terminal-
-  /// stage 400 the backend returns.
+  /// sync, amount-sync-to-products, and Close Won/Lost — all funnel through
+  /// `OpportunitiesRepository`. See that class's doc comments for the
+  /// `stage` vs `leadStatus` distinction, the terminal-stage 400 the backend
+  /// returns, and the exact payment-type contract `closeWon` wraps.
   ///
   /// Copied from [OpportunityActionsController].
   OpportunityActionsControllerProvider(String opportunityId)

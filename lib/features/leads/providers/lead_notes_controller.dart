@@ -6,7 +6,10 @@ import '../domain/interaction.dart';
 part 'lead_notes_controller.g.dart';
 
 @riverpod
-Future<List<Interaction>> leadInteractions(AutoDisposeFutureProviderRef<List<Interaction>> ref, String leadId) {
+Future<List<Interaction>> leadInteractions(
+  AutoDisposeFutureProviderRef<List<Interaction>> ref,
+  String leadId,
+) {
   final repository = ref.watch(leadsRepositoryProvider);
   return repository.getLeadInteractions(leadId);
 }

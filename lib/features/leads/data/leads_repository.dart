@@ -7,7 +7,11 @@ import '../domain/convert_lead_result.dart';
 import '../domain/create_lead_result.dart';
 import '../domain/interaction.dart';
 import '../domain/lead.dart';
+import '../domain/lead_call_history_item.dart';
+import '../domain/lead_ownership_history_item.dart';
 import '../domain/lead_product.dart';
+import '../domain/lead_timeline_item.dart';
+import '../domain/lead_whatsapp_activity.dart';
 import '../domain/leads_page.dart';
 
 part 'leads_repository.g.dart';
@@ -59,7 +63,8 @@ class LeadsRepository {
           if (search != null && search.isNotEmpty) 'search': search,
           if (status != null && status.isNotEmpty) 'status': status,
           if (source != null && source.isNotEmpty) 'source': source,
-          if (assignedTo != null && assignedTo.isNotEmpty) 'assignedTo': assignedTo,
+          if (assignedTo != null && assignedTo.isNotEmpty)
+            'assignedTo': assignedTo,
           if (branchId != null && branchId.isNotEmpty) 'branchId': branchId,
           if (startDate != null) 'startDate': _isoDate(startDate),
           if (endDate != null) 'endDate': _isoDate(endDate),
@@ -89,8 +94,11 @@ class LeadsRepository {
   /// `getLeads` uses.
   Future<List<Lead>> getReEnquiryLeads() async {
     try {
-      final response = await _dio.get<Map<String, dynamic>>('/leads/re-enquiries');
-      final list = (response.data!['leads'] as List).cast<Map<String, dynamic>>();
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/leads/re-enquiries',
+      );
+      final list = (response.data!['leads'] as List)
+          .cast<Map<String, dynamic>>();
       return list.map(Lead.fromJson).toList();
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
@@ -122,13 +130,16 @@ class LeadsRepository {
           if (firstName != null && firstName.isNotEmpty) 'firstName': firstName,
           if (lastName != null && lastName.isNotEmpty) 'lastName': lastName,
           if (email != null && email.isNotEmpty) 'email': email,
-          if (secondaryPhone != null && secondaryPhone.isNotEmpty) 'secondaryPhone': secondaryPhone,
+          if (secondaryPhone != null && secondaryPhone.isNotEmpty)
+            'secondaryPhone': secondaryPhone,
           if (company != null && company.isNotEmpty) 'company': company,
           if (jobTitle != null && jobTitle.isNotEmpty) 'jobTitle': jobTitle,
-          if (enquiryAbout != null && enquiryAbout.isNotEmpty) 'enquiryAbout': enquiryAbout,
+          if (enquiryAbout != null && enquiryAbout.isNotEmpty)
+            'enquiryAbout': enquiryAbout,
           if (source != null && source.isNotEmpty) 'source': source,
           if (status != null && status.isNotEmpty) 'status': status,
-          if (assignedTo != null && assignedTo.isNotEmpty) 'assignedTo': assignedTo,
+          if (assignedTo != null && assignedTo.isNotEmpty)
+            'assignedTo': assignedTo,
           if (potentialValue != null) 'potentialValue': potentialValue,
         },
       );
@@ -174,7 +185,8 @@ class LeadsRepository {
           if (enquiryAbout != null) 'enquiryAbout': enquiryAbout,
           if (status != null) 'status': status,
           if (assignedTo != null) 'assignedTo': assignedTo,
-          if (nextFollowUp != null) 'nextFollowUp': nextFollowUp.toIso8601String(),
+          if (nextFollowUp != null)
+            'nextFollowUp': nextFollowUp.toIso8601String(),
           if (potentialValue != null) 'potentialValue': potentialValue,
           // Full-replace, same as Dad-frontend's AddProductToLeadDialog —
           // there's no incremental add/remove endpoint, the whole array is
@@ -219,8 +231,10 @@ class LeadsRepository {
         data: {
           'dealName': dealName,
           'amount': amount,
-          if (accountName != null && accountName.isNotEmpty) 'accountName': accountName,
-          if (contactName != null && contactName.isNotEmpty) 'contactName': contactName,
+          if (accountName != null && accountName.isNotEmpty)
+            'accountName': accountName,
+          if (contactName != null && contactName.isNotEmpty)
+            'contactName': contactName,
           if (stage != null) 'stage': stage,
           if (lostReason != null) 'lostReason': lostReason,
         },
@@ -232,13 +246,19 @@ class LeadsRepository {
   }
 
   /// `GET /api/interactions/leads/:leadId/interactions` — full activity
-  /// feed for this lead (calls/emails/notes/etc, most-recent first); mobile
-  /// only ever creates `type: 'note'` rows via [addLeadNote], but shows
-  /// whatever's actually there (e.g. call logs from other integrations).
+  /// feed for this lead (calls/emails/notes/etc, most-recent first). Mobile
+  /// only ever creates `type: 'note'` rows via [addLeadNote]; the Notes
+  /// section (`LeadNotesSection`) filters this raw list down to just those,
+  /// so it stays a notes list rather than a mixed activity/call-log feed.
   Future<List<Interaction>> getLeadInteractions(String leadId) async {
     try {
-      final response = await _dio.get<List<dynamic>>('/interactions/leads/$leadId/interactions');
-      return response.data!.cast<Map<String, dynamic>>().map(Interaction.fromJson).toList();
+      final response = await _dio.get<List<dynamic>>(
+        '/interactions/leads/$leadId/interactions',
+      );
+      return response.data!
+          .cast<Map<String, dynamic>>()
+          .map(Interaction.fromJson)
+          .toList();
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
@@ -258,6 +278,74 @@ class LeadsRepository {
           'date': DateTime.now().toIso8601String(),
         },
       );
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/timeline/lead/:id` (Dad-backend/src/controllers/
+  /// timelineController.ts `getTimeline`) — merged, server-sorted activity
+  /// feed for the Lead Detail "Timeline" tab. WhatsApp interaction rows are
+  /// filtered out client-side by the caller (see `LeadTimelineList`),
+  /// matching web's `TimelineFeed.tsx`.
+  Future<List<LeadTimelineItem>> getLeadTimeline(String leadId) async {
+    try {
+      final response = await _dio.get<List<dynamic>>('/timeline/lead/$leadId');
+      return response.data!
+          .cast<Map<String, dynamic>>()
+          .map(LeadTimelineItem.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/whatsapp/lead/:leadId` (Dad-backend/src/controllers/
+  /// whatsAppController.ts `getLeadWhatsAppMessages`) — a single merged feed
+  /// backing BOTH the "WhatsApp Messages" and "WhatsApp Calls" tabs; the
+  /// backend does not split messages from calls itself. Callers split it
+  /// client-side with [isWhatsAppCall], matching web's own classifier.
+  Future<List<LeadWhatsAppActivity>> getLeadWhatsAppActivity(
+    String leadId,
+  ) async {
+    try {
+      final response = await _dio.get<List<dynamic>>('/whatsapp/lead/$leadId');
+      return response.data!
+          .cast<Map<String, dynamic>>()
+          .map(LeadWhatsAppActivity.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/calls/lead/:leadId` (Dad-backend/src/controllers/
+  /// callController.ts `getLeadCalls`) — raw `type: 'call'` `Interaction`
+  /// rows for the Lead Detail "Call History" tab.
+  Future<List<LeadCallHistoryItem>> getLeadCallHistory(String leadId) async {
+    try {
+      final response = await _dio.get<List<dynamic>>('/calls/lead/$leadId');
+      return response.data!
+          .cast<Map<String, dynamic>>()
+          .map(LeadCallHistoryItem.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/leads/:id/history` (Dad-backend/src/controllers/
+  /// leadController.ts `getLeadHistory`) — `LeadHistory` rows for the Lead
+  /// Detail "Ownership History" tab, most-recent first.
+  Future<List<LeadOwnershipHistoryItem>> getLeadOwnershipHistory(
+    String leadId,
+  ) async {
+    try {
+      final response = await _dio.get<List<dynamic>>('/leads/$leadId/history');
+      return response.data!
+          .cast<Map<String, dynamic>>()
+          .map(LeadOwnershipHistoryItem.fromJson)
+          .toList();
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

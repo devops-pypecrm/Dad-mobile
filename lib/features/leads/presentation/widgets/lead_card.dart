@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/utils/hex_color.dart';
+import '../../../../core/utils/url_launch_helper.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
 
-const _brandPurple = Color(0xFF5B21B6);
+const _brandColor = Color(0xFF578732);
 
 /// Short "2h ago"/"1d ago" form — distinct from `formatRelativeDate`
 /// (which does day-level "Today"/"Yesterday"/"N days ago" for the search
@@ -35,14 +35,14 @@ class LeadCard extends ConsumerWidget {
   final Lead lead;
   final VoidCallback onTap;
 
-  Future<void> _launch(Uri uri) async {
-    if (await canLaunchUrl(uri)) await launchUrl(uri);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final leadStatuses = ref.watch(sessionControllerProvider).valueOrNull?.organisation.leadStatuses;
+    final leadStatuses = ref
+        .watch(sessionControllerProvider)
+        .valueOrNull
+        ?.organisation
+        .leadStatuses;
 
     String statusLabel = lead.status;
     Color statusColor = hexToColor(null);
@@ -54,7 +54,9 @@ class LeadCard extends ConsumerWidget {
 
     final isFreshLead = lead.status.toLowerCase() == 'new';
     final timeAgoLabel = isFreshLead ? 'Added' : 'Last contacted';
-    final timeAgoDate = isFreshLead ? lead.createdAt : (lead.updatedAt ?? lead.createdAt);
+    final timeAgoDate = isFreshLead
+        ? lead.createdAt
+        : (lead.updatedAt ?? lead.createdAt);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -80,144 +82,206 @@ class LeadCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(width: 4, color: statusColor),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: statusColor.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              statusLabel,
-                              style: theme.textTheme.labelSmall
-                                  ?.copyWith(color: statusColor, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          const Spacer(),
-                          if (lead.isReEnquiry)
-                            Text(
-                              'RE-ENQUIRY ×${lead.reEnquiryCount}',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: const Color(0xFFEA580C),
-                                fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: statusColor.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                statusLabel,
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: statusColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
-                          if (lead.isHotLead)
-                            const Padding(
-                              padding: EdgeInsets.only(left: 6),
-                              child: Icon(Icons.local_fire_department, color: Color(0xFFEA580C), size: 18),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        lead.fullName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.person_outline, size: 15, color: theme.colorScheme.onSurfaceVariant),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        lead.assignedTo != null ? lead.assignedTo!.firstName : 'Unassigned',
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
+                            const Spacer(),
+                            if (lead.isReEnquiry)
+                              Text(
+                                'RE-ENQUIRY ×${lead.reEnquiryCount}',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: const Color(0xFFEA580C),
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                if (lead.campaignName != null && lead.campaignName!.isNotEmpty) ...[
-                                  const SizedBox(height: 4),
+                              ),
+                            if (lead.isHotLead)
+                              const Padding(
+                                padding: EdgeInsets.only(left: 6),
+                                child: Icon(
+                                  Icons.local_fire_department,
+                                  color: Color(0xFFEA580C),
+                                  size: 18,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          lead.fullName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                                   Row(
                                     children: [
-                                      Icon(Icons.campaign_outlined,
-                                          size: 15, color: theme.colorScheme.onSurfaceVariant),
+                                      Icon(
+                                        Icons.person_outline,
+                                        size: 15,
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
+                                      ),
                                       const SizedBox(width: 6),
                                       Expanded(
                                         child: Text(
-                                          lead.campaignName!,
+                                          lead.assignedTo != null
+                                              ? lead.assignedTo!.firstName
+                                              : 'Unassigned',
                                           style: theme.textTheme.bodyMedium
-                                              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                                              ?.copyWith(
+                                                color: theme
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ],
                                   ),
+                                  if (lead.campaignName != null &&
+                                      lead.campaignName!.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.campaign_outlined,
+                                          size: 15,
+                                          color: theme
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Expanded(
+                                          child: Text(
+                                            lead.campaignName!,
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                                  color: theme
+                                                      .colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            _RoundIconButton(
+                              icon: const Icon(
+                                Icons.call,
+                                size: 18,
+                                color: _brandColor,
+                              ),
+                              background: _brandColor.withValues(alpha: 0.12),
+                              onTap: () => launchUriWithFeedback(
+                                context,
+                                Uri(scheme: 'tel', path: lead.phone),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 1,
+                              height: 24,
+                              color: theme.colorScheme.outlineVariant,
+                            ),
+                            const SizedBox(width: 8),
+                            _RoundIconButton(
+                              // `FontAwesomeIcons.whatsapp` is an `FaIconData`,
+                              // not a plain `IconData` (font_awesome_flutter
+                              // 11+ deliberately stopped implementing
+                              // `IconData` — see pubspec.yaml's comment), so it
+                              // needs the dedicated `FaIcon` widget rather than
+                              // a plain `Icon`.
+                              icon: const FaIcon(
+                                FontAwesomeIcons.whatsapp,
+                                size: 18,
+                                color: Colors.white,
+                              ),
+                              background: const Color(0xFF25D366),
+                              onTap: () => launchUriWithFeedback(
+                                context,
+                                Uri.parse(
+                                  'https://wa.me/${lead.phone.replaceAll(RegExp(r'[^0-9]'), '')}',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Icon(
+                              Icons.chevron_right,
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ],
+                        ),
+                        if (timeAgoDate != null) ...[
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: statusColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.access_time,
+                                  size: 13,
+                                  color: statusColor,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  '$timeAgoLabel ${_shortTimeAgo(timeAgoDate)}',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: statusColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          _RoundIconButton(
-                            icon: const Icon(Icons.call, size: 18, color: _brandPurple),
-                            background: _brandPurple.withValues(alpha: 0.12),
-                            onTap: () => _launch(Uri(scheme: 'tel', path: lead.phone)),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(width: 1, height: 24, color: theme.colorScheme.outlineVariant),
-                          const SizedBox(width: 8),
-                          _RoundIconButton(
-                            // `FontAwesomeIcons.whatsapp` is an `FaIconData`,
-                            // not a plain `IconData` (font_awesome_flutter
-                            // 11+ deliberately stopped implementing
-                            // `IconData` — see pubspec.yaml's comment), so it
-                            // needs the dedicated `FaIcon` widget rather than
-                            // a plain `Icon`.
-                            icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 18, color: Colors.white),
-                            background: const Color(0xFF25D366),
-                            onTap: () => _launch(
-                              Uri.parse('https://wa.me/${lead.phone.replaceAll(RegExp(r'[^0-9]'), '')}'),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Icon(Icons.chevron_right, color: theme.colorScheme.onSurfaceVariant),
                         ],
-                      ),
-                      if (timeAgoDate != null) ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: statusColor.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(Icons.access_time, size: 13, color: statusColor),
-                              const SizedBox(width: 5),
-                              Text(
-                                '$timeAgoLabel ${_shortTimeAgo(timeAgoDate)}',
-                                style: theme.textTheme.labelSmall
-                                    ?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
-                    ],
+                    ),
                   ),
                 ),
-              ),
               ],
             ),
           ),
@@ -228,7 +292,11 @@ class LeadCard extends ConsumerWidget {
 }
 
 class _RoundIconButton extends StatelessWidget {
-  const _RoundIconButton({required this.icon, required this.background, required this.onTap});
+  const _RoundIconButton({
+    required this.icon,
+    required this.background,
+    required this.onTap,
+  });
 
   /// A pre-built `Icon`/`FaIcon` (size/color already set by the caller) —
   /// not an `IconData`, since `FontAwesomeIcons.whatsapp` (an `FaIconData`

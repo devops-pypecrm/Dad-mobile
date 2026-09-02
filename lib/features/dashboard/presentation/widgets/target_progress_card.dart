@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../domain/sales_target.dart';
 
-const _brandPurple = Color(0xFF5B21B6);
+const _brandColor = Color(0xFF578732);
 
 class TargetProgressCard extends StatelessWidget {
   const TargetProgressCard({super.key, required this.target});
@@ -49,8 +49,8 @@ class TargetProgressCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: t.achievementPercent / 100,
                 minHeight: 10,
-                backgroundColor: _brandPurple.withValues(alpha: 0.15),
-                valueColor: const AlwaysStoppedAnimation(_brandPurple),
+                backgroundColor: _brandColor.withValues(alpha: 0.15),
+                valueColor: const AlwaysStoppedAnimation(_brandColor),
               ),
             ),
             const SizedBox(height: 12),
@@ -59,14 +59,14 @@ class TargetProgressCard extends StatelessWidget {
                 Text(
                   '${t.achievedValue.toStringAsFixed(0)} / ${t.targetValue.toStringAsFixed(0)} '
                   '(${t.achievementPercent.toStringAsFixed(0)}%)',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: _brandPurple, fontWeight: FontWeight.bold),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: _brandColor, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 OutlinedButton(
                   onPressed: () => context.push(AppRoutes.targets),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: _brandPurple,
-                    side: const BorderSide(color: _brandPurple),
+                    foregroundColor: _brandColor,
+                    side: const BorderSide(color: _brandColor),
                     shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     visualDensity: VisualDensity.compact,

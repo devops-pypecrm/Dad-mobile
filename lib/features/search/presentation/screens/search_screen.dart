@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +14,8 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/search_result.dart';
 import '../../providers/search_controller.dart';
 
+const _brandColor = Color(0xFF578732);
+
 /// Same type -> icon/color mapping as `getIcon` in
 /// Dad-frontend/src/components/shared/GlobalSearch.tsx:122-131.
 const _typeIcons = {
@@ -24,13 +28,13 @@ const _typeIcons = {
 const _defaultTypeIcon = (Icons.description_outlined, Colors.grey);
 
 /// The global-search tab. Mirrors Dad-frontend's `GlobalSearch.tsx`
-/// behavior exactly: 1-char queries hit `/search/suggestions` (200ms
-/// debounce), 2+ char queries hit `/search/global` (300ms debounce,
-/// backed by `SearchController`). One backend-side gap worth knowing:
-/// `/search/global` covers Lead/Contact/Account/Opportunity/Task — it does
-/// NOT search the `FollowUp` model (a separate table from `Task` on the
-/// backend, see Dad-backend/CLAUDE.md), so follow-ups are not searchable
-/// here or on web today.
+/// behavior: a 1-char query fetches lightweight string suggestions, 2+
+/// characters fetches real matching results live as the user types (see
+/// `SearchController`) — no need to press Enter first. One backend-side
+/// gap worth knowing: `/search/global` covers Lead/Contact/Account/
+/// Opportunity/Task — it does NOT search the `FollowUp` model (a separate
+/// table from `Task` on the backend, see Dad-backend/CLAUDE.md), so
+/// follow-ups are not searchable here or on web today.
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
@@ -65,17 +69,26 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         context.push('/opportunities/${result.id}');
       default:
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${_capitalize(result.type)} details aren\'t available in the app yet.')),
+          SnackBar(
+            content: Text(
+              '${_capitalize(result.type)} details aren\'t available in the app yet.',
+            ),
+          ),
         );
     }
   }
 
-  String _capitalize(String s) => s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
+  String _capitalize(String s) =>
+      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
 
   @override
   Widget build(BuildContext context) {
     final stateAsync = ref.watch(searchControllerProvider);
-    final currency = ref.watch(sessionControllerProvider).valueOrNull?.organisation.currency;
+    final currency = ref
+        .watch(sessionControllerProvider)
+        .valueOrNull
+        ?.organisation
+        .currency;
 
     return Scaffold(
       appBar: const GlobalAppBar(title: 'Search'),
@@ -86,69 +99,117 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           // shared across every tab and carries no screen-specific controls.
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-            child: TextField(
-              controller: _controller,
-              focusNode: _focusNode,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                hintText: 'Search leads, accounts, opportunities…',
-                prefixIcon: const Icon(Icons.search),
-                isDense: true,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+            child: Container(
+              height: 46,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
               ),
-              onChanged: (q) => ref.read(searchControllerProvider.notifier).onQueryChanged(q),
-              onSubmitted: (q) => ref.read(searchControllerProvider.notifier).submit(q),
+              child: TextField(
+                controller: _controller,
+                focusNode: _focusNode,
+                textInputAction: TextInputAction.search,
+                decoration: const InputDecoration(
+                  hintText: 'Search leads, accounts, opportunities…',
+                  prefixIcon: Icon(Icons.search),
+                  isDense: true,
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(14)),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(14)),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(14)),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                onChanged: (q) => ref
+                    .read(searchControllerProvider.notifier)
+                    .onQueryChanged(q),
+                onSubmitted: (q) =>
+                    ref.read(searchControllerProvider.notifier).submit(q),
+              ),
             ),
           ),
           Expanded(
             child: stateAsync.when(
               data: (state) {
-                if (state.isSearching) return const ListSkeleton(itemHeight: 72);
+                if (state.isSearching)
+                  return const ListSkeleton(itemHeight: 84);
                 if (state.searchError != null) {
                   return ErrorStateView(
                     error: state.searchError!,
-                    onRetry: () => ref.read(searchControllerProvider.notifier).retryLastSearch(),
+                    onRetry: () => ref
+                        .read(searchControllerProvider.notifier)
+                        .retryLastSearch(),
                   );
                 }
                 if (state.results != null) {
-                  return _ResultsList(results: state.results!, currency: currency, onTap: _openResult);
+                  return _ResultsList(
+                    results: state.results!,
+                    currency: currency,
+                    onTap: _openResult,
+                  );
                 }
                 if (state.suggestions.isNotEmpty) {
                   return ListView(
+                    // Clears the floating bottom nav bar (see AppShell) —
+                    // same value Dashboard/Leads/Follow Ups/Reports use.
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      8,
+                      16,
+                      math.max(MediaQuery.paddingOf(context).bottom + 12, 95),
+                    ),
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                        child: Text(
-                          'SUGGESTIONS',
-                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12, letterSpacing: 0.6),
+                      const _SectionHeader('Suggestions'),
+                      const SizedBox(height: 12),
+                      for (final s in state.suggestions)
+                        _SimpleResultTile(
+                          icon: Icons.search,
+                          label: s,
+                          onTap: () => _runSearch(s),
                         ),
-                      ),
-                      ...state.suggestions.map(
-                        (s) =>
-                            ListTile(leading: const Icon(Icons.search), title: Text(s), onTap: () => _runSearch(s)),
-                      ),
                     ],
                   );
                 }
                 if (state.recent.isEmpty) {
                   return const EmptyStateView(
-                    message: 'Search for a lead, account, opportunity, or task.',
+                    message:
+                        'Search for a lead, account, opportunity, or task.',
                     icon: Icons.search,
                   );
                 }
                 return ListView(
+                  // Clears the floating bottom nav bar (see AppShell) — same
+                  // value Dashboard/Leads/Follow Ups/Reports use.
+                  padding: EdgeInsets.fromLTRB(
+                    16,
+                    8,
+                    16,
+                    math.max(MediaQuery.paddingOf(context).bottom + 12, 95),
+                  ),
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-                      child: Text('Recent Searches', style: TextStyle(fontWeight: FontWeight.w600)),
-                    ),
-                    ...state.recent.map(
-                      (q) => ListTile(leading: const Icon(Icons.history), title: Text(q), onTap: () => _runSearch(q)),
-                    ),
+                    const _SectionHeader('Recent Searches'),
+                    const SizedBox(height: 12),
+                    for (final q in state.recent)
+                      _SimpleResultTile(
+                        icon: Icons.history,
+                        label: q,
+                        onTap: () => _runSearch(q),
+                      ),
                   ],
                 );
               },
-              loading: () => const ListSkeleton(itemHeight: 72),
+              loading: () => const ListSkeleton(itemHeight: 84),
               error: (error, stack) => ErrorStateView(
                 error: error,
                 onRetry: () => ref.invalidate(searchControllerProvider),
@@ -161,8 +222,116 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 }
 
+/// Section title + a short brand-color underline accent — same pattern as
+/// Reports' `_SectionHeader`, reused here for visual consistency across
+/// the app.
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          title,
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          width: 24,
+          height: 3,
+          decoration: BoxDecoration(
+            color: _brandColor,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// A plain query row (suggestion or recent search) — white rounded card
+/// with an icon circle, matching the app's card language rather than a
+/// bare `ListTile`.
+class _SimpleResultTile extends StatelessWidget {
+  const _SimpleResultTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    color: _brandColor.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, size: 17, color: _brandColor),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Icon(
+                  Icons.north_west,
+                  size: 15,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _ResultsList extends StatelessWidget {
-  const _ResultsList({required this.results, required this.currency, required this.onTap});
+  const _ResultsList({
+    required this.results,
+    required this.currency,
+    required this.onTap,
+  });
 
   final List<SearchResult> results;
   final String? currency;
@@ -171,77 +340,152 @@ class _ResultsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (results.isEmpty) {
-      return const EmptyStateView(message: 'No results found.', icon: Icons.search_off);
+      return const EmptyStateView(
+        message: 'No results found.',
+        icon: Icons.search_off,
+      );
     }
 
     final theme = Theme.of(context);
 
     return ListView.builder(
+      // Clears the floating bottom nav bar (see AppShell) — same value
+      // Dashboard/Leads/Follow Ups/Reports use.
+      padding: EdgeInsets.fromLTRB(
+        16,
+        8,
+        16,
+        math.max(MediaQuery.paddingOf(context).bottom + 12, 95),
+      ),
       itemCount: results.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {
           return Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Text(
-              '${results.length} RESULTS',
-              style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w700, letterSpacing: 0.6),
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _SectionHeader(
+              '${results.length} Result${results.length == 1 ? '' : 's'}',
             ),
           );
         }
         final result = results[index - 1];
         final (icon, color) = _typeIcons[result.type] ?? _defaultTypeIcon;
 
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: color.withValues(alpha: 0.12),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(result.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+        return Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              if (result.value != null)
-                Text(
-                  CurrencyFormatter.format(result.value!, currency),
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: const Color(0xFF10B981),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
             ],
           ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '${result.type.toUpperCase()} · ${result.subtitle ?? ''}',
-                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-              ),
-              if (result.description != null && result.description!.isNotEmpty)
-                Text(result.description!, maxLines: 1, overflow: TextOverflow.ellipsis),
-              Row(
-                children: [
-                  if (result.assignedTo != null && result.assignedTo!.isNotEmpty) ...[
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => onTap(result),
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Container(
-                      width: 4,
-                      height: 4,
-                      margin: const EdgeInsets.only(right: 4),
-                      decoration: BoxDecoration(color: theme.colorScheme.primary, shape: BoxShape.circle),
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(icon, color: color, size: 20),
                     ),
-                    Text(result.assignedTo!, style: theme.textTheme.labelSmall),
-                    const Spacer(),
-                  ] else
-                    const Spacer(),
-                  if (result.createdAt != null)
-                    Text(formatRelativeDate(result.createdAt!), style: theme.textTheme.labelSmall),
-                ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  result.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              if (result.value != null)
+                                Text(
+                                  CurrencyFormatter.format(
+                                    result.value!,
+                                    currency,
+                                  ),
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: const Color(0xFF16A34A),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${result.type.toUpperCase()} · ${result.subtitle ?? ''}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          if (result.description != null &&
+                              result.description!.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              result.description!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ],
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              if (result.assignedTo != null &&
+                                  result.assignedTo!.isNotEmpty) ...[
+                                Icon(
+                                  Icons.person_outline,
+                                  size: 13,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  result.assignedTo!,
+                                  style: theme.textTheme.labelSmall,
+                                ),
+                                const Spacer(),
+                              ] else
+                                const Spacer(),
+                              if (result.createdAt != null)
+                                Text(
+                                  formatRelativeDate(result.createdAt!),
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
-          isThreeLine: true,
-          onTap: () => onTap(result),
         );
       },
     );

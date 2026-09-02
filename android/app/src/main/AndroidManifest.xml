@@ -4,10 +4,29 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- In-app update flow: this app downloads its own update .apk and hands
+         it to the system package installer directly (instead of bouncing to
+         a browser). REQUEST_INSTALL_PACKAGES is the runtime-grantable
+         permission Android 8+ requires before an app can be the *source* of
+         an install intent — see InstallerPlugin.kt. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <application
         android:label="Pype CRM"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
+        <!-- Grants the package installer a content:// URI for the
+             downloaded .apk (stored in this app's own cache dir) — required
+             since Android 7's StrictMode blocks exposing plain file:// URIs
+             to other apps. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -51,6 +70,26 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Without these, `canLaunchUrl` (url_launcher) returns false for
+             every tel:/https:/mailto: URI on Android 11+ (API 30+)'s package
+             visibility restrictions — the lead card's call/WhatsApp buttons
+             and the detail screen's secondary-phone call were silently
+             no-oping on any device where these queries weren't already
+             satisfied by another declared intent, which is why it varied by
+             device instead of failing consistently everywhere. -->
+        <intent>
+            <action android:name="android.intent.action.DIAL"/>
+            <data android:scheme="tel"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SENDTO"/>
+            <data android:scheme="mailto"/>
         </intent>
     </queries>
 </manifest>

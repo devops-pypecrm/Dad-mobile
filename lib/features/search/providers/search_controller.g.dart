@@ -6,11 +6,14 @@ part of 'search_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchControllerHash() => r'bd52252dd49bc95b3158c328ac2707d8b50260fd';
+String _$searchControllerHash() => r'9b90d080b0f8ced4b1ebf21b0ebd87bd024f9884';
 
-/// Search Bar -> Debouncer (300ms) -> API Call, per .claude/skills/search.md.
-/// Typing fetches lightweight string suggestions; submitting (or tapping a
-/// suggestion/recent query) fetches full `SearchResult`s. Never filters a
+/// Search Bar -> Debouncer -> API Call, per .claude/skills/search.md. A
+/// 1-character query fetches lightweight string suggestions (200ms
+/// debounce, too broad for a full search); 2+ characters fetches real
+/// matching `SearchResult`s live as the user types (300ms debounce) —
+/// `submit()` (Enter, or tapping a suggestion/recent query) just fetches
+/// immediately without waiting out the debounce. Never filters a
 /// locally-held dataset — every keystroke that reaches the network goes
 /// straight to the backend.
 ///

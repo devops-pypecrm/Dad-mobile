@@ -24,6 +24,7 @@ class PerformanceUserRef with _$PerformanceUserRef {
     required String id,
     required String name,
     String? role,
+    String? branch,
   }) = _PerformanceUserRef;
 
   factory PerformanceUserRef.fromJson(Map<String, dynamic> json) => _$PerformanceUserRefFromJson(json);

@@ -18,5 +18,6 @@ class LeadSourceDetails with _$LeadSourceDetails {
     String? originalSource,
   }) = _LeadSourceDetails;
 
-  factory LeadSourceDetails.fromJson(Map<String, dynamic> json) => _$LeadSourceDetailsFromJson(json);
+  factory LeadSourceDetails.fromJson(Map<String, dynamic> json) =>
+      _$LeadSourceDetailsFromJson(json);
 }

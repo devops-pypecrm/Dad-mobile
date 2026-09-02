@@ -104,8 +104,14 @@ class FollowUpsListController extends _$FollowUpsListController {
     required String sortBy,
     required String sortOrder,
   }) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    // `.copyWithPrevious` keeps `state.valueOrNull` returning the *old*
+    // list/counts while this fetch is in flight (and if it fails) instead
+    // of wiping to a bare loading/error with nothing to show — otherwise
+    // every keystroke in the search box tore down the whole screen
+    // (search bar included) into a full-page skeleton, since the UI reads
+    // this same state to decide what to render at all.
+    state = const AsyncValue<FollowUpsListState>.loading().copyWithPrevious(state);
+    final result = await AsyncValue.guard(() async {
       final repo = ref.read(followUpsRepositoryProvider);
 
       // Baseline fetch: also the source of truth for `counts` in this
@@ -178,6 +184,10 @@ class FollowUpsListController extends _$FollowUpsListController {
         sortOrder: sortOrder,
       );
     });
+    // A failed search/filter fetch keeps showing the last-good list rather
+    // than blanking the screen — `AsyncValue.guard` alone would replace
+    // `state` with a bare `AsyncError` (no previous value attached).
+    state = result.hasError ? result.copyWithPrevious(state) : result;
   }
 
   Future<void> refresh() async {

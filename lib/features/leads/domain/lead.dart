@@ -70,7 +70,10 @@ class Lead with _$Lead {
   factory Lead.fromJson(Map<String, dynamic> json) => _$LeadFromJson(json);
 
   String get fullName {
-    final name = [firstName, lastName].where((p) => p != null && p.trim().isNotEmpty).join(' ');
+    final name = [
+      firstName,
+      lastName,
+    ].where((p) => p != null && p.trim().isNotEmpty).join(' ');
     return name.isEmpty ? phone : name;
   }
 
@@ -88,5 +91,6 @@ class Lead with _$Lead {
     return source;
   }
 
-  String? get campaignName => sourceDetails?.campaignName ?? sourceDetails?.metaCampaignName;
+  String? get campaignName =>
+      sourceDetails?.campaignName ?? sourceDetails?.metaCampaignName;
 }

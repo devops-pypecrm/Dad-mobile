@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -27,14 +29,25 @@ import '../widgets/stat_tile.dart';
 import '../widgets/target_progress_card.dart';
 
 const _monthNames = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
 /// Brand purple, matching the nav bar/login button/greeting card — used here
 /// instead of `theme.colorScheme.primary` (a Material3-seeded blue, not this
 /// brand color) so the Today card and Exp. Revenue tile read as on-brand
 /// rather than an accidental off-shade.
-const _brandPurple = Color(0xFF5B21B6);
+const _brandColor = Color(0xFF578732);
 
 /// The primary landing screen. Layout mirrors
 /// Dad-frontend/src/pages/Dashboard.tsx: a branch+month filter row driving
@@ -64,8 +77,17 @@ class DashboardScreen extends ConsumerWidget {
           if (!context.mounted) return;
           showModalBottomSheet(
             context: context,
+            // Dashboard lives inside `AppShell`'s `ShellRoute` — without
+            // this, the sheet pushes onto the shell's nested Navigator and
+            // renders BEHIND the floating bottom nav bar, burying the
+            // "Let's go" button.
+            useRootNavigator: true,
             builder: (_) => DailyMotivationSheet(target: data.target!),
-          ).then((_) => ref.read(dailyAchievementControllerProvider.notifier).acknowledge());
+          ).then(
+            (_) => ref
+                .read(dailyAchievementControllerProvider.notifier)
+                .acknowledge(),
+          );
         });
       }
     });
@@ -79,7 +101,8 @@ class DashboardScreen extends ConsumerWidget {
     final session = ref.watch(sessionControllerProvider).valueOrNull;
     final selectedMonth = ref.watch(dashboardMonthProvider);
     final selectedBranchId = ref.watch(dashboardBranchProvider);
-    final branches = ref.watch(dashboardBranchesProvider).valueOrNull ?? const [];
+    final branches =
+        ref.watch(dashboardBranchesProvider).valueOrNull ?? const [];
     final theme = Theme.of(context);
     final currency = session?.organisation.currency;
 
@@ -121,10 +144,18 @@ class DashboardScreen extends ConsumerWidget {
           // `extendBody: true` + a transparent curved bar so scrolled
           // content shows through its notch — but that also means THIS
           // screen's own Scaffold body has no awareness of the floating
-          // bar's ~75px height at all, so without this the last card
-          // (Lead Sources) scrolls out from under the bar rather than
-          // stopping above it.
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+          // bar's height at all, so without this the last card (Lead
+          // Sources) scrolls out from under the bar rather than stopping
+          // above it. A flat 100 fell short in 3-button navigation mode,
+          // where the bar's real height (driven by the system's larger
+          // reported inset there) can exceed that — read the actual merged
+          // inset (see Leads/Reports' identical fix) instead of guessing.
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            math.max(MediaQuery.paddingOf(context).bottom + 12, 95),
+          ),
           children: [
             // --- Header: greeting + role + win rate --------------------
             GreetingCard(session: session, summaryAsync: summaryAsync),
@@ -137,7 +168,10 @@ class DashboardScreen extends ConsumerWidget {
               alignment: Alignment.centerRight,
               child: FilledButton.icon(
                 onPressed: () => context.push(AppRoutes.leads),
-                style: FilledButton.styleFrom(backgroundColor: _brandPurple, foregroundColor: Colors.white),
+                style: FilledButton.styleFrom(
+                  backgroundColor: _brandColor,
+                  foregroundColor: Colors.white,
+                ),
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Add Lead'),
               ),
@@ -151,23 +185,34 @@ class DashboardScreen extends ConsumerWidget {
                 final pendingToday = page.counts.today + page.counts.overdue;
                 return Card(
                   margin: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
                     leading: CircleAvatar(
                       radius: 20,
-                      backgroundColor: _brandPurple.withValues(alpha: 0.12),
-                      child: Icon(Icons.checklist, color: _brandPurple),
+                      backgroundColor: _brandColor.withValues(alpha: 0.12),
+                      child: Icon(Icons.checklist, color: _brandColor),
                     ),
                     title: Text(
                       '$pendingToday follow-up${pendingToday == 1 ? '' : 's'} need attention',
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text('${page.counts.overdue} overdue · ${page.counts.today} due today'),
+                    subtitle: Text(
+                      '${page.counts.overdue} overdue · ${page.counts.today} due today',
+                    ),
                     trailing: CircleAvatar(
                       radius: 16,
-                      backgroundColor: _brandPurple.withValues(alpha: 0.12),
-                      child: Icon(Icons.chevron_right, color: _brandPurple, size: 20),
+                      backgroundColor: _brandColor.withValues(alpha: 0.12),
+                      child: Icon(
+                        Icons.chevron_right,
+                        color: _brandColor,
+                        size: 20,
+                      ),
                     ),
                     onTap: () => context.push('/followups'),
                   ),
@@ -175,7 +220,9 @@ class DashboardScreen extends ConsumerWidget {
               },
               loading: () => Card(
                 margin: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: const Padding(
                   padding: EdgeInsets.all(16),
                   child: LinearProgressIndicator(),
@@ -183,11 +230,20 @@ class DashboardScreen extends ConsumerWidget {
               ),
               error: (error, stack) => Card(
                 margin: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: ListTile(
-                  leading: Icon(Icons.error_outline, color: theme.colorScheme.error),
+                  leading: Icon(
+                    Icons.error_outline,
+                    color: theme.colorScheme.error,
+                  ),
                   title: const Text("Couldn't load today's follow-ups"),
-                  subtitle: Text(error.toString(), maxLines: 2, overflow: TextOverflow.ellipsis),
+                  subtitle: Text(
+                    error.toString(),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   trailing: IconButton(
                     icon: const Icon(Icons.refresh),
                     tooltip: 'Retry',
@@ -198,15 +254,22 @@ class DashboardScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             summaryAsync.when(
-              data: (summary) => TargetProgressCard(target: summary.currentTarget),
+              data: (summary) =>
+                  TargetProgressCard(target: summary.currentTarget),
               loading: () => const Card(
                 margin: EdgeInsets.zero,
-                child: Padding(padding: EdgeInsets.all(16), child: LinearProgressIndicator()),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: LinearProgressIndicator(),
+                ),
               ),
               error: (error, stack) => Card(
                 margin: EdgeInsets.zero,
                 child: ListTile(
-                  leading: Icon(Icons.error_outline, color: theme.colorScheme.error),
+                  leading: Icon(
+                    Icons.error_outline,
+                    color: theme.colorScheme.error,
+                  ),
                   title: const Text("Couldn't load target progress"),
                   trailing: IconButton(
                     icon: const Icon(Icons.refresh),
@@ -224,13 +287,24 @@ class DashboardScreen extends ConsumerWidget {
             // ups, Won, Lost Deals, Revenue (revenueThisMonth).
             const SizedBox(height: 24),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text('Performance Overview', style: theme.textTheme.titleLarge),
-                Text(
-                  '${monthLabel()} · ${branchLabel()}',
-                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                const Spacer(),
+                // `Flexible` + ellipsis — a long branch name or month label
+                // (e.g. "September 2026 · Main Branch Office") was pushing
+                // past the screen edge since neither Text here had any
+                // width constraint under `spaceBetween`.
+                Flexible(
+                  child: Text(
+                    '${monthLabel()} · ${branchLabel()}',
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -243,10 +317,13 @@ class DashboardScreen extends ConsumerWidget {
                     StatTile(
                       label: 'Exp. Revenue',
                       value: forecastAsync.valueOrNull != null
-                          ? CurrencyFormatter.compact(forecastAsync.valueOrNull!.totalPipeline, currency)
+                          ? CurrencyFormatter.compact(
+                              forecastAsync.valueOrNull!.totalPipeline,
+                              currency,
+                            )
                           : '—',
                       icon: Icons.trending_up,
-                      color: _brandPurple,
+                      color: _brandColor,
                       onTap: () => context.push(AppRoutes.opportunities),
                     ),
                     StatTile(
@@ -279,7 +356,10 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                     StatTile(
                       label: 'Revenue',
-                      value: CurrencyFormatter.compact(stats.revenueThisMonth, currency),
+                      value: CurrencyFormatter.compact(
+                        stats.revenueThisMonth,
+                        currency,
+                      ),
                       icon: Icons.trending_up,
                       color: const Color(0xFFF59E0B),
                       onTap: () => context.push(AppRoutes.payments),
@@ -340,12 +420,16 @@ class DashboardScreen extends ConsumerWidget {
             Text('Lead Sources', style: theme.textTheme.titleLarge),
             Text(
               'Acquisition channel distribution',
-              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 8),
             Card(
               margin: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: leadSourcesAsync.when(

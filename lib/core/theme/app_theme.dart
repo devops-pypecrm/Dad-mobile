@@ -5,7 +5,7 @@ class AppTheme {
 
   static ThemeData light = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2563EB)),
+    colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF578732)),
     inputDecorationTheme: const InputDecorationTheme(filled: true),
   );
 }

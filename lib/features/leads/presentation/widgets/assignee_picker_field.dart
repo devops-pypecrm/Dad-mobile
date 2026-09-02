@@ -23,11 +23,17 @@ class AssigneePickerField extends StatelessWidget {
     return DropdownButtonFormField<String?>(
       initialValue: value,
       isExpanded: true,
-      decoration: const InputDecoration(labelText: 'Assign To', border: OutlineInputBorder()),
+      decoration: const InputDecoration(
+        labelText: 'Assign To',
+        border: OutlineInputBorder(),
+      ),
       items: [
         const DropdownMenuItem(value: null, child: Text('Unassigned')),
         for (final user in users)
-          DropdownMenuItem(value: user.id, child: Text(user.fullName, overflow: TextOverflow.ellipsis)),
+          DropdownMenuItem(
+            value: user.id,
+            child: Text(user.fullName, overflow: TextOverflow.ellipsis),
+          ),
       ],
       onChanged: onChanged,
     );

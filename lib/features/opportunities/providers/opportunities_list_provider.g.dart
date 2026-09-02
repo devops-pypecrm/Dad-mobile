@@ -6,11 +6,14 @@ part of 'opportunities_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$opportunitiesListHash() => r'b174ce28cc671207d2ef5f19064f58bc4ddc645e';
+String _$opportunitiesListHash() => r'2afccee69df281d29541b8143a3aea34df9b3881';
 
-/// Infinite-scroll Opportunities list. The backend already scopes results
-/// to what the logged-in user can see (ownership hierarchy) — no
-/// client-side visibility filtering happens here.
+/// Infinite-scroll Opportunities list. Search/filters are forwarded straight
+/// to `GET /api/opportunities` — the backend already scopes results to what
+/// the logged-in user can see (ownership hierarchy), this notifier does no
+/// client-side visibility filtering of its own. It only ever adds one thing
+/// on top: forcing `ownerId` to the caller's own id when [scope] is
+/// [OpportunitiesScope.mine].
 ///
 /// Copied from [OpportunitiesList].
 @ProviderFor(OpportunitiesList)

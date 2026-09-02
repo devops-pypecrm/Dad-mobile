@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.2.6+10
 
 environment:
   sdk: ^3.12.2
@@ -73,6 +73,20 @@ dependencies:
   # Native integrations (call/email/WhatsApp quick actions on Lead Detail)
   url_launcher: ^6.3.1
 
+  # Reads this running build's own version/build number, compared against
+  # the server's published version manifest for in-app update checks.
+  package_info_plus: ^8.1.2
+
+  # Cache dir to download the update .apk into (already a transitive dep
+  # via other plugins, promoted to direct since we import it ourselves).
+  path_provider: ^2.1.5
+
+  # Remembers which update version the user already dismissed the "Update
+  # available" dialog for — plain non-sensitive UI state, so this (not
+  # flutter_secure_storage, which is deliberately scoped to auth data only
+  # — see SecureStorageService's doc comment) is the right tool.
+  shared_preferences: ^2.3.3
+
   # Field Force Check-ins (Phase 3)
   geolocator: ^13.0.2
   image_picker: ^1.1.2
@@ -115,12 +129,29 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.1
 
 # Source image + platform targets for `dart run flutter_launcher_icons`.
-# Regenerate with that command whenever assets/icon/app_icon.png changes.
+# Regenerate with that command whenever any assets/icon/app_icon*.png
+# changes. `adaptive_icon_background` is white — the logo mark's outer
+# black ring was getting clipped by circular/squircle launcher masks at a
+# larger fill (previously transparent + ~78% fill; pulled back to ~68%
+# with a white backing, matching how the icon is meant to be seen).
+# `adaptive_icon_monochrome` is the themed-icon (Android 13+ Material You)
+# layer: without it, a launcher with "Themed icons" on has no app-provided
+# silhouette to recolor and synthesizes its own — which is what was
+# producing an unwanted padding/background box even with a transparent
+# color icon. Android ignores this layer's actual RGB values and only uses
+# its alpha shape, tinting it with the current theme color.
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   image_path: "assets/icon/app_icon.png"
   min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+  adaptive_icon_monochrome: "assets/icon/app_icon_monochrome.png"
+  # Default is 16 — doubles up with the padding already baked into the
+  # foreground/monochrome images themselves (per explicit "fill the whole
+  # icon" request), so it's zeroed out here instead.
+  adaptive_icon_foreground_inset: 0
   remove_alpha_ios: true
 
 # For information on the generic Dart part of this file, see the

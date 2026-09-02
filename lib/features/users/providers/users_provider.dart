@@ -6,12 +6,29 @@ import '../domain/hierarchy_user.dart';
 
 part 'users_provider.g.dart';
 
-/// All active org users. `keepAlive` — this list changes rarely within a
-/// session and is reused by both the Leads Owner filter (full list, same
-/// as web) and [assignableUsers] (subordinate-filtered).
+/// Every active org user, completely unscoped — the raw input
+/// [assignableUsers] narrows down for the Assign-lead picker. Do NOT use
+/// this for the Leads Owner filter (see [scopedUsersProvider]) — despite
+/// the similar name this is a different list with different visibility
+/// rules, not a "full" version of the same data.
 @Riverpod(keepAlive: true)
-Future<List<HierarchyUser>> hierarchyUsers(FutureProviderRef<List<HierarchyUser>> ref) {
+Future<List<HierarchyUser>> hierarchyUsers(
+  FutureProviderRef<List<HierarchyUser>> ref,
+) {
   return ref.watch(usersRepositoryProvider).getHierarchyUsers();
+}
+
+/// Users already scoped server-side to what the caller is allowed to see
+/// (self + subordinates + managed team/branch members, or everyone for
+/// admin/super_admin — see `getVisibleUserIds` on the backend). This is
+/// what the Leads list's Owner filter should read, matching
+/// Dad-frontend's `pages/leads/index.tsx` Owner filter (`getUsers()`), not
+/// [hierarchyUsersProvider]'s unrestricted list.
+@Riverpod(keepAlive: true)
+Future<List<HierarchyUser>> scopedUsers(
+  FutureProviderRef<List<HierarchyUser>> ref,
+) {
+  return ref.watch(usersRepositoryProvider).getScopedUsers();
 }
 
 /// Users a given caller is allowed to assign a lead to: everyone, if the

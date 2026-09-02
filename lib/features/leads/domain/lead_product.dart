@@ -17,7 +17,8 @@ class LeadProductItem with _$LeadProductItem {
     Product? product,
   }) = _LeadProductItem;
 
-  factory LeadProductItem.fromJson(Map<String, dynamic> json) => _$LeadProductItemFromJson(json);
+  factory LeadProductItem.fromJson(Map<String, dynamic> json) =>
+      _$LeadProductItemFromJson(json);
 }
 
 @freezed
@@ -30,5 +31,6 @@ class Product with _$Product {
     @Default('INR') String currency,
   }) = _Product;
 
-  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
+  factory Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductFromJson(json);
 }

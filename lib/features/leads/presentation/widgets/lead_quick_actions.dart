@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../../../../core/utils/url_launch_helper.dart';
+
+const _brandColor = Color(0xFF578732);
 
 /// Call / Email / WhatsApp buttons on the Lead Detail screen — launches the
 /// native dialer/mail client/WhatsApp rather than doing anything in-app.
@@ -9,38 +13,48 @@ class LeadQuickActions extends StatelessWidget {
   final String phone;
   final String? email;
 
-  Future<void> _launch(Uri uri) async {
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
           child: _ActionButton(
-            icon: Icons.call,
+            icon: const Icon(Icons.call, size: 18, color: _brandColor),
             label: 'Call',
-            onTap: () => _launch(Uri(scheme: 'tel', path: phone)),
+            onTap: () =>
+                launchUriWithFeedback(context, Uri(scheme: 'tel', path: phone)),
           ),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 10),
         Expanded(
           child: _ActionButton(
-            icon: Icons.chat,
+            // `FontAwesomeIcons.whatsapp` is an `FaIconData`, not a plain
+            // `IconData` (font_awesome_flutter 11+), so it needs the
+            // dedicated `FaIcon` widget rather than a plain `Icon`.
+            icon: const FaIcon(
+              FontAwesomeIcons.whatsapp,
+              size: 17,
+              color: _brandColor,
+            ),
             label: 'WhatsApp',
-            onTap: () => _launch(Uri.parse('https://wa.me/${phone.replaceAll(RegExp(r'[^0-9]'), '')}')),
+            onTap: () => launchUriWithFeedback(
+              context,
+              Uri.parse(
+                'https://wa.me/${phone.replaceAll(RegExp(r'[^0-9]'), '')}',
+              ),
+            ),
           ),
         ),
         if (email != null && email!.isNotEmpty) ...[
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: _ActionButton(
-              icon: Icons.email,
+              icon: const Icon(Icons.email, size: 18, color: _brandColor),
               label: 'Email',
-              onTap: () => _launch(Uri(scheme: 'mailto', path: email)),
+              onTap: () => launchUriWithFeedback(
+                context,
+                Uri(scheme: 'mailto', path: email),
+              ),
             ),
           ),
         ],
@@ -50,18 +64,43 @@ class LeadQuickActions extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({required this.icon, required this.label, required this.onTap});
+  const _ActionButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
-  final IconData icon;
+  final Widget icon;
   final String label;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton.icon(
+    final theme = Theme.of(context);
+    return OutlinedButton(
       onPressed: onTap,
-      icon: Icon(icon, size: 18),
-      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: theme.colorScheme.outlineVariant),
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          icon,
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: _brandColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

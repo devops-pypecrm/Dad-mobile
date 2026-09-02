@@ -20,6 +20,7 @@ _$OpportunityImpl _$$OpportunityImplFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String?,
       paymentStatus: json['paymentStatus'] as String? ?? 'pending',
       type: json['type'] as String? ?? 'NEW_BUSINESS',
+      lostReason: json['lostReason'] as String?,
       accountId: json['accountId'] as String?,
       account: json['account'] == null
           ? null
@@ -57,6 +58,7 @@ Map<String, dynamic> _$$OpportunityImplToJson(_$OpportunityImpl instance) =>
       'description': instance.description,
       'paymentStatus': instance.paymentStatus,
       'type': instance.type,
+      'lostReason': instance.lostReason,
       'accountId': instance.accountId,
       'account': instance.account,
       'owner': instance.owner,

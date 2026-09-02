@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../../products/data/products_repository.dart';
 import '../../../products/domain/product.dart' as catalog;
 import '../../domain/lead_product.dart';
@@ -33,7 +34,8 @@ class _LeadProductsEditor extends ConsumerStatefulWidget {
   final List<LeadProductItem> initial;
 
   @override
-  ConsumerState<_LeadProductsEditor> createState() => _LeadProductsEditorState();
+  ConsumerState<_LeadProductsEditor> createState() =>
+      _LeadProductsEditorState();
 }
 
 class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
@@ -64,7 +66,9 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
     setState(() => _searching = true);
     try {
       final repository = ref.read(productsRepositoryProvider);
-      final result = await repository.getProducts(search: query.trim().isEmpty ? null : query.trim());
+      final result = await repository.getProducts(
+        search: query.trim().isEmpty ? null : query.trim(),
+      );
       if (mounted) setState(() => _searchResults = result.products);
     } finally {
       if (mounted) setState(() => _searching = false);
@@ -87,25 +91,36 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
   }
 
   void _removeProduct(String productId) {
-    setState(() => _items = _items.where((p) => p.productId != productId).toList());
+    setState(
+      () => _items = _items.where((p) => p.productId != productId).toList(),
+    );
   }
 
   void _updateQuantity(String productId, int quantity) {
     setState(() {
       _items = [
-        for (final p in _items) if (p.productId == productId) p.copyWith(quantity: quantity.clamp(1, 999)) else p,
+        for (final p in _items)
+          if (p.productId == productId)
+            p.copyWith(quantity: quantity.clamp(1, 999))
+          else
+            p,
       ];
     });
   }
 
   void _updatePrice(String productId, double price) {
     setState(() {
-      _items = [for (final p in _items) if (p.productId == productId) p.copyWith(price: price) else p];
+      _items = [
+        for (final p in _items)
+          if (p.productId == productId) p.copyWith(price: price) else p,
+      ];
     });
   }
 
   Future<void> _save() async {
-    await ref.read(leadProductsControllerProvider(widget.leadId).notifier).save(_items);
+    await ref
+        .read(leadProductsControllerProvider(widget.leadId).notifier)
+        .save(_items);
     if (!mounted) return;
     // Only close on actual success — previously this popped unconditionally,
     // so a rejected save (e.g. a network error) silently closed the sheet
@@ -114,7 +129,9 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
     if (error != null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text("Couldn't save products: $error")));
+        ..showSnackBar(
+          SnackBar(content: Text("Couldn't save products: $error")),
+        );
       return;
     }
     Navigator.of(context).pop();
@@ -123,7 +140,9 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final saving = ref.watch(leadProductsControllerProvider(widget.leadId)).isLoading;
+    final saving = ref
+        .watch(leadProductsControllerProvider(widget.leadId))
+        .isLoading;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.92,
@@ -131,21 +150,29 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
       maxChildSize: 0.95,
       expand: false,
       builder: (context, scrollController) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+        padding: EdgeInsets.only(bottom: sheetBottomPadding(context, extra: 0)),
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
                 children: [
-                  Expanded(child: Text('Edit Products', style: theme.textTheme.titleLarge)),
+                  Expanded(
+                    child: Text(
+                      'Edit Products',
+                      style: theme.textTheme.titleLarge,
+                    ),
+                  ),
                   FilledButton(
                     onPressed: saving ? null : _save,
                     child: saving
                         ? const SizedBox(
                             width: 16,
                             height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
                           )
                         : const Text('Save'),
                   ),
@@ -168,7 +195,9 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
                             _search('');
                           },
                         ),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 onSubmitted: _search,
                 onChanged: (value) {
@@ -199,14 +228,20 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
                         title: Text(product.name),
                         subtitle: Text(product.basePrice.toStringAsFixed(0)),
                         trailing: _items.any((p) => p.productId == product.id)
-                            ? const Icon(Icons.check_circle, color: Colors.green)
+                            ? const Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                              )
                             : IconButton(
                                 icon: const Icon(Icons.add_circle_outline),
                                 onPressed: () => _addProduct(product),
                               ),
                       ),
                   const Divider(height: 32),
-                  Text('Selected (${_items.length})', style: theme.textTheme.labelLarge),
+                  Text(
+                    'Selected (${_items.length})',
+                    style: theme.textTheme.labelLarge,
+                  ),
                   const SizedBox(height: 8),
                   if (_items.isEmpty) const Text('No products added yet.'),
                   for (final item in _items)
@@ -220,13 +255,16 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    item.customName ?? item.product?.name ?? item.productId,
+                                    item.customName ??
+                                        item.product?.name ??
+                                        item.productId,
                                     style: theme.textTheme.titleSmall,
                                   ),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete_outline),
-                                  onPressed: () => _removeProduct(item.productId),
+                                  onPressed: () =>
+                                      _removeProduct(item.productId),
                                 ),
                               ],
                             ),
@@ -236,17 +274,30 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
                                   child: TextFormField(
                                     initialValue: '${item.quantity}',
                                     keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(labelText: 'Qty'),
-                                    onChanged: (v) => _updateQuantity(item.productId, int.tryParse(v) ?? 1),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Qty',
+                                    ),
+                                    onChanged: (v) => _updateQuantity(
+                                      item.productId,
+                                      int.tryParse(v) ?? 1,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: TextFormField(
                                     initialValue: item.price.toStringAsFixed(0),
-                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                    decoration: const InputDecoration(labelText: 'Price'),
-                                    onChanged: (v) => _updatePrice(item.productId, double.tryParse(v) ?? item.price),
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                          decimal: true,
+                                        ),
+                                    decoration: const InputDecoration(
+                                      labelText: 'Price',
+                                    ),
+                                    onChanged: (v) => _updatePrice(
+                                      item.productId,
+                                      double.tryParse(v) ?? item.price,
+                                    ),
                                   ),
                                 ),
                               ],

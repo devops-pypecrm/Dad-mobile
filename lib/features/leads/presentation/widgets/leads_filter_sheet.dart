@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../../../core/utils/text_format.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../../dashboard/domain/branch.dart';
@@ -17,6 +18,10 @@ Future<void> showLeadsFilterSheet(BuildContext context, WidgetRef ref) {
   final current = ref.read(leadsListProvider).valueOrNull;
   return showModalBottomSheet<void>(
     context: context,
+    // The Leads tab lives inside `AppShell`'s `ShellRoute` — without this,
+    // the sheet pushes onto the shell's nested Navigator and renders
+    // BEHIND the floating bottom nav bar, burying "Apply Filters".
+    useRootNavigator: true,
     isScrollControlled: true,
     builder: (context) => _LeadsFilterSheet(current: current),
   );
@@ -51,7 +56,9 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
   }
 
   void _apply() {
-    ref.read(leadsListProvider.notifier).applyFilters(
+    ref
+        .read(leadsListProvider.notifier)
+        .applyFilters(
           search: widget.current?.search,
           status: _status,
           source: _source,
@@ -79,17 +86,29 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final leadStatuses = ref.watch(sessionControllerProvider).valueOrNull?.organisation.leadStatuses;
-    final usersAsync = ref.watch(hierarchyUsersProvider);
+    final leadStatuses = ref
+        .watch(sessionControllerProvider)
+        .valueOrNull
+        ?.organisation
+        .leadStatuses;
+    // Server-scoped list (self+subordinates, or everyone for admin) — NOT
+    // `hierarchyUsersProvider`, which is deliberately unrestricted and only
+    // correct as input to the Assign-lead picker's own client-side BFS.
+    final usersAsync = ref.watch(scopedUsersProvider);
     final branchesAsync = ref.watch(dashboardBranchesProvider);
 
     return SafeArea(
+      // `bottom: false` — SafeArea's own automatic bottom inset trusts the
+      // same unfloored `MediaQuery.padding.bottom` that under-reports on
+      // some OEM skins (Color OS, MIUI); `sheetBottomPadding` below replaces
+      // it with a floored value instead of stacking on top of it.
+      bottom: false,
       child: Padding(
         padding: EdgeInsets.only(
           left: 16,
           right: 16,
           top: 16,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          bottom: sheetBottomPadding(context),
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -98,8 +117,13 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Text('Filters', style: theme.textTheme.titleLarge)),
-                  TextButton(onPressed: _clearAll, child: const Text('Clear All')),
+                  Expanded(
+                    child: Text('Filters', style: theme.textTheme.titleLarge),
+                  ),
+                  TextButton(
+                    onPressed: _clearAll,
+                    child: const Text('Clear All'),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -108,11 +132,20 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
               const SizedBox(height: 6),
               DropdownButtonFormField<String?>(
                 initialValue: _status,
-                decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(),
+                ),
                 items: [
-                  const DropdownMenuItem(value: null, child: Text('All statuses')),
+                  const DropdownMenuItem(
+                    value: null,
+                    child: Text('All statuses'),
+                  ),
                   for (final option in (leadStatuses ?? const []))
-                    DropdownMenuItem(value: option.id, child: Text(option.label ?? option.id)),
+                    DropdownMenuItem(
+                      value: option.id,
+                      child: Text(option.label ?? option.id),
+                    ),
                 ],
                 onChanged: (value) => setState(() => _status = value),
               ),
@@ -122,11 +155,20 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
               const SizedBox(height: 6),
               DropdownButtonFormField<String?>(
                 initialValue: _source,
-                decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(),
+                ),
                 items: [
-                  const DropdownMenuItem(value: null, child: Text('All sources')),
+                  const DropdownMenuItem(
+                    value: null,
+                    child: Text('All sources'),
+                  ),
                   for (final source in kSelectableLeadSources)
-                    DropdownMenuItem(value: source, child: Text(humanizeSnakeCase(source))),
+                    DropdownMenuItem(
+                      value: source,
+                      child: Text(humanizeSnakeCase(source)),
+                    ),
                 ],
                 onChanged: (value) => setState(() => _source = value),
               ),
@@ -138,11 +180,23 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
                 data: (users) => DropdownButtonFormField<String?>(
                   initialValue: _assignedTo,
                   isExpanded: true,
-                  decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: OutlineInputBorder(),
+                  ),
                   items: [
-                    const DropdownMenuItem(value: null, child: Text('All owners')),
+                    const DropdownMenuItem(
+                      value: null,
+                      child: Text('All owners'),
+                    ),
                     for (final user in users)
-                      DropdownMenuItem(value: user.id, child: Text(user.fullName, overflow: TextOverflow.ellipsis)),
+                      DropdownMenuItem(
+                        value: user.id,
+                        child: Text(
+                          user.fullName,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                   ],
                   onChanged: (value) => setState(() => _assignedTo = value),
                 ),
@@ -151,7 +205,8 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
               ),
               const SizedBox(height: 16),
 
-              branchesAsync.valueOrNull != null && branchesAsync.valueOrNull!.isNotEmpty
+              branchesAsync.valueOrNull != null &&
+                      branchesAsync.valueOrNull!.isNotEmpty
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -160,13 +215,26 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
                         DropdownButtonFormField<String?>(
                           initialValue: _branchId,
                           isExpanded: true,
-                          decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
+                          decoration: const InputDecoration(
+                            isDense: true,
+                            border: OutlineInputBorder(),
+                          ),
                           items: [
-                            const DropdownMenuItem(value: null, child: Text('All branches')),
+                            const DropdownMenuItem(
+                              value: null,
+                              child: Text('All branches'),
+                            ),
                             for (final Branch branch in branchesAsync.value!)
-                              DropdownMenuItem(value: branch.id, child: Text(branch.name, overflow: TextOverflow.ellipsis)),
+                              DropdownMenuItem(
+                                value: branch.id,
+                                child: Text(
+                                  branch.name,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                           ],
-                          onChanged: (value) => setState(() => _branchId = value),
+                          onChanged: (value) =>
+                              setState(() => _branchId = value),
                         ),
                         const SizedBox(height: 16),
                       ],
@@ -180,20 +248,31 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _pickDate(isStart: true),
-                      child: Text(_startDate == null ? 'From' : '${_startDate!.toLocal()}'.split(' ').first),
+                      child: Text(
+                        _startDate == null
+                            ? 'From'
+                            : '${_startDate!.toLocal()}'.split(' ').first,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _pickDate(isStart: false),
-                      child: Text(_endDate == null ? 'To' : '${_endDate!.toLocal()}'.split(' ').first),
+                      child: Text(
+                        _endDate == null
+                            ? 'To'
+                            : '${_endDate!.toLocal()}'.split(' ').first,
+                      ),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              FilledButton(onPressed: _apply, child: const Text('Apply Filters')),
+              FilledButton(
+                onPressed: _apply,
+                child: const Text('Apply Filters'),
+              ),
             ],
           ),
         ),

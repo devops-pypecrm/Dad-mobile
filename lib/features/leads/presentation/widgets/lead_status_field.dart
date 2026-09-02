@@ -18,20 +18,34 @@ class LeadStatusField extends StatelessWidget {
   final String value;
   final ValueChanged<String> onChanged;
 
-  static const _fallback = ['new', 'contacted', 'qualified', 'converted', 'lost'];
+  static const _fallback = [
+    'new',
+    'contacted',
+    'qualified',
+    'converted',
+    'lost',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final ids = (options != null && options!.isNotEmpty) ? options!.map((o) => o.id).toList() : _fallback;
-    final labelFor = {for (final o in (options ?? const [])) o.id: o.label ?? o.id};
+    final ids = (options != null && options!.isNotEmpty)
+        ? options!.map((o) => o.id).toList()
+        : _fallback;
+    final labelFor = {
+      for (final o in (options ?? const [])) o.id: o.label ?? o.id,
+    };
 
     final items = {value, ...ids}.toList();
 
     return DropdownButtonFormField<String>(
       initialValue: value,
-      decoration: const InputDecoration(labelText: 'Status', border: OutlineInputBorder()),
+      decoration: const InputDecoration(
+        labelText: 'Status',
+        border: OutlineInputBorder(),
+      ),
       items: [
-        for (final id in items) DropdownMenuItem(value: id, child: Text(labelFor[id] ?? id)),
+        for (final id in items)
+          DropdownMenuItem(value: id, child: Text(labelFor[id] ?? id)),
       ],
       onChanged: (selected) {
         if (selected != null) onChanged(selected);

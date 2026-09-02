@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../domain/daily_achievement.dart';
 
 /// "You have X days remaining... you're at Y% of your target" — per
@@ -13,23 +14,36 @@ class DailyMotivationSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        24,
+        24,
+        safeBottomInset(context, floor: 32),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.rocket_launch_outlined, size: 40, color: theme.colorScheme.primary),
+          Icon(
+            Icons.rocket_launch_outlined,
+            size: 40,
+            color: theme.colorScheme.primary,
+          ),
           const SizedBox(height: 16),
           Text(
             'You\'re at ${target.achievementPercent}% of your target!',
             textAlign: TextAlign.center,
-            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            style: theme.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             '${target.daysRemaining} day${target.daysRemaining == 1 ? '' : 's'} left in this ${target.period} '
             'period — ${target.amountRemaining.toStringAsFixed(0)} to go. Let\'s close some deals!',
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 20),
           FilledButton(

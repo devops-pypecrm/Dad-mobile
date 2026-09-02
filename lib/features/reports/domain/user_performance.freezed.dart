@@ -223,6 +223,7 @@ mixin _$PerformanceUserRef {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get role => throw _privateConstructorUsedError;
+  String? get branch => throw _privateConstructorUsedError;
 
   /// Serializes this PerformanceUserRef to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -241,7 +242,7 @@ abstract class $PerformanceUserRefCopyWith<$Res> {
     $Res Function(PerformanceUserRef) then,
   ) = _$PerformanceUserRefCopyWithImpl<$Res, PerformanceUserRef>;
   @useResult
-  $Res call({String id, String name, String? role});
+  $Res call({String id, String name, String? role, String? branch});
 }
 
 /// @nodoc
@@ -258,7 +259,12 @@ class _$PerformanceUserRefCopyWithImpl<$Res, $Val extends PerformanceUserRef>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? id = null, Object? name = null, Object? role = freezed}) {
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? role = freezed,
+    Object? branch = freezed,
+  }) {
     return _then(
       _value.copyWith(
             id: null == id
@@ -272,6 +278,10 @@ class _$PerformanceUserRefCopyWithImpl<$Res, $Val extends PerformanceUserRef>
             role: freezed == role
                 ? _value.role
                 : role // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            branch: freezed == branch
+                ? _value.branch
+                : branch // ignore: cast_nullable_to_non_nullable
                       as String?,
           )
           as $Val,
@@ -288,7 +298,7 @@ abstract class _$$PerformanceUserRefImplCopyWith<$Res>
   ) = __$$PerformanceUserRefImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, String name, String? role});
+  $Res call({String id, String name, String? role, String? branch});
 }
 
 /// @nodoc
@@ -304,7 +314,12 @@ class __$$PerformanceUserRefImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? id = null, Object? name = null, Object? role = freezed}) {
+  $Res call({
+    Object? id = null,
+    Object? name = null,
+    Object? role = freezed,
+    Object? branch = freezed,
+  }) {
     return _then(
       _$PerformanceUserRefImpl(
         id: null == id
@@ -319,6 +334,10 @@ class __$$PerformanceUserRefImplCopyWithImpl<$Res>
             ? _value.role
             : role // ignore: cast_nullable_to_non_nullable
                   as String?,
+        branch: freezed == branch
+            ? _value.branch
+            : branch // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -331,6 +350,7 @@ class _$PerformanceUserRefImpl implements _PerformanceUserRef {
     required this.id,
     required this.name,
     this.role,
+    this.branch,
   });
 
   factory _$PerformanceUserRefImpl.fromJson(Map<String, dynamic> json) =>
@@ -342,10 +362,12 @@ class _$PerformanceUserRefImpl implements _PerformanceUserRef {
   final String name;
   @override
   final String? role;
+  @override
+  final String? branch;
 
   @override
   String toString() {
-    return 'PerformanceUserRef(id: $id, name: $name, role: $role)';
+    return 'PerformanceUserRef(id: $id, name: $name, role: $role, branch: $branch)';
   }
 
   @override
@@ -355,12 +377,13 @@ class _$PerformanceUserRefImpl implements _PerformanceUserRef {
             other is _$PerformanceUserRefImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.role, role) || other.role == role));
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.branch, branch) || other.branch == branch));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, role);
+  int get hashCode => Object.hash(runtimeType, id, name, role, branch);
 
   /// Create a copy of PerformanceUserRef
   /// with the given fields replaced by the non-null parameter values.
@@ -384,6 +407,7 @@ abstract class _PerformanceUserRef implements PerformanceUserRef {
     required final String id,
     required final String name,
     final String? role,
+    final String? branch,
   }) = _$PerformanceUserRefImpl;
 
   factory _PerformanceUserRef.fromJson(Map<String, dynamic> json) =
@@ -395,6 +419,8 @@ abstract class _PerformanceUserRef implements PerformanceUserRef {
   String get name;
   @override
   String? get role;
+  @override
+  String? get branch;
 
   /// Create a copy of PerformanceUserRef
   /// with the given fields replaced by the non-null parameter values.

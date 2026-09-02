@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../auth/domain/user_session.dart';
 import '../../domain/dashboard_summary.dart';
 
-const _brandPurple = Color(0xFF5B21B6);
+const _brandColor = Color(0xFF578732);
 
 String _greeting() {
   final hour = DateTime.now().hour;
@@ -44,7 +44,7 @@ class GreetingCard extends StatelessWidget {
       // Lead" button) that shares the same ListView padding — this screen's
       // own SizedBox gaps already handle spacing between sections.
       margin: EdgeInsets.zero,
-      color: _brandPurple,
+      color: _brandColor,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Stack(
@@ -114,12 +114,12 @@ class GreetingCard extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(tier.icon, size: 14, color: _brandPurple),
+                              Icon(tier.icon, size: 14, color: _brandColor),
                               const SizedBox(width: 4),
                               Text(
                                 tier.label,
                                 style: theme.textTheme.labelSmall
-                                    ?.copyWith(color: _brandPurple, fontWeight: FontWeight.w600),
+                                    ?.copyWith(color: _brandColor, fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),

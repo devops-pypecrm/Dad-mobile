@@ -17,5 +17,6 @@ class LeadsPage with _$LeadsPage {
     required int total,
   }) = _LeadsPage;
 
-  factory LeadsPage.fromJson(Map<String, dynamic> json) => _$LeadsPageFromJson(json);
+  factory LeadsPage.fromJson(Map<String, dynamic> json) =>
+      _$LeadsPageFromJson(json);
 }

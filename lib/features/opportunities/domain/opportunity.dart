@@ -12,6 +12,28 @@ part 'opportunity.g.dart';
 /// display hint (e.g. hiding a future "move stage" affordance).
 const kTerminalOpportunityStages = {'closed_won', 'closed_lost'};
 
+/// `Opportunity.leadSource` values selectable in the Opportunities filter —
+/// mirrors the Source dropdown in Dad-frontend/src/pages/opportunities/
+/// index.tsx. Deliberately a separate list from `kSelectableLeadSources`
+/// (Lead.source): different backend field, different value set (this one
+/// includes `api`/`whatsapp`/`meta_leadgen`, which Lead's selectable list
+/// excludes as system-assigned).
+const kSelectableOpportunitySources = [
+  'website',
+  'referral',
+  'social',
+  'paid_ad',
+  'import',
+  'api',
+  'manual',
+  'whatsapp',
+  'meta_leadgen',
+  'cold_call',
+  'email_campaign',
+  'google_ads',
+  'other',
+];
+
 /// Mirrors `Dad-backend/prisma/schema.prisma`'s `Opportunity` model. `stage`
 /// is a free string (not a bound Prisma enum) exactly like `Lead.status` —
 /// see Dad-backend/CLAUDE.md. Nothing here recomputes pipeline/win logic;
@@ -29,6 +51,7 @@ class Opportunity with _$Opportunity {
     String? description,
     @Default('pending') String paymentStatus,
     @Default('NEW_BUSINESS') String type,
+    String? lostReason,
     String? accountId,
     AccountRef? account,
     OwnerRef? owner,

@@ -37,10 +37,13 @@ class CheckInsFeedScreen extends ConsumerWidget {
                   const Icon(Icons.cloud_off, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text('$pendingCount check-in${pendingCount == 1 ? '' : 's'} waiting to sync'),
+                    child: Text(
+                      '$pendingCount check-in${pendingCount == 1 ? '' : 's'} waiting to sync',
+                    ),
                   ),
                   TextButton(
-                    onPressed: () => ref.read(checkInSyncProvider.notifier).trySyncAll(),
+                    onPressed: () =>
+                        ref.read(checkInSyncProvider.notifier).trySyncAll(),
                     child: const Text('Sync now'),
                   ),
                 ],
@@ -56,21 +59,30 @@ class CheckInsFeedScreen extends ConsumerWidget {
                   );
                 }
                 return RefreshIndicator(
-                  onRefresh: () => ref.read(checkInsFeedProvider.notifier).refresh(),
+                  onRefresh: () =>
+                      ref.read(checkInsFeedProvider.notifier).refresh(),
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: checkIns.length,
                     itemBuilder: (context, index) {
                       final checkIn = checkIns[index];
-                      final related = checkIn.lead ?? checkIn.contact ?? checkIn.account;
-                      final userName =
-                          [checkIn.user?.firstName, checkIn.user?.lastName].where((p) => p != null).join(' ');
+                      final related =
+                          checkIn.lead ?? checkIn.contact ?? checkIn.account;
+                      final userName = [
+                        checkIn.user?.firstName,
+                        checkIn.user?.lastName,
+                      ].where((p) => p != null).join(' ');
                       return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
                         child: ListTile(
                           leading: checkIn.photoUrl != null
                               ? AuthenticatedThumbnail(path: checkIn.photoUrl!)
-                              : const CircleAvatar(child: Icon(Icons.location_on_outlined)),
+                              : const CircleAvatar(
+                                  child: Icon(Icons.location_on_outlined),
+                                ),
                           title: Text(
                             related?.displayName ?? checkIn.type,
                             maxLines: 1,
@@ -85,7 +97,10 @@ class CheckInsFeedScreen extends ConsumerWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          trailing: Chip(label: Text(checkIn.type), visualDensity: VisualDensity.compact),
+                          trailing: Chip(
+                            label: Text(checkIn.type),
+                            visualDensity: VisualDensity.compact,
+                          ),
                         ),
                       );
                     },
@@ -95,7 +110,8 @@ class CheckInsFeedScreen extends ConsumerWidget {
               loading: () => const ListSkeleton(itemHeight: 72),
               error: (error, stack) => ErrorStateView(
                 error: error,
-                onRetry: () => ref.read(checkInsFeedProvider.notifier).refresh(),
+                onRetry: () =>
+                    ref.read(checkInsFeedProvider.notifier).refresh(),
               ),
             ),
           ),

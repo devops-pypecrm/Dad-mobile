@@ -6,7 +6,7 @@ part of 'checkin_sync_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$checkInSyncHash() => r'5f1e94d3ebf4c10bb4130f6007086e977d3b90cf';
+String _$checkInSyncHash() => r'fd53f8d32ab57596bd12a2b949928d680d369843';
 
 /// Drives the check-in offline-write queue: submits immediately when
 /// online, falls back to the local Hive queue when offline or the request

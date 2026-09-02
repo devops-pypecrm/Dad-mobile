@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/list_skeleton.dart';
@@ -33,11 +34,17 @@ class ReEnquiriesScreen extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () => ref.refresh(reEnquiriesProvider.future),
             child: ListView.builder(
-              padding: const EdgeInsets.only(top: 8, bottom: 24),
+              padding: EdgeInsets.only(
+                top: 8,
+                bottom: safeBottomInset(context),
+              ),
               itemCount: leads.length,
               itemBuilder: (context, index) {
                 final lead = leads[index];
-                return LeadCard(lead: lead, onTap: () => context.push('/leads/${lead.id}'));
+                return LeadCard(
+                  lead: lead,
+                  onTap: () => context.push('/leads/${lead.id}'),
+                );
               },
             ),
           );

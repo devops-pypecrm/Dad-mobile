@@ -25,9 +25,12 @@ class SearchState with _$SearchState {
   }) = _SearchState;
 }
 
-/// Search Bar -> Debouncer (300ms) -> API Call, per .claude/skills/search.md.
-/// Typing fetches lightweight string suggestions; submitting (or tapping a
-/// suggestion/recent query) fetches full `SearchResult`s. Never filters a
+/// Search Bar -> Debouncer -> API Call, per .claude/skills/search.md. A
+/// 1-character query fetches lightweight string suggestions (200ms
+/// debounce, too broad for a full search); 2+ characters fetches real
+/// matching `SearchResult`s live as the user types (300ms debounce) —
+/// `submit()` (Enter, or tapping a suggestion/recent query) just fetches
+/// immediately without waiting out the debounce. Never filters a
 /// locally-held dataset — every keystroke that reaches the network goes
 /// straight to the backend.
 @riverpod
@@ -41,26 +44,55 @@ class SearchController extends _$SearchController {
     return SearchState(recent: recent);
   }
 
+  /// Live search-as-you-type: a 1-character query is too broad to hit the
+  /// full `/search/global` endpoint for, so it only fetches lightweight
+  /// string suggestions; 2+ characters fetches real matching results
+  /// directly (same endpoint `submit()` uses), so items appear as the user
+  /// types instead of requiring an explicit Enter/submit first.
   void onQueryChanged(String query) {
     _debounce?.cancel();
     final current = state.valueOrNull ?? const SearchState();
-    state = AsyncValue.data(current.copyWith(query: query, results: null));
+    final trimmed = query.trim();
 
-    if (query.trim().length < 2) {
-      state = AsyncValue.data(current.copyWith(query: query, suggestions: [], results: null));
+    if (trimmed.isEmpty) {
+      state = AsyncValue.data(
+        current.copyWith(query: query, suggestions: [], results: null, isSearching: false, searchError: null),
+      );
       return;
     }
 
+    if (trimmed.length < 2) {
+      state = AsyncValue.data(current.copyWith(query: query, suggestions: [], results: null));
+      _debounce = Timer(const Duration(milliseconds: 200), () async {
+        try {
+          final suggestions = await ref.read(searchRepositoryProvider).suggestions(trimmed);
+          final latest = state.valueOrNull;
+          if (latest != null && latest.query == query) {
+            state = AsyncValue.data(latest.copyWith(suggestions: suggestions));
+          }
+        } catch (_) {
+          // Suggestions are a convenience — silently drop failures rather
+          // than surfacing an error for a background type-ahead call.
+        }
+      });
+      return;
+    }
+
+    state = AsyncValue.data(current.copyWith(query: query));
     _debounce = Timer(const Duration(milliseconds: 300), () async {
+      final beforeFetch = state.valueOrNull ?? current;
+      state = AsyncValue.data(beforeFetch.copyWith(isSearching: true, searchError: null));
       try {
-        final suggestions = await ref.read(searchRepositoryProvider).suggestions(query.trim());
+        final results = await ref.read(searchRepositoryProvider).globalSearch(trimmed);
         final latest = state.valueOrNull;
         if (latest != null && latest.query == query) {
-          state = AsyncValue.data(latest.copyWith(suggestions: suggestions));
+          state = AsyncValue.data(latest.copyWith(results: results, isSearching: false, suggestions: []));
         }
-      } catch (_) {
-        // Suggestions are a convenience — silently drop failures rather
-        // than surfacing an error for a background type-ahead call.
+      } catch (e) {
+        final latest = state.valueOrNull;
+        if (latest != null && latest.query == query) {
+          state = AsyncValue.data(latest.copyWith(isSearching: false, searchError: e));
+        }
       }
     });
   }

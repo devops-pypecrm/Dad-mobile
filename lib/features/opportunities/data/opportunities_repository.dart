@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_provider.dart';
+import '../domain/installment_input.dart';
 import '../domain/opportunities_page.dart';
 import '../domain/opportunity.dart';
 import '../domain/opportunity_note.dart';
@@ -14,14 +15,14 @@ OpportunitiesRepository opportunitiesRepository(ProviderRef<OpportunitiesReposit
     OpportunitiesRepository(ref.watch(dioProvider));
 
 /// Talks to Dad-backend's `/api/opportunities` routes
-/// (Dad-backend/src/controllers/opportunityController.ts). Tier 1 core
-/// detail actions: stage change, edit (amount/probability/close date),
-/// inline linked-lead status sync, amount-sync-to-products, and notes.
-/// Deliberately NOT covered: Create/Delete, Close Won/Lost with EMI/
-/// payment-type flows, Kanban drag-reorder — those are a separate,
-/// larger pass (EMI/payment mutations especially touch real money-tracking
-/// business logic that deserves its own scoped review, not a quick add-on
-/// here).
+/// (Dad-backend/src/controllers/opportunityController.ts). Covers: stage
+/// change, edit (amount/probability/close date), inline linked-lead status
+/// sync, amount-sync-to-products, notes, and Close Won/Lost (including the
+/// payment-type/EMI side effects). Deliberately NOT covered: Create/Delete,
+/// Kanban drag-reorder, and EMI installment management AFTER closing
+/// (marking an installment paid/editing/deleting — those touch the
+/// separate `/emi/installments/:id` endpoints, a further pass once the
+/// close-deal flow itself is proven).
 class OpportunitiesRepository {
   OpportunitiesRepository(this._dio);
 
@@ -32,6 +33,11 @@ class OpportunitiesRepository {
     int limit = 20,
     String? stage,
     String? search,
+    String? ownerId,
+    String? type,
+    String? leadSource,
+    DateTime? startDate,
+    DateTime? endDate,
   }) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
@@ -41,6 +47,11 @@ class OpportunitiesRepository {
           'limit': limit,
           if (stage != null && stage.isNotEmpty) 'stage': stage,
           if (search != null && search.isNotEmpty) 'search': search,
+          if (ownerId != null && ownerId.isNotEmpty) 'ownerId': ownerId,
+          if (type != null && type.isNotEmpty) 'type': type,
+          if (leadSource != null && leadSource.isNotEmpty) 'leadSource': leadSource,
+          if (startDate != null) 'startDate': startDate.toIso8601String(),
+          if (endDate != null) 'endDate': endDate.toIso8601String(),
         },
       );
       return OpportunitiesPage.fromJson(response.data!);
@@ -85,6 +96,65 @@ class OpportunitiesRepository {
           if (closeDate != null) 'closeDate': closeDate.toIso8601String(),
           if (leadStatus != null) 'leadStatus': leadStatus,
         },
+      );
+      return Opportunity.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `PUT /api/opportunities/:id` with `stage: 'closed_won'` — the payment
+  /// side effects (Dad-backend/src/controllers/opportunityController.ts:
+  /// 370-527) only fire when `paymentType` is present alongside that exact
+  /// stage value, so this is deliberately a SEPARATE method from
+  /// [updateOpportunity] rather than optional params on it — there's no
+  /// valid way to call this with `paymentType` omitted, unlike every other
+  /// field there.
+  ///
+  /// [paymentType] must be exactly `'paid'`, `'partial'`, or `'emi'`
+  /// (server-checked strings, not free text):
+  /// - `'paid'`: backend pays the entire remaining balance itself — do not
+  ///   send [paidAmount]/[installments], they're ignored for this type.
+  /// - `'partial'`: [paidAmount] required (the down payment received now).
+  ///   [installments] optional — if given, their amounts must sum to
+  ///   exactly `opportunity.amount - paidAmount` (0.01 tolerance) or the
+  ///   backend 400s; backend requires `paidAmount < amount` for this path
+  ///   (EMI conversion needs the opportunity to land in `partial` status).
+  /// - `'emi'`: no [paidAmount] (nothing paid yet) — [installments]
+  ///   required, amounts must sum to the full `opportunity.amount`.
+  Future<Opportunity> closeWon(
+    String id, {
+    required String paymentType,
+    double? paidAmount,
+    List<InstallmentInput>? installments,
+  }) async {
+    try {
+      final response = await _dio.put<Map<String, dynamic>>(
+        '/opportunities/$id',
+        data: {
+          'stage': 'closed_won',
+          'paymentType': paymentType,
+          if (paidAmount != null) 'paidAmount': paidAmount,
+          if (installments != null && installments.isNotEmpty)
+            'installments': installments.map((i) => i.toJson()).toList(),
+        },
+      );
+      return Opportunity.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `PUT /api/opportunities/:id` with `stage: 'closed_lost'`. Web enforces
+  /// a 5-character minimum on [lostReason] client-side before allowing
+  /// submit at all (the backend itself doesn't validate it) — mobile
+  /// mirrors that same minimum in the sheet's UI, not here, so this method
+  /// itself doesn't re-guard it.
+  Future<Opportunity> closeLost(String id, {required String lostReason}) async {
+    try {
+      final response = await _dio.put<Map<String, dynamic>>(
+        '/opportunities/$id',
+        data: {'stage': 'closed_lost', 'lostReason': lostReason},
       );
       return Opportunity.fromJson(response.data!);
     } on DioException catch (e) {

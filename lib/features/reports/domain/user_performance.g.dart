@@ -23,6 +23,7 @@ _$PerformanceUserRefImpl _$$PerformanceUserRefImplFromJson(
   id: json['id'] as String,
   name: json['name'] as String,
   role: json['role'] as String?,
+  branch: json['branch'] as String?,
 );
 
 Map<String, dynamic> _$$PerformanceUserRefImplToJson(
@@ -31,6 +32,7 @@ Map<String, dynamic> _$$PerformanceUserRefImplToJson(
   'id': instance.id,
   'name': instance.name,
   'role': instance.role,
+  'branch': instance.branch,
 };
 
 _$PerformanceMetricsImpl _$$PerformanceMetricsImplFromJson(

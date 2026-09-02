@@ -32,7 +32,8 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       ref.read(productsListProvider.notifier).loadMore();
     }
   }
@@ -50,9 +51,14 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Delete Product'),
-        content: Text('Delete "${product.name}"? This can\'t be undone from here.'),
+        content: Text(
+          'Delete "${product.name}"? This can\'t be undone from here.',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
@@ -62,13 +68,17 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
     );
     if (confirmed != true || !context.mounted) return;
 
-    final success = await ref.read(productActionsControllerProvider.notifier).delete(product.id);
+    final success = await ref
+        .read(productActionsControllerProvider.notifier)
+        .delete(product.id);
     if (!context.mounted) return;
     if (!success) {
       final error = ref.read(productActionsControllerProvider).error;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text("Couldn't delete product: $error")));
+        ..showSnackBar(
+          SnackBar(content: Text("Couldn't delete product: $error")),
+        );
     }
   }
 
@@ -96,16 +106,24 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
               decoration: InputDecoration(
                 hintText: 'Search products…',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
               ),
-              onSubmitted: (query) =>
-                  ref.read(productsListProvider.notifier).search(query.trim().isEmpty ? null : query.trim()),
+              onSubmitted: (query) => ref
+                  .read(productsListProvider.notifier)
+                  .search(query.trim().isEmpty ? null : query.trim()),
             ),
           ),
         ),
       ),
+      // No extra bottom padding here — Scaffold already keeps a plain FAB
+      // (no bottomNavigationBar competing for the slot, unlike AppShell's
+      // custom floating bar) clear of the system nav bar on its own; adding
+      // `safeBottomInset` on top of that stacked with Scaffold's own
+      // clearance and pushed the button too far up.
       floatingActionButton: isOrgAdmin
           ? FloatingActionButton.extended(
               onPressed: () => showProductFormSheet(context),
@@ -144,8 +162,12 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
                 final product = data.products[productIndex];
                 return ProductCard(
                   product: product,
-                  onEdit: isOrgAdmin ? () => showProductFormSheet(context, editing: product) : null,
-                  onDelete: isOrgAdmin ? () => _confirmDelete(context, product) : null,
+                  onEdit: isOrgAdmin
+                      ? () => showProductFormSheet(context, editing: product)
+                      : null,
+                  onDelete: isOrgAdmin
+                      ? () => _confirmDelete(context, product)
+                      : null,
                 );
               },
             ),
@@ -179,7 +201,11 @@ class _StatsRow extends StatelessWidget {
         data: (stats) => Row(
           children: [
             Expanded(
-              child: _StatCard(label: 'Total Products', value: '${stats.totalProducts}', icon: Icons.inventory_2_outlined),
+              child: _StatCard(
+                label: 'Total Products',
+                value: '${stats.totalProducts}',
+                icon: Icons.inventory_2_outlined,
+              ),
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -191,11 +217,18 @@ class _StatsRow extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: _StatCard(label: 'Active', value: '${stats.activeCount}', icon: Icons.check_circle_outline),
+              child: _StatCard(
+                label: 'Active',
+                value: '${stats.activeCount}',
+                icon: Icons.check_circle_outline,
+              ),
             ),
           ],
         ),
-        loading: () => const SizedBox(height: 84, child: Center(child: CircularProgressIndicator())),
+        loading: () => const SizedBox(
+          height: 84,
+          child: Center(child: CircularProgressIndicator()),
+        ),
         error: (error, stack) => const SizedBox.shrink(),
       ),
     );
@@ -203,7 +236,11 @@ class _StatsRow extends StatelessWidget {
 }
 
 class _StatCard extends StatelessWidget {
-  const _StatCard({required this.label, required this.value, required this.icon});
+  const _StatCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+  });
 
   final String label;
   final String value;
@@ -217,7 +254,9 @@ class _StatCard extends StatelessWidget {
       color: theme.colorScheme.primary.withValues(alpha: 0.06),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.15)),
+        side: BorderSide(
+          color: theme.colorScheme.primary.withValues(alpha: 0.15),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -226,10 +265,17 @@ class _StatCard extends StatelessWidget {
           children: [
             Icon(icon, size: 18, color: theme.colorScheme.primary),
             const SizedBox(height: 8),
-            Text(value, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Text(
               label,
-              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

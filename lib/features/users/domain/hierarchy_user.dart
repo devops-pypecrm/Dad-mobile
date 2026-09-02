@@ -21,7 +21,8 @@ class HierarchyUser with _$HierarchyUser {
     String? reportsToId,
   }) = _HierarchyUser;
 
-  factory HierarchyUser.fromJson(Map<String, dynamic> json) => _$HierarchyUserFromJson(json);
+  factory HierarchyUser.fromJson(Map<String, dynamic> json) =>
+      _$HierarchyUserFromJson(json);
 
   String get fullName => '$firstName $lastName'.trim();
 }

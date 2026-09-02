@@ -21,7 +21,14 @@ mixin _$OpportunitiesListState {
   int get page => throw _privateConstructorUsedError;
   int get totalPages => throw _privateConstructorUsedError;
   bool get isLoadingMore => throw _privateConstructorUsedError;
+  OpportunitiesScope get scope => throw _privateConstructorUsedError;
+  String? get search => throw _privateConstructorUsedError;
   String? get stage => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  String? get leadSource => throw _privateConstructorUsedError;
+  String? get ownerId => throw _privateConstructorUsedError;
+  DateTime? get startDate => throw _privateConstructorUsedError;
+  DateTime? get endDate => throw _privateConstructorUsedError;
 
   /// Create a copy of OpportunitiesListState
   /// with the given fields replaced by the non-null parameter values.
@@ -42,7 +49,14 @@ abstract class $OpportunitiesListStateCopyWith<$Res> {
     int page,
     int totalPages,
     bool isLoadingMore,
+    OpportunitiesScope scope,
+    String? search,
     String? stage,
+    String? type,
+    String? leadSource,
+    String? ownerId,
+    DateTime? startDate,
+    DateTime? endDate,
   });
 }
 
@@ -68,7 +82,14 @@ class _$OpportunitiesListStateCopyWithImpl<
     Object? page = null,
     Object? totalPages = null,
     Object? isLoadingMore = null,
+    Object? scope = null,
+    Object? search = freezed,
     Object? stage = freezed,
+    Object? type = freezed,
+    Object? leadSource = freezed,
+    Object? ownerId = freezed,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -88,10 +109,38 @@ class _$OpportunitiesListStateCopyWithImpl<
                 ? _value.isLoadingMore
                 : isLoadingMore // ignore: cast_nullable_to_non_nullable
                       as bool,
+            scope: null == scope
+                ? _value.scope
+                : scope // ignore: cast_nullable_to_non_nullable
+                      as OpportunitiesScope,
+            search: freezed == search
+                ? _value.search
+                : search // ignore: cast_nullable_to_non_nullable
+                      as String?,
             stage: freezed == stage
                 ? _value.stage
                 : stage // ignore: cast_nullable_to_non_nullable
                       as String?,
+            type: freezed == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            leadSource: freezed == leadSource
+                ? _value.leadSource
+                : leadSource // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            ownerId: freezed == ownerId
+                ? _value.ownerId
+                : ownerId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            startDate: freezed == startDate
+                ? _value.startDate
+                : startDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            endDate: freezed == endDate
+                ? _value.endDate
+                : endDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
           )
           as $Val,
     );
@@ -112,7 +161,14 @@ abstract class _$$OpportunitiesListStateImplCopyWith<$Res>
     int page,
     int totalPages,
     bool isLoadingMore,
+    OpportunitiesScope scope,
+    String? search,
     String? stage,
+    String? type,
+    String? leadSource,
+    String? ownerId,
+    DateTime? startDate,
+    DateTime? endDate,
   });
 }
 
@@ -135,7 +191,14 @@ class __$$OpportunitiesListStateImplCopyWithImpl<$Res>
     Object? page = null,
     Object? totalPages = null,
     Object? isLoadingMore = null,
+    Object? scope = null,
+    Object? search = freezed,
     Object? stage = freezed,
+    Object? type = freezed,
+    Object? leadSource = freezed,
+    Object? ownerId = freezed,
+    Object? startDate = freezed,
+    Object? endDate = freezed,
   }) {
     return _then(
       _$OpportunitiesListStateImpl(
@@ -155,10 +218,38 @@ class __$$OpportunitiesListStateImplCopyWithImpl<$Res>
             ? _value.isLoadingMore
             : isLoadingMore // ignore: cast_nullable_to_non_nullable
                   as bool,
+        scope: null == scope
+            ? _value.scope
+            : scope // ignore: cast_nullable_to_non_nullable
+                  as OpportunitiesScope,
+        search: freezed == search
+            ? _value.search
+            : search // ignore: cast_nullable_to_non_nullable
+                  as String?,
         stage: freezed == stage
             ? _value.stage
             : stage // ignore: cast_nullable_to_non_nullable
                   as String?,
+        type: freezed == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        leadSource: freezed == leadSource
+            ? _value.leadSource
+            : leadSource // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        ownerId: freezed == ownerId
+            ? _value.ownerId
+            : ownerId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        startDate: freezed == startDate
+            ? _value.startDate
+            : startDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        endDate: freezed == endDate
+            ? _value.endDate
+            : endDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
       ),
     );
   }
@@ -172,7 +263,14 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
     this.page = 1,
     this.totalPages = 1,
     this.isLoadingMore = false,
+    this.scope = OpportunitiesScope.team,
+    this.search,
     this.stage,
+    this.type,
+    this.leadSource,
+    this.ownerId,
+    this.startDate,
+    this.endDate,
   }) : _opportunities = opportunities,
        super._();
 
@@ -195,11 +293,26 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
   @JsonKey()
   final bool isLoadingMore;
   @override
+  @JsonKey()
+  final OpportunitiesScope scope;
+  @override
+  final String? search;
+  @override
   final String? stage;
+  @override
+  final String? type;
+  @override
+  final String? leadSource;
+  @override
+  final String? ownerId;
+  @override
+  final DateTime? startDate;
+  @override
+  final DateTime? endDate;
 
   @override
   String toString() {
-    return 'OpportunitiesListState(opportunities: $opportunities, page: $page, totalPages: $totalPages, isLoadingMore: $isLoadingMore, stage: $stage)';
+    return 'OpportunitiesListState(opportunities: $opportunities, page: $page, totalPages: $totalPages, isLoadingMore: $isLoadingMore, scope: $scope, search: $search, stage: $stage, type: $type, leadSource: $leadSource, ownerId: $ownerId, startDate: $startDate, endDate: $endDate)';
   }
 
   @override
@@ -216,7 +329,16 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
                 other.totalPages == totalPages) &&
             (identical(other.isLoadingMore, isLoadingMore) ||
                 other.isLoadingMore == isLoadingMore) &&
-            (identical(other.stage, stage) || other.stage == stage));
+            (identical(other.scope, scope) || other.scope == scope) &&
+            (identical(other.search, search) || other.search == search) &&
+            (identical(other.stage, stage) || other.stage == stage) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.leadSource, leadSource) ||
+                other.leadSource == leadSource) &&
+            (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
+            (identical(other.startDate, startDate) ||
+                other.startDate == startDate) &&
+            (identical(other.endDate, endDate) || other.endDate == endDate));
   }
 
   @override
@@ -226,7 +348,14 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
     page,
     totalPages,
     isLoadingMore,
+    scope,
+    search,
     stage,
+    type,
+    leadSource,
+    ownerId,
+    startDate,
+    endDate,
   );
 
   /// Create a copy of OpportunitiesListState
@@ -248,7 +377,14 @@ abstract class _OpportunitiesListState extends OpportunitiesListState {
     final int page,
     final int totalPages,
     final bool isLoadingMore,
+    final OpportunitiesScope scope,
+    final String? search,
     final String? stage,
+    final String? type,
+    final String? leadSource,
+    final String? ownerId,
+    final DateTime? startDate,
+    final DateTime? endDate,
   }) = _$OpportunitiesListStateImpl;
   const _OpportunitiesListState._() : super._();
 
@@ -261,7 +397,21 @@ abstract class _OpportunitiesListState extends OpportunitiesListState {
   @override
   bool get isLoadingMore;
   @override
+  OpportunitiesScope get scope;
+  @override
+  String? get search;
+  @override
   String? get stage;
+  @override
+  String? get type;
+  @override
+  String? get leadSource;
+  @override
+  String? get ownerId;
+  @override
+  DateTime? get startDate;
+  @override
+  DateTime? get endDate;
 
   /// Create a copy of OpportunitiesListState
   /// with the given fields replaced by the non-null parameter values.

@@ -15,5 +15,6 @@ class LeadAssignee with _$LeadAssignee {
     required String email,
   }) = _LeadAssignee;
 
-  factory LeadAssignee.fromJson(Map<String, dynamic> json) => _$LeadAssigneeFromJson(json);
+  factory LeadAssignee.fromJson(Map<String, dynamic> json) =>
+      _$LeadAssigneeFromJson(json);
 }

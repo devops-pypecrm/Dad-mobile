@@ -6,7 +6,7 @@ part of 'session_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sessionControllerHash() => r'81c1b48f12f52135206396ba3f2dc3507a08f6c6';
+String _$sessionControllerHash() => r'2718c6410bc83376228c99b290723b02d73eabcd';
 
 /// Single source of truth for "who is logged in". The router guard, the
 /// authenticated shell, and every screen that needs the current user watch

@@ -169,8 +169,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           FilledButton(
             onPressed: (isLoading || !_canSubmit) ? null : _submit,
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF5B21B6),
-              disabledBackgroundColor: const Color(0xFF5B21B6).withValues(alpha: 0.6),
+              backgroundColor: const Color(0xFF79BC46),
+              disabledBackgroundColor: const Color(0xFF79BC46).withValues(alpha: 0.6),
               minimumSize: const Size.fromHeight(58),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
             ),

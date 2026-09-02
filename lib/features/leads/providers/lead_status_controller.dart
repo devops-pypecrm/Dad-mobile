@@ -17,13 +17,18 @@ class LeadStatusController extends _$LeadStatusController {
 
   Future<void> updateStatus(String status) => _update(status: status);
 
-  Future<void> scheduleNextFollowUp(DateTime dueDate) => _update(nextFollowUp: dueDate);
+  Future<void> scheduleNextFollowUp(DateTime dueDate) =>
+      _update(nextFollowUp: dueDate);
 
   Future<void> _update({String? status, DateTime? nextFollowUp}) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final repository = ref.read(leadsRepositoryProvider);
-      await repository.updateLead(leadId, status: status, nextFollowUp: nextFollowUp);
+      await repository.updateLead(
+        leadId,
+        status: status,
+        nextFollowUp: nextFollowUp,
+      );
       ref.invalidate(leadDetailProvider(leadId));
       ref.read(leadsListProvider.notifier).refresh();
     });

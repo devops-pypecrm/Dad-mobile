@@ -6,7 +6,11 @@ import 'lead.dart';
 /// (Dad-backend/src/controllers/leadController.ts). `isReEnquiry` is absent
 /// (not just false) on the normal-create path.
 class CreateLeadResult {
-  const CreateLeadResult({required this.lead, required this.isReEnquiry, this.reEnquiryCount});
+  const CreateLeadResult({
+    required this.lead,
+    required this.isReEnquiry,
+    this.reEnquiryCount,
+  });
 
   factory CreateLeadResult.fromJson(Map<String, dynamic> json) {
     final isReEnquiry = json['isReEnquiry'] == true;

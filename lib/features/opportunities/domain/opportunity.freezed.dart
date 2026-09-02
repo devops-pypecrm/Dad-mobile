@@ -31,6 +31,7 @@ mixin _$Opportunity {
   String? get description => throw _privateConstructorUsedError;
   String get paymentStatus => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
+  String? get lostReason => throw _privateConstructorUsedError;
   String? get accountId => throw _privateConstructorUsedError;
   AccountRef? get account => throw _privateConstructorUsedError;
   OwnerRef? get owner => throw _privateConstructorUsedError;
@@ -69,6 +70,7 @@ abstract class $OpportunityCopyWith<$Res> {
     String? description,
     String paymentStatus,
     String type,
+    String? lostReason,
     String? accountId,
     AccountRef? account,
     OwnerRef? owner,
@@ -109,6 +111,7 @@ class _$OpportunityCopyWithImpl<$Res, $Val extends Opportunity>
     Object? description = freezed,
     Object? paymentStatus = null,
     Object? type = null,
+    Object? lostReason = freezed,
     Object? accountId = freezed,
     Object? account = freezed,
     Object? owner = freezed,
@@ -159,6 +162,10 @@ class _$OpportunityCopyWithImpl<$Res, $Val extends Opportunity>
                 ? _value.type
                 : type // ignore: cast_nullable_to_non_nullable
                       as String,
+            lostReason: freezed == lostReason
+                ? _value.lostReason
+                : lostReason // ignore: cast_nullable_to_non_nullable
+                      as String?,
             accountId: freezed == accountId
                 ? _value.accountId
                 : accountId // ignore: cast_nullable_to_non_nullable
@@ -269,6 +276,7 @@ abstract class _$$OpportunityImplCopyWith<$Res>
     String? description,
     String paymentStatus,
     String type,
+    String? lostReason,
     String? accountId,
     AccountRef? account,
     OwnerRef? owner,
@@ -312,6 +320,7 @@ class __$$OpportunityImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? paymentStatus = null,
     Object? type = null,
+    Object? lostReason = freezed,
     Object? accountId = freezed,
     Object? account = freezed,
     Object? owner = freezed,
@@ -362,6 +371,10 @@ class __$$OpportunityImplCopyWithImpl<$Res>
             ? _value.type
             : type // ignore: cast_nullable_to_non_nullable
                   as String,
+        lostReason: freezed == lostReason
+            ? _value.lostReason
+            : lostReason // ignore: cast_nullable_to_non_nullable
+                  as String?,
         accountId: freezed == accountId
             ? _value.accountId
             : accountId // ignore: cast_nullable_to_non_nullable
@@ -409,6 +422,7 @@ class _$OpportunityImpl implements _Opportunity {
     this.description,
     this.paymentStatus = 'pending',
     this.type = 'NEW_BUSINESS',
+    this.lostReason,
     this.accountId,
     this.account,
     this.owner,
@@ -447,6 +461,8 @@ class _$OpportunityImpl implements _Opportunity {
   @JsonKey()
   final String type;
   @override
+  final String? lostReason;
+  @override
   final String? accountId;
   @override
   final AccountRef? account;
@@ -478,7 +494,7 @@ class _$OpportunityImpl implements _Opportunity {
 
   @override
   String toString() {
-    return 'Opportunity(id: $id, name: $name, amount: $amount, stage: $stage, probability: $probability, closeDate: $closeDate, leadSource: $leadSource, description: $description, paymentStatus: $paymentStatus, type: $type, accountId: $accountId, account: $account, owner: $owner, contacts: $contacts, lead: $lead, emiSchedule: $emiSchedule, paymentRecords: $paymentRecords)';
+    return 'Opportunity(id: $id, name: $name, amount: $amount, stage: $stage, probability: $probability, closeDate: $closeDate, leadSource: $leadSource, description: $description, paymentStatus: $paymentStatus, type: $type, lostReason: $lostReason, accountId: $accountId, account: $account, owner: $owner, contacts: $contacts, lead: $lead, emiSchedule: $emiSchedule, paymentRecords: $paymentRecords)';
   }
 
   @override
@@ -501,6 +517,8 @@ class _$OpportunityImpl implements _Opportunity {
             (identical(other.paymentStatus, paymentStatus) ||
                 other.paymentStatus == paymentStatus) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.lostReason, lostReason) ||
+                other.lostReason == lostReason) &&
             (identical(other.accountId, accountId) ||
                 other.accountId == accountId) &&
             (identical(other.account, account) || other.account == account) &&
@@ -529,6 +547,7 @@ class _$OpportunityImpl implements _Opportunity {
     description,
     paymentStatus,
     type,
+    lostReason,
     accountId,
     account,
     owner,
@@ -564,6 +583,7 @@ abstract class _Opportunity implements Opportunity {
     final String? description,
     final String paymentStatus,
     final String type,
+    final String? lostReason,
     final String? accountId,
     final AccountRef? account,
     final OwnerRef? owner,
@@ -596,6 +616,8 @@ abstract class _Opportunity implements Opportunity {
   String get paymentStatus;
   @override
   String get type;
+  @override
+  String? get lostReason;
   @override
   String? get accountId;
   @override

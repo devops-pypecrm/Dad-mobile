@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../domain/product.dart';
 import '../../providers/product_actions_controller.dart';
 
@@ -32,10 +33,14 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
   late final _name = TextEditingController(text: widget.editing?.name);
   late final _sku = TextEditingController(text: widget.editing?.sku);
   late final _basePrice = TextEditingController(
-    text: widget.editing != null ? widget.editing!.basePrice.toStringAsFixed(0) : '',
+    text: widget.editing != null
+        ? widget.editing!.basePrice.toStringAsFixed(0)
+        : '',
   );
   late final _category = TextEditingController(text: widget.editing?.category);
-  late final _description = TextEditingController(text: widget.editing?.description);
+  late final _description = TextEditingController(
+    text: widget.editing?.description,
+  );
   late bool _isCustom = widget.editing?.isCustom ?? false;
 
   @override
@@ -54,7 +59,11 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
     if (name.isEmpty || basePrice == null) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Name and a valid base price are required.')));
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Name and a valid base price are required.'),
+          ),
+        );
       return;
     }
 
@@ -84,7 +93,9 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
       final error = ref.read(productActionsControllerProvider).error;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text("Couldn't save product: $error")));
+        ..showSnackBar(
+          SnackBar(content: Text("Couldn't save product: $error")),
+        );
       return;
     }
     Navigator.of(context).pop();
@@ -96,26 +107,40 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
     final saving = ref.watch(productActionsControllerProvider).isLoading;
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      padding: EdgeInsets.only(bottom: sheetBottomPadding(context, extra: 0)),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.editing == null ? 'Add Product' : 'Edit Product', style: theme.textTheme.titleLarge),
+            Text(
+              widget.editing == null ? 'Add Product' : 'Edit Product',
+              style: theme.textTheme.titleLarge,
+            ),
             const SizedBox(height: 16),
-            TextField(controller: _name, decoration: const InputDecoration(labelText: 'Name *')),
+            TextField(
+              controller: _name,
+              decoration: const InputDecoration(labelText: 'Name *'),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: _sku, decoration: const InputDecoration(labelText: 'SKU')),
+            TextField(
+              controller: _sku,
+              decoration: const InputDecoration(labelText: 'SKU'),
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: _basePrice,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(labelText: 'Base Price *'),
             ),
             const SizedBox(height: 12),
-            TextField(controller: _category, decoration: const InputDecoration(labelText: 'Category')),
+            TextField(
+              controller: _category,
+              decoration: const InputDecoration(labelText: 'Category'),
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: _description,
@@ -129,7 +154,9 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
               value: _isCustom,
               onChanged: (value) => setState(() => _isCustom = value ?? false),
               title: const Text('Custom Price'),
-              subtitle: const Text('Price is entered at the time of sale, not fixed here.'),
+              subtitle: const Text(
+                'Price is entered at the time of sale, not fixed here.',
+              ),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -140,7 +167,10 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Text('Save'),
               ),

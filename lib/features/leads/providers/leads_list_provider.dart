@@ -49,7 +49,12 @@ class LeadsList extends _$LeadsList {
   Future<LeadsListState> build() async {
     final repository = ref.watch(leadsRepositoryProvider);
     final result = await repository.getLeads(page: 1);
-    return LeadsListState(leads: result.leads, page: result.page, pages: result.pages, total: result.total);
+    return LeadsListState(
+      leads: result.leads,
+      page: result.page,
+      pages: result.pages,
+      total: result.total,
+    );
   }
 
   Future<void> loadMore() async {
@@ -99,8 +104,14 @@ class LeadsList extends _$LeadsList {
     String? sortOrder,
   }) async {
     final current = state.valueOrNull;
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
+    // `.copyWithPrevious` keeps `state.valueOrNull` returning the *old*
+    // list while this fetch is in flight (and if it fails) instead of
+    // wiping to a bare loading/error with nothing to show — otherwise a
+    // live/dynamic search flashes the whole list to a full skeleton on
+    // every keystroke instead of updating in place. See the identical fix
+    // on `FollowUpsListController.applyFilters`.
+    state = const AsyncValue<LeadsListState>.loading().copyWithPrevious(state);
+    final result = await AsyncValue.guard(() async {
       final repository = ref.read(leadsRepositoryProvider);
       final result = await repository.getLeads(
         page: 1,
@@ -130,6 +141,7 @@ class LeadsList extends _$LeadsList {
         sortOrder: sortOrder ?? current?.sortOrder ?? 'desc',
       );
     });
+    state = result.hasError ? result.copyWithPrevious(state) : result;
   }
 
   Future<void> refresh() async {

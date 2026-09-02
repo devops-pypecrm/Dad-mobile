@@ -21,12 +21,15 @@ class Interaction with _$Interaction {
     InteractionAuthor? createdBy,
   }) = _Interaction;
 
-  factory Interaction.fromJson(Map<String, dynamic> json) => _$InteractionFromJson(json);
+  factory Interaction.fromJson(Map<String, dynamic> json) =>
+      _$InteractionFromJson(json);
 }
 
 @freezed
 class InteractionAuthor with _$InteractionAuthor {
-  const factory InteractionAuthor({String? firstName, String? lastName}) = _InteractionAuthor;
+  const factory InteractionAuthor({String? firstName, String? lastName}) =
+      _InteractionAuthor;
 
-  factory InteractionAuthor.fromJson(Map<String, dynamic> json) => _$InteractionAuthorFromJson(json);
+  factory InteractionAuthor.fromJson(Map<String, dynamic> json) =>
+      _$InteractionAuthorFromJson(json);
 }

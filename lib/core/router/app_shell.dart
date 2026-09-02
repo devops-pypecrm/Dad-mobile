@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/app_updates/presentation/widgets/update_checker.dart';
 import '../../features/notifications/presentation/widgets/notification_panel.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/curved_nav_bar/curved_navigation_bar.dart';
 import 'app_router.dart';
 
-/// Bar fill + selected-tab text/icon color (`#5B21B6`) — a fixed brand
-/// purple, not theme-derived, per explicit request. Kept as a named
+/// Bar fill + selected-tab text/icon color (`#79BC46`) — a fixed brand
+/// color, not theme-derived, per explicit request. Kept as a named
 /// constant so `_NavItem`'s "contrast against the white circle" color
 /// stays in sync with the bar automatically if this ever changes.
-const _navBarPurple = Color(0xFF5B21B6);
+const _navBarColor = Color(0xFF578732);
+
+/// A blanket floor here (tried and reverted — see git history) forced a
+/// visible dead gap under the bar on any device correctly reporting a
+/// near-zero inset (plain gesture mode with nothing to clear, or no system
+/// nav bar at all), since there's no way to distinguish that from an OEM
+/// under-reporting a real gesture pill using the inset value alone. Trusting
+/// the reported value directly is the correct default; if a specific device
+/// is confirmed to under-report, that needs a targeted fix, not a global one
+/// that visibly breaks every correctly-reporting device in exchange.
+double _bottomMarginFor(double reportedInset) =>
+    reportedInset > 8 ? reportedInset + 4 : 8.0;
 
 /// Identifies the ONE persistent outer Scaffold (this shell) across the
 /// whole tab-navigation lifetime, so [ProfileMenuButton] can open its drawer
@@ -44,7 +56,11 @@ class AppShell extends StatelessWidget {
     (route: AppRoutes.leads, icon: Icons.people_outline, label: 'Leads'),
     (route: AppRoutes.search, icon: Icons.search, label: 'Search'),
     (route: AppRoutes.followups, icon: Icons.checklist, label: 'Follow Ups'),
-    (route: AppRoutes.reports, icon: Icons.bar_chart_outlined, label: 'Reports'),
+    (
+      route: AppRoutes.reports,
+      icon: Icons.bar_chart_outlined,
+      label: 'Reports',
+    ),
   ];
 
   int get _currentIndex {
@@ -67,6 +83,7 @@ class AppShell extends StatelessWidget {
       children: [
         _buildScaffold(context, currentIndex),
         const NotificationPanel(),
+        const UpdateChecker(),
       ],
     );
   }
@@ -107,48 +124,66 @@ class AppShell extends StatelessWidget {
       // items are laid out at a fixed pixel offset tied to a hardcoded 75.0
       // internally, so reducing `height` below 75 clips the bottom of the
       // icons/labels instead of just tightening the gap.
-      bottomNavigationBar: MediaQuery.removePadding(
-        context: context,
-        removeBottom: true,
-        // Floats the bar as an inset rounded box (margin on both sides +
-        // bottom) instead of a flush, edge-to-edge strip. Plain `Padding`
-        // (no clip), so it doesn't interfere with the circle's rise
-        // animation, which still overflows above this box via `Clip.none`
-        // inside the vendored widget itself.
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
-          child: CurvedNavigationBar(
-            index: currentIndex,
-            // Bar fill is white; the floating circle is the fixed brand
-            // purple. `backgroundColor` stays transparent (real content shows
-            // through the notch corners as you scroll) — the bar no longer
-            // depends on a color-contrast trick to read against that
-            // transparent backdrop because `barElevation` below gives the
-            // curved shape itself a drop shadow, drawn on its own path via
-            // `canvas.drawShadow` (see the vendored painter's file header).
-            color: Colors.white,
-            buttonBackgroundColor: _navBarPurple,
-            backgroundColor: Colors.transparent,
-            // Rounds all 4 corners of the bar itself (see the vendored
-            // painter's file header) so it reads as a floating rounded box
-            // rather than a sharp-cornered rectangle.
-            cornerRadius: 28,
-            // Shadow on the bar's curved shape (notch included), so it reads
-            // as raised above whatever scrolls behind it.
-            barElevation: 8,
-            barShadowColor: Colors.black.withValues(alpha: 0.25),
-            // Separate drop shadow on the circle alone (see the vendored
-            // widget's file header for why this needed a fork).
-            buttonElevation: 6,
-            buttonShadowColor: Colors.black.withValues(alpha: 0.35),
-            animationDuration: const Duration(milliseconds: 400),
-            animationCurve: Curves.easeOutCubic,
-            onTap: (index) => context.go(_tabs[index].route),
-            items: [
-              for (var i = 0; i < _tabs.length; i++) _NavItem(tab: _tabs[i], selected: i == currentIndex),
-            ],
-          ),
-        ),
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          // Gesture navigation reports a small inset (~12-24px) for the thin
+          // translucent home-indicator pill our floating bar can safely
+          // overlap with just a little breathing room. 3-button navigation
+          // reports a much larger inset (~48px) for an *opaque*, non-overlay
+          // system bar. Trust the real reported inset (+4px buffer) in both
+          // cases — only fall back to a floor when the report itself looks
+          // broken (≤8px), and even then only force the larger OEM-bug floor
+          // on Android; everywhere else (web/desktop) a plain 8px margin is
+          // correct since there's genuinely no system chrome to clear. See
+          // `_bottomMarginFor`'s doc comment.
+          final bottomMargin = _bottomMarginFor(
+            MediaQuery.paddingOf(context).bottom,
+          );
+          return MediaQuery.removePadding(
+            context: context,
+            removeBottom: true,
+            // Floats the bar as an inset rounded box (margin on both sides +
+            // bottom) instead of a flush, edge-to-edge strip. Plain `Padding`
+            // (no clip), so it doesn't interfere with the circle's rise
+            // animation, which still overflows above this box via `Clip.none`
+            // inside the vendored widget itself.
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(8, 0, 8, bottomMargin),
+              child: CurvedNavigationBar(
+                index: currentIndex,
+                // Bar fill is white; the floating circle is the fixed brand
+                // purple. `backgroundColor` stays transparent (real content shows
+                // through the notch corners as you scroll) — the bar no longer
+                // depends on a color-contrast trick to read against that
+                // transparent backdrop because `barElevation` below gives the
+                // curved shape itself a drop shadow, drawn on its own path via
+                // `canvas.drawShadow` (see the vendored painter's file header).
+                color: Colors.white,
+                buttonBackgroundColor: _navBarColor,
+                backgroundColor: Colors.transparent,
+                // Rounds all 4 corners of the bar itself (see the vendored
+                // painter's file header) so it reads as a floating rounded box
+                // rather than a sharp-cornered rectangle.
+                cornerRadius: 28,
+                // Shadow on the bar's curved shape (notch included), so it reads
+                // as raised above whatever scrolls behind it.
+                barElevation: 8,
+                barShadowColor: Colors.black.withValues(alpha: 0.25),
+                // Separate drop shadow on the circle alone (see the vendored
+                // widget's file header for why this needed a fork).
+                buttonElevation: 6,
+                buttonShadowColor: Colors.black.withValues(alpha: 0.35),
+                animationDuration: const Duration(milliseconds: 400),
+                animationCurve: Curves.easeOutCubic,
+                onTap: (index) => context.go(_tabs[index].route),
+                items: [
+                  for (var i = 0; i < _tabs.length; i++)
+                    _NavItem(tab: _tabs[i], selected: i == currentIndex),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -177,11 +212,11 @@ class _NavItem extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(tab.icon, color: _navBarPurple, size: 22),
+        Icon(tab.icon, color: _navBarColor, size: 22),
         const SizedBox(height: 2),
         Text(
           tab.label,
-          style: theme.textTheme.labelSmall?.copyWith(color: _navBarPurple),
+          style: theme.textTheme.labelSmall?.copyWith(color: _navBarColor),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

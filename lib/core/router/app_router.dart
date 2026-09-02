@@ -7,6 +7,7 @@ import '../../features/accounts/presentation/screens/accounts_list_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/providers/session_provider.dart';
+import '../../features/app_updates/presentation/screens/updates_screen.dart';
 import '../../features/calls/presentation/screens/call_logs_screen.dart';
 import '../../features/checkins/presentation/screens/checkin_form_screen.dart';
 import '../../features/checkins/presentation/screens/checkins_feed_screen.dart';
@@ -50,6 +51,7 @@ class AppRoutes {
   static const products = '/products';
   static const reEnquiries = '/re-enquiries';
   static const calls = '/calls';
+  static const updates = '/updates';
 }
 
 @Riverpod(keepAlive: true)
@@ -162,6 +164,7 @@ GoRouter goRouter(ProviderRef<GoRouter> ref) {
       GoRoute(path: AppRoutes.products, builder: (context, state) => const ProductsListScreen()),
       GoRoute(path: AppRoutes.reEnquiries, builder: (context, state) => const ReEnquiriesScreen()),
       GoRoute(path: AppRoutes.calls, builder: (context, state) => const CallLogsScreen()),
+      GoRoute(path: AppRoutes.updates, builder: (context, state) => const UpdatesScreen()),
     ],
   );
 }

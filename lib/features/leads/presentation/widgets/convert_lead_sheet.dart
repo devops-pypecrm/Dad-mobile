@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../domain/lead.dart';
 import '../../providers/lead_convert_controller.dart';
 
@@ -12,7 +13,11 @@ import '../../providers/lead_convert_controller.dart';
 ///
 /// Returns the new Opportunity's id on success, so the caller can navigate
 /// there — or `null` if the sheet was dismissed/failed.
-Future<String?> showConvertLeadSheet(BuildContext context, WidgetRef ref, Lead lead) {
+Future<String?> showConvertLeadSheet(
+  BuildContext context,
+  WidgetRef ref,
+  Lead lead,
+) {
   if (!lead.hasProducts) {
     return showDialog<String?>(
       context: context,
@@ -22,7 +27,10 @@ Future<String?> showConvertLeadSheet(BuildContext context, WidgetRef ref, Lead l
           'This lead has no products attached. Add at least one product before moving it to the pipeline.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
         ],
       ),
     );
@@ -55,13 +63,18 @@ class _ConvertLeadFormState extends ConsumerState<_ConvertLeadForm> {
   void initState() {
     super.initState();
     final lead = widget.lead;
-    final totalProductValue = (lead.products ?? const [])
-        .fold<double>(0, (sum, p) => sum + p.price * p.quantity);
-    _dealName = TextEditingController(text: lead.enquiryAbout ?? '${lead.fullName} deal');
+    final totalProductValue = (lead.products ?? const []).fold<double>(
+      0,
+      (sum, p) => sum + p.price * p.quantity,
+    );
+    _dealName = TextEditingController(
+      text: lead.enquiryAbout ?? '${lead.fullName} deal',
+    );
     _accountName = TextEditingController(text: lead.company ?? lead.fullName);
     _contactName = TextEditingController(text: lead.fullName);
     _amount = TextEditingController(
-      text: (totalProductValue > 0 ? totalProductValue : lead.potentialValue).toStringAsFixed(0),
+      text: (totalProductValue > 0 ? totalProductValue : lead.potentialValue)
+          .toStringAsFixed(0),
     );
   }
 
@@ -78,7 +91,9 @@ class _ConvertLeadFormState extends ConsumerState<_ConvertLeadForm> {
     final amount = double.tryParse(_amount.text.trim());
     if (_dealName.text.trim().isEmpty || amount == null) return;
 
-    final opportunityId = await ref.read(leadConvertControllerProvider(widget.lead.id).notifier).convert(
+    final opportunityId = await ref
+        .read(leadConvertControllerProvider(widget.lead.id).notifier)
+        .convert(
           dealName: _dealName.text.trim(),
           amount: amount,
           accountName: _accountName.text.trim(),
@@ -90,7 +105,9 @@ class _ConvertLeadFormState extends ConsumerState<_ConvertLeadForm> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final actionState = ref.watch(leadConvertControllerProvider(widget.lead.id));
+    final actionState = ref.watch(
+      leadConvertControllerProvider(widget.lead.id),
+    );
 
     ref.listen(leadConvertControllerProvider(widget.lead.id), (previous, next) {
       final error = next.error;
@@ -102,7 +119,7 @@ class _ConvertLeadFormState extends ConsumerState<_ConvertLeadForm> {
     });
 
     return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      padding: EdgeInsets.only(bottom: sheetBottomPadding(context, extra: 0)),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -113,18 +130,31 @@ class _ConvertLeadFormState extends ConsumerState<_ConvertLeadForm> {
             const SizedBox(height: 4),
             Text(
               'Creates an Account, Contact, and Opportunity from this lead.',
-              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 16),
-            TextField(controller: _dealName, decoration: const InputDecoration(labelText: 'Deal Name')),
+            TextField(
+              controller: _dealName,
+              decoration: const InputDecoration(labelText: 'Deal Name'),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: _accountName, decoration: const InputDecoration(labelText: 'Account Name')),
+            TextField(
+              controller: _accountName,
+              decoration: const InputDecoration(labelText: 'Account Name'),
+            ),
             const SizedBox(height: 12),
-            TextField(controller: _contactName, decoration: const InputDecoration(labelText: 'Contact Name')),
+            TextField(
+              controller: _contactName,
+              decoration: const InputDecoration(labelText: 'Contact Name'),
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: _amount,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: const InputDecoration(labelText: 'Amount'),
             ),
             const SizedBox(height: 20),
@@ -136,7 +166,10 @@ class _ConvertLeadFormState extends ConsumerState<_ConvertLeadForm> {
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : const Text('Convert'),
               ),

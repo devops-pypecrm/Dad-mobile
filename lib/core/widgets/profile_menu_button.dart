@@ -7,7 +7,7 @@ import '../router/app_shell.dart';
 /// Brand purple — matches the nav bar/login button/greeting card/drawer
 /// header, used here instead of `theme.colorScheme.primary` (a Material3-
 /// seeded blue, not this brand color).
-const _brandPurple = Color(0xFF5B21B6);
+const _brandColor = Color(0xFF578732);
 
 /// Drop-in replacement for the AppBar's auto-generated hamburger icon on
 /// screens with a `Scaffold.drawer` set. There's no profile-photo upload
@@ -25,7 +25,7 @@ class ProfileMenuButton extends ConsumerWidget {
     return IconButton(
       icon: CircleAvatar(
         radius: 16,
-        backgroundColor: _brandPurple,
+        backgroundColor: _brandColor,
         child: Text(
           initial,
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),

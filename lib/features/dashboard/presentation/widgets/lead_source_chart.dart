@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/lead_source_stat.dart';
 
-const _brandPurple = Color(0xFF5B21B6);
+const _brandColor = Color(0xFF578732);
 
 // Same COLORS array as Dad-frontend/src/components/dashboard/LeadSourcesWidget.tsx:8,
 // cycled the same way (`COLORS[index % COLORS.length]`) so a given source
@@ -75,7 +75,7 @@ class LeadSourceChart extends StatelessWidget {
                       Text(
                         '$total',
                         style: theme.textTheme.titleLarge
-                            ?.copyWith(color: _brandPurple, fontWeight: FontWeight.bold),
+                            ?.copyWith(color: _brandColor, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         'leads',
@@ -130,7 +130,7 @@ class LeadSourceChart extends StatelessWidget {
             Text('Total leads', style: theme.textTheme.bodyMedium),
             Text(
               '$total',
-              style: theme.textTheme.titleMedium?.copyWith(color: _brandPurple, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(color: _brandColor, fontWeight: FontWeight.bold),
             ),
           ],
         ),

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -57,7 +59,9 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
 
-    await ref.read(createLeadControllerProvider.notifier).submit(
+    await ref
+        .read(createLeadControllerProvider.notifier)
+        .submit(
           phone: _phoneController.text.trim(),
           firstName: _firstNameController.text.trim(),
           lastName: _lastNameController.text.trim(),
@@ -68,7 +72,9 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
           source: _source,
           status: _status,
           assignedTo: _assignedTo,
-          potentialValue: double.tryParse(_potentialValueController.text.trim()),
+          potentialValue: double.tryParse(
+            _potentialValueController.text.trim(),
+          ),
         );
 
     final result = ref.read(createLeadControllerProvider).valueOrNull;
@@ -91,8 +97,15 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
   @override
   Widget build(BuildContext context) {
     final createState = ref.watch(createLeadControllerProvider);
-    final leadStatuses = ref.watch(sessionControllerProvider).valueOrNull?.organisation.leadStatuses;
-    final usersAsync = ref.watch(hierarchyUsersProvider);
+    final leadStatuses = ref
+        .watch(sessionControllerProvider)
+        .valueOrNull
+        ?.organisation
+        .leadStatuses;
+    // Server-scoped list, matching web's QuickAddLeadDialog assignee field
+    // (`getUsers()`) — not `hierarchyUsersProvider`, which is unrestricted
+    // and only correct as input to the Assign-lead picker's client-side BFS.
+    final usersAsync = ref.watch(scopedUsersProvider);
 
     ref.listen(createLeadControllerProvider, (previous, next) {
       final error = next.error;
@@ -105,8 +118,8 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
 
     _status ??= (leadStatuses != null && leadStatuses.isNotEmpty)
         ? (leadStatuses.where((o) => o.isDefault).isNotEmpty
-            ? leadStatuses.firstWhere((o) => o.isDefault).id
-            : leadStatuses.first.id)
+              ? leadStatuses.firstWhere((o) => o.isDefault).id
+              : leadStatuses.first.id)
         : 'new';
 
     return Scaffold(
@@ -116,18 +129,39 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
         // back-arrow detection — that's unreliable when this widget is
         // shown inside a `showModalBottomSheet` route instead of a normal
         // pushed route.
-        leading: IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.of(context).pop()),
+        leading: IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          // Extra bottom clearance beyond what `showQuickAddLeadSheet`'s
+          // `useSafeArea: true` already adds — some OEM Android skins
+          // (Color OS/Oppo, MIUI) under-report the gesture-nav bottom inset
+          // to Flutter, so `SafeArea` alone still left the "Add Lead" button
+          // tucked partly under the system nav bar on those devices. A hard
+          // floor on top of the reported inset guarantees real clearance
+          // regardless of what the OS claims (same pattern as AppShell's
+          // `_minBottomClearance` and the Leads FAB).
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            math.max(MediaQuery.paddingOf(context).bottom, 24) + 16,
+          ),
           children: [
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Phone *', border: OutlineInputBorder()),
-              validator: (value) => (value == null || value.trim().isEmpty) ? 'Phone is required' : null,
+              decoration: const InputDecoration(
+                labelText: 'Phone *',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) => (value == null || value.trim().isEmpty)
+                  ? 'Phone is required'
+                  : null,
             ),
             const SizedBox(height: 12),
             Row(
@@ -135,16 +169,24 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
                 Expanded(
                   child: TextFormField(
                     controller: _firstNameController,
-                    decoration: const InputDecoration(labelText: 'First name *', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'First name *',
+                      border: OutlineInputBorder(),
+                    ),
                     validator: (value) =>
-                        (value == null || value.trim().isEmpty) ? 'Required' : null,
+                        (value == null || value.trim().isEmpty)
+                        ? 'Required'
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
                     controller: _lastNameController,
-                    decoration: const InputDecoration(labelText: 'Last name', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'Last name',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
               ],
@@ -153,37 +195,60 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _secondaryPhoneController,
               keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(labelText: 'Secondary phone', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Secondary phone',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _companyController,
-              decoration: const InputDecoration(labelText: 'Company', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Company',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _enquiryAboutController,
-              decoration: const InputDecoration(labelText: 'Enquiry about', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Enquiry about',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 12),
             TextFormField(
               controller: _potentialValueController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'Potential value', border: OutlineInputBorder()),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Potential value',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               initialValue: _source,
-              decoration: const InputDecoration(labelText: 'Source', border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                labelText: 'Source',
+                border: OutlineInputBorder(),
+              ),
               items: [
                 for (final source in kSelectableLeadSources)
-                  DropdownMenuItem(value: source, child: Text(humanizeSnakeCase(source))),
+                  DropdownMenuItem(
+                    value: source,
+                    child: Text(humanizeSnakeCase(source)),
+                  ),
               ],
               onChanged: (value) => setState(() => _source = value ?? _source),
             ),
@@ -207,7 +272,11 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
             FilledButton(
               onPressed: createState.isLoading ? null : _submit,
               child: createState.isLoading
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2.5))
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2.5),
+                    )
                   : const Text('Add Lead'),
             ),
           ],
@@ -222,10 +291,16 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
 /// FAB. `isScrollControlled: true` lets the sheet grow to (near) full
 /// height instead of the default half-screen cap, and `useSafeArea: true`
 /// keeps it clear of the status bar — both needed since this form has
-/// considerably more fields than a typical bottom sheet.
+/// considerably more fields than a typical bottom sheet. `useRootNavigator:
+/// true` is required because the Leads tab lives inside `AppShell`'s
+/// `ShellRoute` — without it this sheet pushes onto the shell's nested
+/// Navigator and renders BEHIND the floating bottom nav bar (a plain
+/// `Scaffold.bottomNavigationBar`, always composited above `body`),
+/// burying the form's own Submit button under it.
 Future<void> showQuickAddLeadSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true,
     isScrollControlled: true,
     useSafeArea: true,
     builder: (context) => const FractionallySizedBox(

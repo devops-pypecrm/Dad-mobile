@@ -105,6 +105,7 @@ class SessionController extends _$SessionController {
   /// account-specific data, add it here too.
   void _invalidateAccountScopedCaches() {
     ref.invalidate(hierarchyUsersProvider);
+    ref.invalidate(scopedUsersProvider);
     ref.invalidate(notificationsControllerProvider);
     ref.invalidate(myDayProvider);
     ref.invalidate(followUpsListControllerProvider);
