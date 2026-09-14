@@ -22,6 +22,7 @@ class OpportunitiesListState with _$OpportunitiesListState {
     @Default(<Opportunity>[]) List<Opportunity> opportunities,
     @Default(1) int page,
     @Default(1) int totalPages,
+    @Default(0) int totalOpportunities,
     @Default(false) bool isLoadingMore,
     @Default(OpportunitiesScope.team) OpportunitiesScope scope,
     String? search,
@@ -54,6 +55,22 @@ class OpportunitiesListState with _$OpportunitiesListState {
 /// [OpportunitiesScope.mine].
 @riverpod
 class OpportunitiesList extends _$OpportunitiesList {
+  void hardReset() => state = const AsyncValue.loading();
+
+  // Set by app_router.dart's `/opportunities` route builder — which runs
+  // synchronously, before this notifier's `build()` ever starts — when
+  // opened from a Dashboard tile (Pipeline/Won/Lost Deals). `build()` below
+  // consumes (and clears) these for its OWN initial fetch instead of always
+  // fetching unfiltered and relying on a second `applyFilters` call to
+  // "correct" it afterward: that two-step approach raced `build()`'s own
+  // in-flight unfiltered fetch, which could resolve AFTER the filtered one
+  // and silently overwrite it — confirmed live (Won/Lost Deals tiles kept
+  // showing every stage). Fetching filtered from the very first call has no
+  // such race because there's only ever one fetch on entry.
+  static String? pendingInitialStage;
+  static DateTime? pendingInitialStartDate;
+  static DateTime? pendingInitialEndDate;
+
   String? _resolveOwnerId(String? ownerId, OpportunitiesScope scope) {
     if (scope == OpportunitiesScope.mine) {
       return ref.read(sessionControllerProvider).valueOrNull?.id;
@@ -64,11 +81,31 @@ class OpportunitiesList extends _$OpportunitiesList {
   @override
   Future<OpportunitiesListState> build() async {
     final repository = ref.watch(opportunitiesRepositoryProvider);
-    final result = await repository.getOpportunities(page: 1);
+
+    final stage = pendingInitialStage;
+    final startDate = pendingInitialStartDate;
+    final endDate = pendingInitialEndDate;
+    // Consume once — an unrelated later visit to Opportunities (e.g. the
+    // user backs out and opens it again from elsewhere) must start
+    // unfiltered, not silently reuse a stale pending filter.
+    pendingInitialStage = null;
+    pendingInitialStartDate = null;
+    pendingInitialEndDate = null;
+
+    final result = await repository.getOpportunities(
+      page: 1,
+      stage: stage,
+      startDate: startDate,
+      endDate: endDate,
+    );
     return OpportunitiesListState(
       opportunities: result.opportunities,
       page: result.page,
       totalPages: result.totalPages,
+      totalOpportunities: result.totalOpportunities,
+      stage: stage,
+      startDate: startDate,
+      endDate: endDate,
     );
   }
 
@@ -94,6 +131,7 @@ class OpportunitiesList extends _$OpportunitiesList {
           opportunities: [...current.opportunities, ...result.opportunities],
           page: result.page,
           totalPages: result.totalPages,
+          totalOpportunities: result.totalOpportunities,
           isLoadingMore: false,
         ),
       );
@@ -118,7 +156,9 @@ class OpportunitiesList extends _$OpportunitiesList {
     // while this fetch is in flight (and if it fails) instead of wiping to a
     // bare loading/error with nothing to show — same fix as
     // `LeadsList.applyFilters`.
-    state = const AsyncValue<OpportunitiesListState>.loading().copyWithPrevious(state);
+    state = const AsyncValue<OpportunitiesListState>.loading().copyWithPrevious(
+      state,
+    );
     final result = await AsyncValue.guard(() async {
       final repository = ref.read(opportunitiesRepositoryProvider);
       final result = await repository.getOpportunities(
@@ -135,6 +175,7 @@ class OpportunitiesList extends _$OpportunitiesList {
         opportunities: result.opportunities,
         page: result.page,
         totalPages: result.totalPages,
+        totalOpportunities: result.totalOpportunities,
         search: search,
         stage: stage,
         type: type,
@@ -158,7 +199,10 @@ class OpportunitiesList extends _$OpportunitiesList {
         stage: current?.stage,
         type: current?.type,
         leadSource: current?.leadSource,
-        ownerId: _resolveOwnerId(current?.ownerId, current?.scope ?? OpportunitiesScope.team),
+        ownerId: _resolveOwnerId(
+          current?.ownerId,
+          current?.scope ?? OpportunitiesScope.team,
+        ),
         startDate: current?.startDate,
         endDate: current?.endDate,
       );
@@ -166,6 +210,7 @@ class OpportunitiesList extends _$OpportunitiesList {
         opportunities: result.opportunities,
         page: result.page,
         totalPages: result.totalPages,
+        totalOpportunities: result.totalOpportunities,
       );
     });
   }

@@ -31,17 +31,26 @@ final latestMobileReleaseProvider =
 // ignore: unused_element
 typedef LatestMobileReleaseRef = AutoDisposeFutureProviderRef<AppRelease?>;
 String _$currentPackageInfoHash() =>
-    r'7e59829d6e685a0494b8bb96e3e9654fa274b4e7';
+    r'0b54dba8a830c2970b22202b1dc36942acfedc66';
 
 /// This running build's own version, read once via `package_info_plus`
 /// (backed by the platform's real package manager metadata, not the
 /// `pubspec.yaml` value directly — the two can drift if a build overrides
 /// `--build-name`/`--build-number`).
 ///
+/// Guarded the same way as [latestMobileReleaseProvider] above — this used
+/// to have no try/catch at all, so if the plugin channel threw for any
+/// reason (e.g. queried before it's fully registered), the exception
+/// propagated through [availableUpdateProvider] and turned the whole chain
+/// into `AsyncError`. [UpdateChecker] reads `next.valueOrNull`, which
+/// returns null for both "no update" and "errored" — so a real update was
+/// silently indistinguishable from "you're already up to date," and the
+/// popup just never appeared with no visible symptom anywhere.
+///
 /// Copied from [currentPackageInfo].
 @ProviderFor(currentPackageInfo)
 final currentPackageInfoProvider =
-    AutoDisposeFutureProvider<PackageInfo>.internal(
+    AutoDisposeFutureProvider<PackageInfo?>.internal(
       currentPackageInfo,
       name: r'currentPackageInfoProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -53,8 +62,8 @@ final currentPackageInfoProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentPackageInfoRef = AutoDisposeFutureProviderRef<PackageInfo>;
-String _$availableUpdateHash() => r'e0119bf94da331f10210ebe704094c6336dfc6d4';
+typedef CurrentPackageInfoRef = AutoDisposeFutureProviderRef<PackageInfo?>;
+String _$availableUpdateHash() => r'66a1ab2070cde39760408ebd037cba153a6689cc';
 
 /// Non-null only when the server's `versionCode` is strictly newer than
 /// this running build's own build number — the single source of truth

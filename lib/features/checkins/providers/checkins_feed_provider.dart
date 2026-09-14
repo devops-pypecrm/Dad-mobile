@@ -10,6 +10,8 @@ part 'checkins_feed_provider.g.dart';
 /// Dad-backend/src/controllers/checkInController.ts).
 @Riverpod(keepAlive: true)
 class CheckInsFeed extends _$CheckInsFeed {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<List<CheckIn>> build() {
     final repository = ref.watch(checkInsRepositoryProvider);

@@ -6,23 +6,22 @@ import '../../auth/providers/session_provider.dart';
 import '../../reports/domain/top_performer.dart';
 import '../data/dashboard_repository.dart';
 import '../domain/branch.dart';
+import '../domain/dashboard_date_range.dart';
 import '../domain/dashboard_summary.dart';
+import '../domain/lead_health.dart';
 import '../domain/lead_source_stat.dart';
 import '../domain/sales_forecast.dart';
 import '../domain/sales_target.dart';
 
 part 'dashboard_provider.g.dart';
 
-/// `YYYY-MM`, defaults to the current month. Drives the Performance
-/// Overview grid; null means "all-time" (backend's default when the
-/// `month` query param is omitted) — mirrors `selectedMonth` in
-/// Dad-frontend/src/pages/Dashboard.tsx, where `"all"` in the UI maps to
-/// an omitted param, same as here.
-final dashboardMonthProvider = StateProvider<String?>(
-  (ref) {
-    final now = DateTime.now();
-    return '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}';
-  },
+/// Drives the Performance Overview grid — mirrors the *current* web
+/// dashboard (Dad-frontend/src/pages/DashboardV2.tsx's `DateRangeDropdown`
+/// with `presets={['allTime', 'thisMonth', 'lastMonth', 'custom']}`), not
+/// the older single-month picker `Dashboard.tsx` (now `/old-dashboard`)
+/// used. Defaults to "This Month", matching `getDefaultDateRange()` there.
+final dashboardDateRangeProvider = StateProvider<DashboardDateRange>(
+  (ref) => DashboardDateRange.thisMonth(),
 );
 
 /// Selected branch id, or null for "All Branches" — mirrors
@@ -47,10 +46,14 @@ Future<List<Branch>> dashboardBranches(AutoDisposeFutureProviderRef<List<Branch>
 @riverpod
 Future<DashboardSummary> dashboardSummary(AutoDisposeFutureProviderRef<DashboardSummary> ref) async {
   final repository = ref.watch(dashboardRepositoryProvider);
-  final month = ref.watch(dashboardMonthProvider);
+  final range = ref.watch(dashboardDateRangeProvider);
   final branchId = ref.watch(dashboardBranchProvider);
 
-  final stats = await repository.getStats(month: month, branchId: branchId);
+  final stats = await repository.getStats(
+    startDate: range.apiStartDate,
+    endDate: range.apiEndDate,
+    branchId: branchId,
+  );
   final targets = await repository.getMyTargets();
 
   SalesTarget? currentTarget;
@@ -67,9 +70,24 @@ Future<DashboardSummary> dashboardSummary(AutoDisposeFutureProviderRef<Dashboard
 
 @riverpod
 Future<SalesForecast> dashboardForecast(AutoDisposeFutureProviderRef<SalesForecast> ref) {
-  final month = ref.watch(dashboardMonthProvider);
+  final range = ref.watch(dashboardDateRangeProvider);
   final branchId = ref.watch(dashboardBranchProvider);
-  return ref.watch(dashboardRepositoryProvider).getForecast(month: month, branchId: branchId);
+  return ref
+      .watch(dashboardRepositoryProvider)
+      .getForecast(startDate: range.apiStartDate, endDate: range.apiEndDate, branchId: branchId);
+}
+
+/// Backs the "Unattended Leads"/"No Activity Leads" tiles — watching the
+/// same date-range/branch providers as [dashboardForecast] is what makes
+/// those tiles automatically respect the dashboard's existing filter, no
+/// separate plumbing needed.
+@riverpod
+Future<LeadHealth> dashboardLeadHealth(AutoDisposeFutureProviderRef<LeadHealth> ref) {
+  final range = ref.watch(dashboardDateRangeProvider);
+  final branchId = ref.watch(dashboardBranchProvider);
+  return ref
+      .watch(dashboardRepositoryProvider)
+      .getLeadHealth(startDate: range.apiStartDate, endDate: range.apiEndDate, branchId: branchId);
 }
 
 @riverpod

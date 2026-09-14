@@ -25,7 +25,6 @@ class AssigneePickerField extends StatelessWidget {
       isExpanded: true,
       decoration: const InputDecoration(
         labelText: 'Assign To',
-        border: OutlineInputBorder(),
       ),
       items: [
         const DropdownMenuItem(value: null, child: Text('Unassigned')),

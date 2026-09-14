@@ -7,6 +7,7 @@ import '../domain/installment_input.dart';
 import '../domain/opportunities_page.dart';
 import '../domain/opportunity.dart';
 import '../domain/opportunity_note.dart';
+import '../domain/opportunity_timeline_item.dart';
 
 part 'opportunities_repository.g.dart';
 
@@ -50,8 +51,8 @@ class OpportunitiesRepository {
           if (ownerId != null && ownerId.isNotEmpty) 'ownerId': ownerId,
           if (type != null && type.isNotEmpty) 'type': type,
           if (leadSource != null && leadSource.isNotEmpty) 'leadSource': leadSource,
-          if (startDate != null) 'startDate': startDate.toIso8601String(),
-          if (endDate != null) 'endDate': endDate.toIso8601String(),
+          if (startDate != null) 'startDate': startDate.toUtc().toIso8601String(),
+          if (endDate != null) 'endDate': endDate.toUtc().toIso8601String(),
         },
       );
       return OpportunitiesPage.fromJson(response.data!);
@@ -93,7 +94,7 @@ class OpportunitiesRepository {
           if (stage != null) 'stage': stage,
           if (amount != null) 'amount': amount,
           if (probability != null) 'probability': probability,
-          if (closeDate != null) 'closeDate': closeDate.toIso8601String(),
+          if (closeDate != null) 'closeDate': closeDate.toUtc().toIso8601String(),
           if (leadStatus != null) 'leadStatus': leadStatus,
         },
       );
@@ -162,6 +163,30 @@ class OpportunitiesRepository {
     }
   }
 
+  /// `POST /api/emi/installments/:id/pay` — marks one installment paid in
+  /// full (Dad-backend/src/controllers/emiController.ts `markInstallmentPaid`).
+  /// Mirrors the web EMISchedulePanel's "Pay" button, which only shows for
+  /// `pending`/`overdue` installments.
+  Future<void> markInstallmentPaid(String installmentId) async {
+    try {
+      await _dio.post<Map<String, dynamic>>('/emi/installments/$installmentId/pay');
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `DELETE /api/emi/installments/:id` — removes one installment from its
+  /// schedule. Mirrors the web panel's trash-icon action, same scope (any
+  /// installment, not just pending ones — the backend itself is the one
+  /// source of truth on whether a given installment may be deleted).
+  Future<void> deleteInstallment(String installmentId) async {
+    try {
+      await _dio.delete<void>('/emi/installments/$installmentId');
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
   /// `POST /api/interactions` (the generic endpoint, unlike leads' path-
   /// scoped one) — `opportunity` is a sibling field alongside `type`, not
   /// nested, per `interactionController.ts`'s `createInteractionGeneric`.
@@ -174,7 +199,7 @@ class OpportunitiesRepository {
           'type': 'note',
           'subject': 'Note',
           'description': description,
-          'date': DateTime.now().toIso8601String(),
+          'date': DateTime.now().toUtc().toIso8601String(),
         },
       );
     } on DioException catch (e) {
@@ -196,6 +221,21 @@ class OpportunitiesRepository {
           .cast<Map<String, dynamic>>()
           .map(OpportunityNote.fromJson)
           .where((note) => note.opportunityId == opportunityId)
+          .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/timeline/opportunity/:id` — the combined activity feed for
+  /// the "Timeline & Files" tab (see `OpportunityTimelineItem`'s doc
+  /// comment). Already sorted newest-first by the backend.
+  Future<List<OpportunityTimelineItem>> getTimeline(String opportunityId) async {
+    try {
+      final response = await _dio.get<List<dynamic>>('/timeline/opportunity/$opportunityId');
+      return response.data!
+          .cast<Map<String, dynamic>>()
+          .map(OpportunityTimelineItem.fromJson)
           .toList();
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);

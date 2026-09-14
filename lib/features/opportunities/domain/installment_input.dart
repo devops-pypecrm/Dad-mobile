@@ -10,7 +10,7 @@ class InstallmentInput {
   final double amount;
 
   Map<String, dynamic> toJson() => {
-        'dueDate': dueDate.toIso8601String(),
+        'dueDate': dueDate.toUtc().toIso8601String(),
         'amount': amount,
       };
 }

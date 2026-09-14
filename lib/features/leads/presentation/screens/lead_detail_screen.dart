@@ -6,6 +6,7 @@ import '../../../../core/utils/hex_color.dart';
 import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../../../core/utils/text_format.dart';
 import '../../../../core/utils/url_launch_helper.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/fading_wheel_picker.dart';
 import '../../../auth/providers/session_provider.dart';
@@ -143,9 +144,7 @@ class LeadDetailScreen extends ConsumerWidget {
     ref.listen(leadStatusControllerProvider(leadId), (previous, next) {
       final error = next.error;
       if (error != null && !next.isLoading) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(error.toString())));
+        showAppSnackBar(context, error.toString(), isError: true);
       }
     });
 

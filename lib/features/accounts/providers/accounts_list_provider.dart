@@ -24,6 +24,8 @@ class AccountsListState with _$AccountsListState {
 
 @riverpod
 class AccountsList extends _$AccountsList {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<AccountsListState> build() async {
     final repository = ref.watch(accountsRepositoryProvider);

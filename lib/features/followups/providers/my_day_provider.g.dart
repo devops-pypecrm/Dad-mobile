@@ -6,7 +6,7 @@ part of 'my_day_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myDayHash() => r'd22597e17ba5edc05450422e51d7bd2171565314';
+String _$myDayHash() => r'36966a27073b22ed2316441fd9fb1c0ea833eaf9';
 
 /// "My Day" — today's follow-ups. Loads the backend's default view (omitting
 /// `status` forwards to the server default of `not_started`/`in_progress`,

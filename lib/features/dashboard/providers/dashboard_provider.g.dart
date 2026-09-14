@@ -31,7 +31,7 @@ final dashboardBranchesProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DashboardBranchesRef = AutoDisposeFutureProviderRef<List<Branch>>;
-String _$dashboardSummaryHash() => r'41887c04b9fb195d9d3e6e5c9d4907efa93ed953';
+String _$dashboardSummaryHash() => r'34e4298a83f0e1553903f0e68e388dc9f944fcd8';
 
 /// See also [dashboardSummary].
 @ProviderFor(dashboardSummary)
@@ -49,7 +49,7 @@ final dashboardSummaryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DashboardSummaryRef = AutoDisposeFutureProviderRef<DashboardSummary>;
-String _$dashboardForecastHash() => r'cfa9b1d41342d08044f8aa19c73d411162a3c10a';
+String _$dashboardForecastHash() => r'883d744f08b87df5464300181593d2da93f66597';
 
 /// See also [dashboardForecast].
 @ProviderFor(dashboardForecast)
@@ -67,6 +67,30 @@ final dashboardForecastProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DashboardForecastRef = AutoDisposeFutureProviderRef<SalesForecast>;
+String _$dashboardLeadHealthHash() =>
+    r'93099dd1353aa46554e0a61bf853a8061ef5373b';
+
+/// Backs the "Unattended Leads"/"No Activity Leads" tiles — watching the
+/// same date-range/branch providers as [dashboardForecast] is what makes
+/// those tiles automatically respect the dashboard's existing filter, no
+/// separate plumbing needed.
+///
+/// Copied from [dashboardLeadHealth].
+@ProviderFor(dashboardLeadHealth)
+final dashboardLeadHealthProvider =
+    AutoDisposeFutureProvider<LeadHealth>.internal(
+      dashboardLeadHealth,
+      name: r'dashboardLeadHealthProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$dashboardLeadHealthHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DashboardLeadHealthRef = AutoDisposeFutureProviderRef<LeadHealth>;
 String _$leadSourcesHash() => r'34777615148cc4af034a39687f24d97e7efe4097';
 
 /// See also [leadSources].

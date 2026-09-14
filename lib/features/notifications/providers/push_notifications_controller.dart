@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/router/app_router.dart';
+import '../../app_updates/providers/app_update_provider.dart';
 import '../data/local_notifications_service.dart';
 import '../data/notifications_repository.dart';
 import 'notifications_controller.dart';
@@ -19,6 +20,8 @@ part 'push_notifications_controller.g.dart';
 /// registration needs a valid JWT.
 @Riverpod(keepAlive: true)
 class PushNotificationsController extends _$PushNotificationsController {
+  void hardReset() => state = const AsyncValue.loading();
+
   StreamSubscription<String>? _tokenRefreshSub;
   StreamSubscription<RemoteMessage>? _foregroundSub;
   StreamSubscription<RemoteMessage>? _openedAppSub;
@@ -64,6 +67,17 @@ class PushNotificationsController extends _$PushNotificationsController {
       // triggering the same query invalidation, without needing a
       // separate socket client.
       ref.read(notificationsControllerProvider.notifier).refresh();
+
+      // `notifyAppUpdate.ts` (run by `publish_release.sh` right after every
+      // publish, or by hand via `notify_app_update.sh`) sends this exact
+      // `type` so a newly-published release surfaces the update dialog
+      // immediately in an already-open app — not just on the next cold
+      // launch's version check. Invalidating here is enough: `UpdateChecker`
+      // is always mounted and reactively watches the same provider chain,
+      // so it shows the dialog the moment this recomputes.
+      if (message.data['type'] == 'app_update') {
+        ref.invalidate(latestMobileReleaseProvider);
+      }
     });
 
     _openedAppSub = FirebaseMessaging.onMessageOpenedApp.listen((message) {
@@ -74,6 +88,31 @@ class PushNotificationsController extends _$PushNotificationsController {
     final initialMessage = await messaging.getInitialMessage();
     if (initialMessage != null) {
       _routeFromPayload(initialMessage.data);
+    }
+  }
+
+  /// Re-POSTs this device's current FCM token against whichever account is
+  /// now authenticated. Must be called after every successful `login()`,
+  /// `switchToAccount()`, and `addAccount()` in `session_provider.dart` —
+  /// `build()` above only ever runs ONCE per app process (this provider is
+  /// `keepAlive`, and it's only watched by `DashboardScreen`, which doesn't
+  /// remount when switching between already-logged-in accounts or when
+  /// logging out and back in within the same running app). Without this,
+  /// re-registration for the newly active user never happens until the
+  /// next full app restart — meaning switching accounts (or logging out and
+  /// back into a different one) silently leaves push notifications
+  /// pointed at the PREVIOUS account's user row on this device. This is
+  /// safe to call even before `build()` has ever run (fresh install, first
+  /// login) — worst case it duplicates the registration `build()` is about
+  /// to do itself, which is harmless (`POST` is idempotent).
+  Future<void> reRegisterCurrentToken() async {
+    if (kIsWeb) return;
+    try {
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) await _registerToken(token);
+    } catch (_) {
+      // Same best-effort contract as `_registerToken` — never let push
+      // re-registration block or fail the login/switch flow it's called from.
     }
   }
 
@@ -106,7 +145,14 @@ class PushNotificationsController extends _$PushNotificationsController {
     final relatedResource = data['relatedResource'] as String?;
     final relatedId = data['relatedId'] as String?;
 
-    if (relatedResource == 'Lead' && relatedId != null && relatedId.isNotEmpty) {
+    if (data['type'] == 'app_update') {
+      // Tapped an update-available notification while backgrounded/killed
+      // (the foreground case is handled directly in `onMessage` above,
+      // without needing a tap at all) — go straight to the Updates screen
+      // rather than the dashboard, since that's the entire reason this
+      // notification exists.
+      router.push(AppRoutes.updates);
+    } else if (relatedResource == 'Lead' && relatedId != null && relatedId.isNotEmpty) {
       router.push('/leads/$relatedId');
     } else if (relatedResource == 'FollowUp') {
       router.push(AppRoutes.followups);

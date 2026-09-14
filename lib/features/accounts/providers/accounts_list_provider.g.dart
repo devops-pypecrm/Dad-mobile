@@ -6,7 +6,7 @@ part of 'accounts_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$accountsListHash() => r'3a463e811ea30601bf45de2627f98b4c810d107e';
+String _$accountsListHash() => r'f1c45159b9f7bb422112996953e89ed6e9d196d6';
 
 /// See also [AccountsList].
 @ProviderFor(AccountsList)

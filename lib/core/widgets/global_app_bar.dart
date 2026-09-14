@@ -31,6 +31,34 @@ class GlobalAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
+  Future<void> _confirmLogout(BuildContext context, WidgetRef ref) async {
+    // Wording depends on whether logging out actually lands on the login
+    // screen or just switches to another saved account — see
+    // `SessionController.logout`'s doc comment for the mechanics.
+    final hasOtherSaved =
+        (await ref.read(sessionControllerProvider.notifier).loadSavedAccounts()).isNotEmpty;
+    if (!context.mounted) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Log out?'),
+        content: Text(
+          hasOtherSaved
+              ? "You'll be switched to another account you're still signed into on this device."
+              : "You'll need to sign in again to use this account.",
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Log Out')),
+        ],
+      ),
+    );
+    if (confirmed == true) {
+      await ref.read(sessionControllerProvider.notifier).logout();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPanelOpen = ref.watch(notificationPanelOpenProvider);
@@ -91,7 +119,7 @@ class GlobalAppBar extends ConsumerWidget implements PreferredSizeWidget {
           collapsed: isPanelOpen,
           child: IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () => ref.read(sessionControllerProvider.notifier).logout(),
+            onPressed: () => _confirmLogout(context, ref),
           ),
         ),
       ],

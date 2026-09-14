@@ -7,7 +7,7 @@ part of 'opportunity_actions_controller.dart';
 // **************************************************************************
 
 String _$opportunityActionsControllerHash() =>
-    r'10459e8656f16c960b8ecdacf0bbb1ff7fd291a0';
+    r'd18c47eb52c9063d93f66f05d1c47ccef15d1be6';
 
 /// Copied from Dart SDK
 class _SystemHash {

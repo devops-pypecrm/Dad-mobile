@@ -20,6 +20,12 @@ import '../widgets/opportunity_card.dart';
 // filter button, and status accents.
 const _brandColor = Color(0xFF578732);
 
+const _tileStageTitles = {
+  'expected': 'Pipeline',
+  'closed_won': 'Won Deals',
+  'closed_lost': 'Lost Deals',
+};
+
 class OpportunitiesListScreen extends ConsumerStatefulWidget {
   const OpportunitiesListScreen({super.key});
 
@@ -102,7 +108,22 @@ class _OpportunitiesListScreenState extends ConsumerState<OpportunitiesListScree
       // route (`/opportunities`), not one of the 5 tab-root screens inside
       // `AppShell`'s `ShellRoute`, so it needs the default back button
       // `GlobalAppBar` deliberately suppresses for its tab-root use case.
-      appBar: AppBar(title: const Text('Opportunities')),
+      appBar: AppBar(
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(_tileStageTitles[data?.stage] ?? 'Opportunities'),
+            if (data != null)
+              Text(
+                '${data.totalOpportunities} ${data.totalOpportunities == 1 ? 'result' : 'results'}',
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           if (showTeamTab)

@@ -153,7 +153,7 @@ class _OpportunityNotesProviderElement
 }
 
 String _$opportunityNotesControllerHash() =>
-    r'578ac48926847aade5e4d7ac7b18e4c62f135f6b';
+    r'bb8d030506fa37545c25e2a62cb5d9df9e2777d2';
 
 abstract class _$OpportunityNotesController
     extends BuildlessAutoDisposeAsyncNotifier<void> {

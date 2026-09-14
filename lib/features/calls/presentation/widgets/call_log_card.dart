@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/utils/role_utils.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../data/calls_repository.dart';
 import '../../domain/call_log.dart';
@@ -32,6 +33,15 @@ const _statusColors = {
   'initiated': Color(0xFF2563EB),
 };
 
+/// `callStatus: 'failed'` doesn't mean sync/upload failed — it's the
+/// backend's literal word for "0-second duration" (Dad-backend/src/
+/// controllers/androidController.ts), which for a call that was never
+/// connected (unanswered/instantly-hung-up-on) is normal, expected data,
+/// not a technical failure. The raw word reads like something broke, so
+/// it's relabeled for display only — the underlying stored value (used
+/// for filtering/reports) is untouched.
+String _displayStatus(String status) => status == 'failed' ? 'Not Answered' : status;
+
 class CallLogCard extends ConsumerWidget {
   const CallLogCard({super.key, required this.call});
 
@@ -40,7 +50,6 @@ class CallLogCard extends ConsumerWidget {
   Future<void> _download(BuildContext context) async {
     final url = call.playableRecordingUrl;
     if (url == null) return;
-    final messenger = ScaffoldMessenger.of(context);
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       // Opens externally (browser/media app) rather than in-app — the
@@ -48,7 +57,7 @@ class CallLogCard extends ConsumerWidget {
       // file-storage/share dependency: the browser handles saving it.
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (context.mounted) {
-      messenger.showSnackBar(const SnackBar(content: Text('Could not open the recording.')));
+      showAppSnackBar(context, 'Could not open the recording.', isError: true);
     }
   }
 
@@ -68,13 +77,12 @@ class CallLogCard extends ConsumerWidget {
       ),
     );
     if (confirmed != true) return;
-    final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(callsRepositoryProvider).deleteRecording(call.id);
       ref.read(callLogsListProvider.notifier).removeRecordingLocally(call.id);
-      messenger.showSnackBar(const SnackBar(content: Text('Recording deleted')));
+      if (context.mounted) showAppSnackBar(context, 'Recording deleted');
     } catch (_) {
-      messenger.showSnackBar(const SnackBar(content: Text('Failed to delete recording')));
+      if (context.mounted) showAppSnackBar(context, 'Failed to delete recording', isError: true);
     }
   }
 
@@ -162,7 +170,7 @@ class CallLogCard extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
-                            call.callStatus!,
+                            _displayStatus(call.callStatus!),
                             style: theme.textTheme.labelSmall?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
                           ),
                         ),

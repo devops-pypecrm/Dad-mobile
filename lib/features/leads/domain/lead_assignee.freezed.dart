@@ -149,9 +149,9 @@ class __$$LeadAssigneeImplCopyWithImpl<$Res>
 class _$LeadAssigneeImpl implements _LeadAssignee {
   const _$LeadAssigneeImpl({
     this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
+    this.firstName = '',
+    this.lastName = '',
+    this.email = '',
   });
 
   factory _$LeadAssigneeImpl.fromJson(Map<String, dynamic> json) =>
@@ -160,10 +160,13 @@ class _$LeadAssigneeImpl implements _LeadAssignee {
   @override
   final String? id;
   @override
+  @JsonKey()
   final String firstName;
   @override
+  @JsonKey()
   final String lastName;
   @override
+  @JsonKey()
   final String email;
 
   @override
@@ -205,9 +208,9 @@ class _$LeadAssigneeImpl implements _LeadAssignee {
 abstract class _LeadAssignee implements LeadAssignee {
   const factory _LeadAssignee({
     final String? id,
-    required final String firstName,
-    required final String lastName,
-    required final String email,
+    final String firstName,
+    final String lastName,
+    final String email,
   }) = _$LeadAssigneeImpl;
 
   factory _LeadAssignee.fromJson(Map<String, dynamic> json) =

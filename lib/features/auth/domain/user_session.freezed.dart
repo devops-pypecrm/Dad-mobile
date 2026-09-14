@@ -31,6 +31,14 @@ mixin _$UserSession {
   /// `role`, which drives permissions. Nullable: most seeded/older users
   /// never had it set. See `UserSession.displayTitle` for the fallback.
   String? get position => throw _privateConstructorUsedError;
+  String? get phone => throw _privateConstructorUsedError;
+
+  /// URL to the user's uploaded profile photo (`User.profileImage` on the
+  /// backend) — set via `PUT /api/profile`, uploaded through the same
+  /// `/api/upload/image` endpoint check-in photos use. Absent for the
+  /// (still common) case of a user who has never uploaded one, in which
+  /// case [initial] is the fallback everywhere an avatar is shown.
+  String? get profileImage => throw _privateConstructorUsedError;
   bool get isBranchManager => throw _privateConstructorUsedError;
   Organisation get organisation => throw _privateConstructorUsedError;
   String? get branchId => throw _privateConstructorUsedError;
@@ -63,6 +71,8 @@ abstract class $UserSessionCopyWith<$Res> {
     String email,
     String role,
     String? position,
+    String? phone,
+    String? profileImage,
     bool isBranchManager,
     Organisation organisation,
     String? branchId,
@@ -93,6 +103,8 @@ class _$UserSessionCopyWithImpl<$Res, $Val extends UserSession>
     Object? email = null,
     Object? role = null,
     Object? position = freezed,
+    Object? phone = freezed,
+    Object? profileImage = freezed,
     Object? isBranchManager = null,
     Object? organisation = null,
     Object? branchId = freezed,
@@ -123,6 +135,14 @@ class _$UserSessionCopyWithImpl<$Res, $Val extends UserSession>
             position: freezed == position
                 ? _value.position
                 : position // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            phone: freezed == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            profileImage: freezed == profileImage
+                ? _value.profileImage
+                : profileImage // ignore: cast_nullable_to_non_nullable
                       as String?,
             isBranchManager: null == isBranchManager
                 ? _value.isBranchManager
@@ -172,6 +192,8 @@ abstract class _$$UserSessionImplCopyWith<$Res>
     String email,
     String role,
     String? position,
+    String? phone,
+    String? profileImage,
     bool isBranchManager,
     Organisation organisation,
     String? branchId,
@@ -202,6 +224,8 @@ class __$$UserSessionImplCopyWithImpl<$Res>
     Object? email = null,
     Object? role = null,
     Object? position = freezed,
+    Object? phone = freezed,
+    Object? profileImage = freezed,
     Object? isBranchManager = null,
     Object? organisation = null,
     Object? branchId = freezed,
@@ -232,6 +256,14 @@ class __$$UserSessionImplCopyWithImpl<$Res>
         position: freezed == position
             ? _value.position
             : position // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        phone: freezed == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        profileImage: freezed == profileImage
+            ? _value.profileImage
+            : profileImage // ignore: cast_nullable_to_non_nullable
                   as String?,
         isBranchManager: null == isBranchManager
             ? _value.isBranchManager
@@ -264,6 +296,8 @@ class _$UserSessionImpl extends _UserSession {
     required this.email,
     required this.role,
     this.position,
+    this.phone,
+    this.profileImage,
     this.isBranchManager = false,
     required this.organisation,
     this.branchId,
@@ -290,6 +324,16 @@ class _$UserSessionImpl extends _UserSession {
   @override
   final String? position;
   @override
+  final String? phone;
+
+  /// URL to the user's uploaded profile photo (`User.profileImage` on the
+  /// backend) — set via `PUT /api/profile`, uploaded through the same
+  /// `/api/upload/image` endpoint check-in photos use. Absent for the
+  /// (still common) case of a user who has never uploaded one, in which
+  /// case [initial] is the fallback everywhere an avatar is shown.
+  @override
+  final String? profileImage;
+  @override
   @JsonKey()
   final bool isBranchManager;
   @override
@@ -304,7 +348,7 @@ class _$UserSessionImpl extends _UserSession {
 
   @override
   String toString() {
-    return 'UserSession(id: $id, firstName: $firstName, lastName: $lastName, email: $email, role: $role, position: $position, isBranchManager: $isBranchManager, organisation: $organisation, branchId: $branchId, token: $token)';
+    return 'UserSession(id: $id, firstName: $firstName, lastName: $lastName, email: $email, role: $role, position: $position, phone: $phone, profileImage: $profileImage, isBranchManager: $isBranchManager, organisation: $organisation, branchId: $branchId, token: $token)';
   }
 
   @override
@@ -321,6 +365,9 @@ class _$UserSessionImpl extends _UserSession {
             (identical(other.role, role) || other.role == role) &&
             (identical(other.position, position) ||
                 other.position == position) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.profileImage, profileImage) ||
+                other.profileImage == profileImage) &&
             (identical(other.isBranchManager, isBranchManager) ||
                 other.isBranchManager == isBranchManager) &&
             (identical(other.organisation, organisation) ||
@@ -340,6 +387,8 @@ class _$UserSessionImpl extends _UserSession {
     email,
     role,
     position,
+    phone,
+    profileImage,
     isBranchManager,
     organisation,
     branchId,
@@ -368,6 +417,8 @@ abstract class _UserSession extends UserSession {
     required final String email,
     required final String role,
     final String? position,
+    final String? phone,
+    final String? profileImage,
     final bool isBranchManager,
     required final Organisation organisation,
     final String? branchId,
@@ -394,6 +445,16 @@ abstract class _UserSession extends UserSession {
   /// never had it set. See `UserSession.displayTitle` for the fallback.
   @override
   String? get position;
+  @override
+  String? get phone;
+
+  /// URL to the user's uploaded profile photo (`User.profileImage` on the
+  /// backend) — set via `PUT /api/profile`, uploaded through the same
+  /// `/api/upload/image` endpoint check-in photos use. Absent for the
+  /// (still common) case of a user who has never uploaded one, in which
+  /// case [initial] is the fallback everywhere an avatar is shown.
+  @override
+  String? get profileImage;
   @override
   bool get isBranchManager;
   @override

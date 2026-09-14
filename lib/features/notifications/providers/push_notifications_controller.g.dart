@@ -7,7 +7,7 @@ part of 'push_notifications_controller.dart';
 // **************************************************************************
 
 String _$pushNotificationsControllerHash() =>
-    r'e29cddd58b86599941c6aa2e9f26879fb57c88f9';
+    r'03c1c337b9ad7ebaa1e13d41141ab136b637b5bc';
 
 /// Wires FCM end to end: requests permission, registers/refreshes the
 /// device token against `POST /api/users/device-token`, shows a local

@@ -1,5 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../followups/providers/followups_list_controller.dart';
 import '../data/leads_repository.dart';
 import 'lead_detail_provider.dart';
 import 'leads_list_provider.dart';
@@ -31,6 +32,14 @@ class LeadStatusController extends _$LeadStatusController {
       );
       ref.invalidate(leadDetailProvider(leadId));
       ref.read(leadsListProvider.notifier).refresh();
+      // Setting `nextFollowUp` auto-reschedules (or creates) a FollowUp row
+      // server-side (see this class's doc comment) — without this, the
+      // Follow Ups tab's own `keepAlive` cache never learns about that
+      // change and keeps showing the old due date/overdue status until
+      // something else happens to trigger a refetch.
+      if (nextFollowUp != null) {
+        await ref.read(followUpsListControllerProvider.notifier).refresh();
+      }
     });
   }
 }

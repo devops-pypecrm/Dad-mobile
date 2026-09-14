@@ -17,12 +17,13 @@ class WheelResult<T> {
 /// active (bold, full size/opacity), items further from center shrink and
 /// fade out, and a top/bottom gradient blends the ends into the popup's own
 /// background — no border/outline anywhere. Originally built for the
-/// Dashboard's Branch/Month filters (`showBranchPickerPopup`/
-/// `showMonthYearPickerPopup`, which still own their own dialog layout —
-/// two wheels side by side, an "All Time" shortcut) and extracted here so
-/// other single-value pickers (e.g. the Lead Detail status picker via
-/// [showWheelSelectPopup]) get the same "scroll to the value you want,
-/// centered item is the active one" feel instead of reimplementing it.
+/// Dashboard's Branch/Month filters (`showBranchPickerPopup`, which still
+/// owns its own dialog layout) — the Dashboard's date filter has since moved
+/// to a plain preset list (see `showDashboardDateRangeFilterSheet`, not
+/// wheel-based) but this is still extracted here so other single-value
+/// pickers (e.g. the Lead Detail status picker via [showWheelSelectPopup])
+/// get the same "scroll to the value you want, centered item is the active
+/// one" feel instead of reimplementing it.
 class FadingWheel extends StatefulWidget {
   const FadingWheel({
     super.key,

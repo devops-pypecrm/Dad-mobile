@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../domain/call_settings.dart';
 import '../../providers/call_settings_provider.dart';
@@ -26,18 +27,13 @@ class CallRecordingSettingsScreen extends ConsumerWidget {
           settingsAsync.when(
             data: (_) => TextButton(
               onPressed: () async {
-                final messenger = ScaffoldMessenger.of(context);
                 await controller.save();
                 if (!context.mounted) return;
                 final error = ref.read(callSettingsControllerProvider).error;
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      error == null
-                          ? 'Settings saved'
-                          : 'Failed to save: $error',
-                    ),
-                  ),
+                showAppSnackBar(
+                  context,
+                  error == null ? 'Settings saved' : 'Failed to save: $error',
+                  isError: error != null,
                 );
               },
               child: const Text('Save'),
@@ -245,15 +241,13 @@ class _SettingsForm extends ConsumerWidget {
         const SizedBox(height: 24),
         FilledButton(
           onPressed: () async {
-            final messenger = ScaffoldMessenger.of(context);
             await controller.save();
+            if (!context.mounted) return;
             final error = ref.read(callSettingsControllerProvider).error;
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text(
-                  error == null ? 'Settings saved' : 'Failed to save: $error',
-                ),
-              ),
+            showAppSnackBar(
+              context,
+              error == null ? 'Settings saved' : 'Failed to save: $error',
+              isError: error != null,
             );
           },
           child: const Text('Save Settings'),

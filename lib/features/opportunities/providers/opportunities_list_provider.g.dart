@@ -6,7 +6,7 @@ part of 'opportunities_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$opportunitiesListHash() => r'2afccee69df281d29541b8143a3aea34df9b3881';
+String _$opportunitiesListHash() => r'4f88699bc6654e6a9acb0a7c4f89ed65077b689e';
 
 /// Infinite-scroll Opportunities list. Search/filters are forwarded straight
 /// to `GET /api/opportunities` — the backend already scopes results to what

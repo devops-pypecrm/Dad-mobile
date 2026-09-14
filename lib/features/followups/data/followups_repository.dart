@@ -78,7 +78,7 @@ class FollowUpsRepository {
     try {
       final response = await _dio.put<Map<String, dynamic>>(
         '/follow-ups/$id',
-        data: {'dueDate': dueDate.toIso8601String()},
+        data: {'dueDate': dueDate.toUtc().toIso8601String()},
       );
       return FollowUp.fromJson(response.data!);
     } on DioException catch (e) {

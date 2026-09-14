@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/text_format.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../../users/providers/users_provider.dart';
 import '../../domain/lead.dart';
+import '../../domain/phone_number_utils.dart';
 import '../../providers/create_lead_controller.dart';
 import '../widgets/assignee_picker_field.dart';
 import '../widgets/lead_status_field.dart';
+import '../widgets/phone_country_code_field.dart';
 
 /// "New Lead" form — same field set as Dad-frontend's `QuickAddLeadDialog`
 /// (minus org custom fields and the phone country-code picker). Presented
@@ -41,6 +44,7 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
   String _source = 'manual';
   String? _status;
   String? _assignedTo;
+  String _dialCode = '+91';
 
   @override
   void dispose() {
@@ -62,7 +66,7 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
     await ref
         .read(createLeadControllerProvider.notifier)
         .submit(
-          phone: _phoneController.text.trim(),
+          phone: combineDialCode(_dialCode, _phoneController.text),
           firstName: _firstNameController.text.trim(),
           lastName: _lastNameController.text.trim(),
           email: _emailController.text.trim(),
@@ -82,14 +86,11 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
 
     if (result != null) {
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            result.isReEnquiry
-                ? '${result.lead.fullName} already exists — marked as a re-enquiry (#${result.reEnquiryCount ?? '-'}).'
-                : '${result.lead.fullName} added.',
-          ),
-        ),
+      showAppSnackBar(
+        context,
+        result.isReEnquiry
+            ? '${result.lead.fullName} already exists — marked as a re-enquiry (#${result.reEnquiryCount ?? '-'}).'
+            : '${result.lead.fullName} added.',
       );
     }
   }
@@ -97,22 +98,33 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
   @override
   Widget build(BuildContext context) {
     final createState = ref.watch(createLeadControllerProvider);
-    final leadStatuses = ref
-        .watch(sessionControllerProvider)
-        .valueOrNull
-        ?.organisation
-        .leadStatuses;
+    final session = ref.watch(sessionControllerProvider).valueOrNull;
+    final leadStatuses = session?.organisation.leadStatuses;
     // Server-scoped list, matching web's QuickAddLeadDialog assignee field
     // (`getUsers()`) — not `hierarchyUsersProvider`, which is unrestricted
     // and only correct as input to the Assign-lead picker's client-side BFS.
     final usersAsync = ref.watch(scopedUsersProvider);
+    final assignableUsersList = usersAsync.valueOrNull ?? const [];
+    // A plain sales_rep with nobody reporting to them only ever gets
+    // themself back from this server-scoped list (self + subordinates,
+    // none here) — the same "nothing else to pick" signal already used for
+    // the manager/team-lead checks in reports_screen.dart and
+    // opportunities_list_screen.dart. In that case there's no real choice
+    // to offer, so the picker is hidden entirely rather than shown with a
+    // single, forced option.
+    final canPickAssignee = assignableUsersList.length > 1;
+    if (!canPickAssignee && session != null) {
+      // Force-assign to the creator. Leaving `assignedTo` blank instead
+      // would NOT default to "assign to me" — the backend's round-robin
+      // distribution service picks it up whenever assignedToId is omitted
+      // on create, which could hand this lead to someone else entirely.
+      _assignedTo = session.id;
+    }
 
     ref.listen(createLeadControllerProvider, (previous, next) {
       final error = next.error;
       if (error != null && !next.isLoading) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(error.toString())));
+        showAppSnackBar(context, error.toString(), isError: true);
       }
     });
 
@@ -152,13 +164,12 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
             math.max(MediaQuery.paddingOf(context).bottom, 24) + 16,
           ),
           children: [
-            TextFormField(
+            PhoneCountryCodeField(
               controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Phone *',
-                border: OutlineInputBorder(),
-              ),
+              label: 'Phone *',
+              initialCountryCode: 'IN',
+              onCountryChanged: (code) =>
+                  setState(() => _dialCode = code.dialCode ?? '+91'),
               validator: (value) => (value == null || value.trim().isEmpty)
                   ? 'Phone is required'
                   : null,
@@ -171,7 +182,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
                     controller: _firstNameController,
                     decoration: const InputDecoration(
                       labelText: 'First name *',
-                      border: OutlineInputBorder(),
                     ),
                     validator: (value) =>
                         (value == null || value.trim().isEmpty)
@@ -185,7 +195,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
                     controller: _lastNameController,
                     decoration: const InputDecoration(
                       labelText: 'Last name',
-                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
@@ -197,7 +206,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'Email',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -206,7 +214,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
                 labelText: 'Secondary phone',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -214,7 +221,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
               controller: _companyController,
               decoration: const InputDecoration(
                 labelText: 'Company',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -222,7 +228,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
               controller: _enquiryAboutController,
               decoration: const InputDecoration(
                 labelText: 'Enquiry about',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -233,7 +238,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
               ),
               decoration: const InputDecoration(
                 labelText: 'Potential value',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 20),
@@ -241,7 +245,6 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
               initialValue: _source,
               decoration: const InputDecoration(
                 labelText: 'Source',
-                border: OutlineInputBorder(),
               ),
               items: [
                 for (final source in kSelectableLeadSources)
@@ -258,16 +261,18 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
               value: _status!,
               onChanged: (value) => setState(() => _status = value),
             ),
-            const SizedBox(height: 12),
-            usersAsync.when(
-              data: (users) => AssigneePickerField(
-                users: users,
-                value: _assignedTo,
-                onChanged: (value) => setState(() => _assignedTo = value),
+            if (canPickAssignee) ...[
+              const SizedBox(height: 12),
+              usersAsync.when(
+                data: (users) => AssigneePickerField(
+                  users: users,
+                  value: _assignedTo,
+                  onChanged: (value) => setState(() => _assignedTo = value),
+                ),
+                loading: () => const LinearProgressIndicator(),
+                error: (_, _) => const SizedBox.shrink(),
               ),
-              loading: () => const LinearProgressIndicator(),
-              error: (_, _) => const SizedBox.shrink(),
-            ),
+            ],
             const SizedBox(height: 24),
             FilledButton(
               onPressed: createState.isLoading ? null : _submit,

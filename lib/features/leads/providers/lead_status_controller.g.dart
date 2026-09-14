@@ -7,7 +7,7 @@ part of 'lead_status_controller.dart';
 // **************************************************************************
 
 String _$leadStatusControllerHash() =>
-    r'2d08a882d24dbd8ff816b55436a35c4c95c9cf42';
+    r'5fd2e0f6d2f1a0cbf9188d09a76edbb99de97cc1';
 
 /// Copied from Dart SDK
 class _SystemHash {

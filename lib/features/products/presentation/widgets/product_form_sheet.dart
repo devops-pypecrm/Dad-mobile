@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../domain/product.dart';
 import '../../providers/product_actions_controller.dart';
 
@@ -57,13 +58,7 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
     final name = _name.text.trim();
     final basePrice = double.tryParse(_basePrice.text.trim());
     if (name.isEmpty || basePrice == null) {
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('Name and a valid base price are required.'),
-          ),
-        );
+      showAppSnackBar(context, 'Name and a valid base price are required.', isError: true);
       return;
     }
 
@@ -91,11 +86,7 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
     if (!mounted) return;
     if (!success) {
       final error = ref.read(productActionsControllerProvider).error;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text("Couldn't save product: $error")),
-        );
+      showAppSnackBar(context, "Couldn't save product: $error", isError: true);
       return;
     }
     Navigator.of(context).pop();

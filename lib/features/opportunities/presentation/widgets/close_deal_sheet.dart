@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/confirm_dialog.dart';
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../domain/installment_input.dart';
 import '../../domain/opportunity.dart';
 import '../../providers/opportunity_actions_controller.dart';
 
-const _brandPurple = Color(0xFF5B21B6);
+const _brandColor = Color(0xFF578732);
 
 /// Close Won — mirrors Dad-frontend's `CloseWonDialog.tsx`: a payment-type
 /// choice (Fully Paid / Partially Paid / Full EMI), a down-payment field
@@ -120,6 +122,15 @@ class _CloseWonFormState extends ConsumerState<_CloseWonForm> {
 
   Future<void> _submit() async {
     if (!_canSubmit) return;
+
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Close as Won?',
+      message: 'Mark "${widget.opportunity.name}" as Closed Won? This cannot be undone.',
+      confirmLabel: 'Close Won',
+    );
+    if (!confirmed || !mounted) return;
+
     final controller = ref.read(
       opportunityActionsControllerProvider(widget.opportunity.id).notifier,
     );
@@ -151,9 +162,7 @@ class _CloseWonFormState extends ConsumerState<_CloseWonForm> {
       final error = ref
           .read(opportunityActionsControllerProvider(widget.opportunity.id))
           .error;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text("Couldn't close deal: $error")));
+      showAppSnackBar(context, "Couldn't close deal: $error", isError: true);
       return;
     }
     Navigator.of(context).pop();
@@ -195,7 +204,7 @@ class _CloseWonFormState extends ConsumerState<_CloseWonForm> {
             for (final option in _PaymentType.values)
               RadioListTile<_PaymentType>(
                 contentPadding: EdgeInsets.zero,
-                activeColor: _brandPurple,
+                activeColor: _brandColor,
                 value: option,
                 groupValue: _paymentType,
                 title: Text(switch (option) {
@@ -394,6 +403,16 @@ class _CloseLostFormState extends ConsumerState<_CloseLostForm> {
 
   Future<void> _submit() async {
     if (!_canSubmit) return;
+
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Close as Lost?',
+      message: 'Mark this opportunity as Closed Lost? This cannot be undone.',
+      confirmLabel: 'Close Lost',
+      destructive: true,
+    );
+    if (!confirmed || !mounted) return;
+
     final success = await ref
         .read(
           opportunityActionsControllerProvider(widget.opportunityId).notifier,
@@ -404,9 +423,7 @@ class _CloseLostFormState extends ConsumerState<_CloseLostForm> {
       final error = ref
           .read(opportunityActionsControllerProvider(widget.opportunityId))
           .error;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text("Couldn't close deal: $error")));
+      showAppSnackBar(context, "Couldn't close deal: $error", isError: true);
       return;
     }
     Navigator.of(context).pop();

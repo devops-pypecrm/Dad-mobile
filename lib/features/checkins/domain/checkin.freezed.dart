@@ -29,6 +29,7 @@ mixin _$CheckIn {
   String? get notes => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
+  String? get userId => throw _privateConstructorUsedError;
   String? get leadId => throw _privateConstructorUsedError;
   String? get contactId => throw _privateConstructorUsedError;
   String? get accountId => throw _privateConstructorUsedError;
@@ -60,6 +61,7 @@ abstract class $CheckInCopyWith<$Res> {
     String? notes,
     String? photoUrl,
     DateTime createdAt,
+    String? userId,
     String? leadId,
     String? contactId,
     String? accountId,
@@ -98,6 +100,7 @@ class _$CheckInCopyWithImpl<$Res, $Val extends CheckIn>
     Object? notes = freezed,
     Object? photoUrl = freezed,
     Object? createdAt = null,
+    Object? userId = freezed,
     Object? leadId = freezed,
     Object? contactId = freezed,
     Object? accountId = freezed,
@@ -140,6 +143,10 @@ class _$CheckInCopyWithImpl<$Res, $Val extends CheckIn>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                       as DateTime,
+            userId: freezed == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String?,
             leadId: freezed == leadId
                 ? _value.leadId
                 : leadId // ignore: cast_nullable_to_non_nullable
@@ -247,6 +254,7 @@ abstract class _$$CheckInImplCopyWith<$Res> implements $CheckInCopyWith<$Res> {
     String? notes,
     String? photoUrl,
     DateTime createdAt,
+    String? userId,
     String? leadId,
     String? contactId,
     String? accountId,
@@ -288,6 +296,7 @@ class __$$CheckInImplCopyWithImpl<$Res>
     Object? notes = freezed,
     Object? photoUrl = freezed,
     Object? createdAt = null,
+    Object? userId = freezed,
     Object? leadId = freezed,
     Object? contactId = freezed,
     Object? accountId = freezed,
@@ -330,6 +339,10 @@ class __$$CheckInImplCopyWithImpl<$Res>
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
                   as DateTime,
+        userId: freezed == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String?,
         leadId: freezed == leadId
             ? _value.leadId
             : leadId // ignore: cast_nullable_to_non_nullable
@@ -375,6 +388,7 @@ class _$CheckInImpl implements _CheckIn {
     this.notes,
     this.photoUrl,
     required this.createdAt,
+    this.userId,
     this.leadId,
     this.contactId,
     this.accountId,
@@ -404,6 +418,8 @@ class _$CheckInImpl implements _CheckIn {
   @override
   final DateTime createdAt;
   @override
+  final String? userId;
+  @override
   final String? leadId;
   @override
   final String? contactId;
@@ -420,7 +436,7 @@ class _$CheckInImpl implements _CheckIn {
 
   @override
   String toString() {
-    return 'CheckIn(id: $id, type: $type, address: $address, latitude: $latitude, longitude: $longitude, notes: $notes, photoUrl: $photoUrl, createdAt: $createdAt, leadId: $leadId, contactId: $contactId, accountId: $accountId, user: $user, lead: $lead, contact: $contact, account: $account)';
+    return 'CheckIn(id: $id, type: $type, address: $address, latitude: $latitude, longitude: $longitude, notes: $notes, photoUrl: $photoUrl, createdAt: $createdAt, userId: $userId, leadId: $leadId, contactId: $contactId, accountId: $accountId, user: $user, lead: $lead, contact: $contact, account: $account)';
   }
 
   @override
@@ -440,6 +456,7 @@ class _$CheckInImpl implements _CheckIn {
                 other.photoUrl == photoUrl) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
             (identical(other.leadId, leadId) || other.leadId == leadId) &&
             (identical(other.contactId, contactId) ||
                 other.contactId == contactId) &&
@@ -463,6 +480,7 @@ class _$CheckInImpl implements _CheckIn {
     notes,
     photoUrl,
     createdAt,
+    userId,
     leadId,
     contactId,
     accountId,
@@ -496,6 +514,7 @@ abstract class _CheckIn implements CheckIn {
     final String? notes,
     final String? photoUrl,
     required final DateTime createdAt,
+    final String? userId,
     final String? leadId,
     final String? contactId,
     final String? accountId,
@@ -523,6 +542,8 @@ abstract class _CheckIn implements CheckIn {
   String? get photoUrl;
   @override
   DateTime get createdAt;
+  @override
+  String? get userId;
   @override
   String? get leadId;
   @override

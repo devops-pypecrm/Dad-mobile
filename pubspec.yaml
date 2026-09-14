@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.2.6+10
+version: 1.3.12+26
 
 environment:
   sdk: ^3.12.2
@@ -95,6 +95,11 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
 
+  # Field Operations dashboard — OpenStreetMap tiles via flutter_map, same
+  # no-API-key approach as Dad-frontend's Leaflet-based MapComponent.
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
   # Push Notifications (Phase 3)
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.5
@@ -109,6 +114,9 @@ dependencies:
   # Call recording playback (Phase 5 of CALL_RECORDING_PLAN.md) — plays
   # CallLog.recordingUrl, which was modeled but never rendered until now.
   audioplayers: ^6.1.0
+  pdf: ^3.13.0
+  printing: ^5.15.0
+  country_code_picker: ^3.4.1
 
 dev_dependencies:
   flutter_test:
@@ -167,6 +175,15 @@ flutter:
 
   assets:
     - assets/images/app_logo.png
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-ExtraBold.ttf
+          weight: 800
 
   # To add assets to your application, add an assets section, like this:
   # assets:

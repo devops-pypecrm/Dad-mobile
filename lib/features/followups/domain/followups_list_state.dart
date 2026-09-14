@@ -53,6 +53,17 @@ class FollowUpsListState with _$FollowUpsListState {
     Iterable<FollowUp> result = allTasks;
 
     if (quickFilter != null) {
+      // Exact-instant cutoffs — matching `FollowUpCard`'s own per-card
+      // "Overdue" badge (`dueDate.isBefore(now)`) and the backend's
+      // `counts` (Dad-backend's `getFollowUps`, fixed to the same `now`
+      // cutoff). This used to compare against `startOfToday` (midnight)
+      // instead: a task due earlier today — already past, correctly
+      // counted as overdue everywhere else — got excluded here since
+      // "before midnight today" isn't true for something due at, say,
+      // 9am today. That's exactly what made tapping a stat card with a
+      // non-zero count render an empty list: `allTasks` (from
+      // `_fetchWindow`) already had the right rows, this re-filter then
+      // threw them straight back out.
       final now = DateTime.now();
       final startOfToday = DateTime(now.year, now.month, now.day);
       final startOfTomorrow = startOfToday.add(const Duration(days: 1));
@@ -60,9 +71,9 @@ class FollowUpsListState with _$FollowUpsListState {
         if (t.isCompleted) return false;
         switch (quickFilter!) {
           case FollowUpQuickFilter.overdue:
-            return t.dueDate.isBefore(startOfToday);
+            return t.dueDate.isBefore(now);
           case FollowUpQuickFilter.today:
-            return !t.dueDate.isBefore(startOfToday) && t.dueDate.isBefore(startOfTomorrow);
+            return !t.dueDate.isBefore(now) && t.dueDate.isBefore(startOfTomorrow);
           case FollowUpQuickFilter.upcoming:
             return !t.dueDate.isBefore(startOfTomorrow);
         }

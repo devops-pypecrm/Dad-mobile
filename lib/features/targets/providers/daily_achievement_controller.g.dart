@@ -7,7 +7,7 @@ part of 'daily_achievement_controller.dart';
 // **************************************************************************
 
 String _$dailyAchievementControllerHash() =>
-    r'01ebfee6192bd851204af4a438daf1f8e6abb0ed';
+    r'c9bd7f36d54fd154b3eceb08b95ade788b9eac93';
 
 /// Fetched once per app session (keepAlive) — the backend itself tracks
 /// `lastNotifiedDate` server-side, so this doesn't need to re-poll; the UI

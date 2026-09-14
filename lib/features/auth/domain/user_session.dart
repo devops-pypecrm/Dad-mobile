@@ -24,6 +24,13 @@ class UserSession with _$UserSession {
     /// `role`, which drives permissions. Nullable: most seeded/older users
     /// never had it set. See `UserSession.displayTitle` for the fallback.
     String? position,
+    String? phone,
+    /// URL to the user's uploaded profile photo (`User.profileImage` on the
+    /// backend) — set via `PUT /api/profile`, uploaded through the same
+    /// `/api/upload/image` endpoint check-in photos use. Absent for the
+    /// (still common) case of a user who has never uploaded one, in which
+    /// case [initial] is the fallback everywhere an avatar is shown.
+    String? profileImage,
     @Default(false) bool isBranchManager,
     required Organisation organisation,
     String? branchId,

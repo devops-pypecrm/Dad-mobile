@@ -162,13 +162,18 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
                       // The app-wide theme sets `filled: true` with no
                       // explicit color (AppTheme's InputDecorationTheme),
                       // which defaults to Material3's grayish
-                      // surfaceContainerHighest fill — override to white
-                      // just for this field rather than touching the
-                      // global theme.
+                      // surfaceContainerHighest fill — override to the
+                      // Scaffold's own background (colorScheme.surface) so
+                      // the field reads as part of the page instead of a
+                      // separate white card, matching the borderless
+                      // filter/sort buttons beside it.
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).colorScheme.surface,
+                      // Radius matches _SquareIconButton's 14 (filter/sort
+                      // buttons beside it) instead of a pill shape, so the
+                      // whole row reads as one consistent button style.
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(14),
                         borderSide: BorderSide(
                           color: Theme.of(context).colorScheme.outlineVariant,
                         ),
@@ -228,6 +233,19 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
           ),
           if (data?.hasActiveFilters ?? false)
             _ActiveFilterChips(data: data!, onClear: _clearFilter),
+          if (data != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '${data.total} ${data.total == 1 ? 'lead' : 'leads'} found',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                ),
+              ),
+            ),
           // Once we have data from *any* previous fetch, keep rendering the
           // list from it — even while a new (debounced-search/filter) fetch
           // is in flight — instead of falling through to a full

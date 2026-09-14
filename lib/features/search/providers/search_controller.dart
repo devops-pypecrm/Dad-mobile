@@ -35,6 +35,8 @@ class SearchState with _$SearchState {
 /// straight to the backend.
 @riverpod
 class SearchController extends _$SearchController {
+  void hardReset() => state = const AsyncValue.loading();
+
   Timer? _debounce;
 
   @override

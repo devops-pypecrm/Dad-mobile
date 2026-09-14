@@ -10,6 +10,8 @@ part 'daily_achievement_controller.g.dart';
 /// just needs to know once, on launch, whether to show the daily prompt.
 @Riverpod(keepAlive: true)
 class DailyAchievementController extends _$DailyAchievementController {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<DailyAchievement> build() {
     return ref.watch(targetsRepositoryProvider).getDailyAchievement();

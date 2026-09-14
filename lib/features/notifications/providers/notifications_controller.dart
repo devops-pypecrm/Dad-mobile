@@ -22,6 +22,11 @@ part 'notifications_controller.g.dart';
 /// client dependency just to replicate what FCM already tells us.
 @Riverpod(keepAlive: true)
 class NotificationsController extends _$NotificationsController {
+  /// Forces an immediate loading state with no carried-over previous value —
+  /// see `SessionController._invalidateAccountScopedCaches` for why a plain
+  /// `ref.invalidate()` isn't enough for a still-mounted screen.
+  void hardReset() => state = const AsyncValue.loading();
+
   Timer? _pollTimer;
   String? _typeFilter;
   bool? _isReadFilter;

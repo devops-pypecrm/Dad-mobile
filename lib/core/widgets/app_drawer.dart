@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/providers/saved_accounts_unread_provider.dart';
 import '../../features/auth/providers/session_provider.dart';
 import '../router/app_router.dart';
 import '../utils/role_utils.dart';
@@ -26,6 +27,12 @@ class AppDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionControllerProvider).valueOrNull;
     final canSeeReEnquiries = isManagerRole(session?.role);
+    // Only asked for once the drawer is actually open (this provider isn't
+    // `keepAlive`) — see `savedAccountsUnreadCountsProvider`'s doc comment
+    // for why this can't be real-time: push only ever reaches whichever
+    // account is currently active on this device.
+    final hasSavedUnread = session != null &&
+        (ref.watch(savedAccountsUnreadCountsProvider).valueOrNull?.values.any((c) => c > 0) ?? false);
 
     void goTab(String route) {
       Navigator.of(context).pop();
@@ -73,6 +80,41 @@ class AppDrawer extends ConsumerWidget {
                           style: const TextStyle(color: Colors.white70, fontSize: 14),
                         ),
                       ),
+                    if (session != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: InkWell(
+                          onTap: () => push(AppRoutes.accountSwitcher),
+                          borderRadius: BorderRadius.circular(20),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.swap_horiz, color: Colors.white70, size: 16),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Switch Account',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (hasSavedUnread)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 6),
+                                    child: Container(
+                                      width: 7,
+                                      height: 7,
+                                      decoration: const BoxDecoration(color: Colors.orangeAccent, shape: BoxShape.circle),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -115,6 +157,12 @@ class AppDrawer extends ConsumerWidget {
                 label: 'Re-Enquiries',
                 onTap: () => push(AppRoutes.reEnquiries),
               ),
+            _SectionLabel('Field Force'),
+            _DrawerItem(
+              icon: Icons.map_outlined,
+              label: 'Field Operations',
+              onTap: () => push(AppRoutes.fieldOperations),
+            ),
             _SectionLabel('Connect'),
             _DrawerItem(
               icon: Icons.call_outlined,
@@ -137,6 +185,11 @@ class AppDrawer extends ConsumerWidget {
               icon: Icons.system_update_outlined,
               label: 'Updates',
               onTap: () => push(AppRoutes.updates),
+            ),
+            _DrawerItem(
+              icon: Icons.settings_outlined,
+              label: 'Settings',
+              onTap: () => push(AppRoutes.settings),
             ),
           ],
         ),

@@ -7,7 +7,7 @@ part of 'notifications_controller.dart';
 // **************************************************************************
 
 String _$notificationsControllerHash() =>
-    r'33f286ce94f7ef9d3d8c810b6e14402c98a73b93';
+    r'ee55675fd366327177d77d1f207580839c61b8ba';
 
 /// Drives both the AppBar bell badge (via `.unreadCount`) and the full
 /// `/notifications` screen. Polls every 30s while alive — same interval as

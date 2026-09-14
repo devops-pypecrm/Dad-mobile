@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../core/utils/url_launch_helper.dart';
 
 /// Low-key, factual explainer for the separate call-recording companion
 /// app (Phase 5 of Dad-mobile/CALL_RECORDING_PLAN.md) — reached only via a
@@ -20,15 +21,8 @@ class CallRecordingInfoScreen extends StatelessWidget {
   /// placeholder path on a real, already-used domain, not a fabricated one.
   static const _downloadUrl = 'https://pypecrm.com/call-recorder';
 
-  Future<void> _openDownloadPage(BuildContext context) async {
-    final uri = Uri.parse(_downloadUrl);
-    final messenger = ScaffoldMessenger.of(context);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else if (context.mounted) {
-      messenger.showSnackBar(const SnackBar(content: Text('Could not open the download page.')));
-    }
-  }
+  Future<void> _openDownloadPage(BuildContext context) =>
+      launchUriWithFeedback(context, Uri.parse(_downloadUrl));
 
   @override
   Widget build(BuildContext context) {

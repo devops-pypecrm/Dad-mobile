@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../domain/followup.dart';
 import '../../providers/followups_list_controller.dart';
 
@@ -87,9 +88,23 @@ class FollowUpCard extends ConsumerWidget {
       time?.hour ?? 9,
       time?.minute ?? 0,
     );
-    await ref
-        .read(followUpsListControllerProvider.notifier)
-        .reschedule(followUp.id, dueDate);
+    // Previously un-caught — a failed reschedule threw straight out of this
+    // `onTap` callback with nothing to catch it, so it silently vanished:
+    // no rollback, no error shown, the card just looked unchanged. See
+    // `FollowUpsListController.reschedule`'s doc comment for the matching
+    // controller-side fix (optimistic update + rollback).
+    try {
+      await ref
+          .read(followUpsListControllerProvider.notifier)
+          .reschedule(followUp.id, dueDate);
+      if (context.mounted) {
+        showAppSnackBar(context, 'Follow-up rescheduled.');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showAppSnackBar(context, "Couldn't reschedule: $e", isError: true);
+      }
+    }
   }
 
   Future<void> _showActions(BuildContext context, WidgetRef ref) async {

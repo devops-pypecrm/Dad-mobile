@@ -14,6 +14,8 @@ _$UserSessionImpl _$$UserSessionImplFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       role: json['role'] as String,
       position: json['position'] as String?,
+      phone: json['phone'] as String?,
+      profileImage: json['profileImage'] as String?,
       isBranchManager: json['isBranchManager'] as bool? ?? false,
       organisation: Organisation.fromJson(
         json['organisation'] as Map<String, dynamic>,
@@ -30,6 +32,8 @@ Map<String, dynamic> _$$UserSessionImplToJson(_$UserSessionImpl instance) =>
       'email': instance.email,
       'role': instance.role,
       'position': instance.position,
+      'phone': instance.phone,
+      'profileImage': instance.profileImage,
       'isBranchManager': instance.isBranchManager,
       'organisation': instance.organisation,
       'branchId': instance.branchId,

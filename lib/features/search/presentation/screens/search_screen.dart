@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/relative_date.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/global_app_bar.dart';
@@ -68,12 +69,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       case 'opportunity':
         context.push('/opportunities/${result.id}');
       default:
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${_capitalize(result.type)} details aren\'t available in the app yet.',
-            ),
-          ),
+        showAppSnackBar(
+          context,
+          '${_capitalize(result.type)} details aren\'t available in the app yet.',
         );
     }
   }
@@ -102,7 +100,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: Container(
               height: 46,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: const Color(0xFFF9FAEF),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: Theme.of(context).colorScheme.outlineVariant,
@@ -112,12 +110,17 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 controller: _controller,
                 focusNode: _focusNode,
                 textInputAction: TextInputAction.search,
+                // Centers the hint/input text exactly between the box's top
+                // and bottom edges — without this, `isDense`'s asymmetric
+                // default vertical padding reads as sitting slightly above
+                // center inside this fixed-height (46) container.
+                textAlignVertical: TextAlignVertical.center,
                 decoration: const InputDecoration(
                   hintText: 'Search leads, accounts, opportunities…',
                   prefixIcon: Icon(Icons.search),
                   isDense: true,
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: Color(0xFFF9FAEF),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(14)),
                     borderSide: BorderSide.none,

@@ -76,6 +76,73 @@ class LeadsRepository {
     }
   }
 
+  /// `GET /api/leads/unattended` (Dad-backend/src/controllers/
+  /// leadController.ts `getUnattendedLeads`) — same "assigned but never
+  /// contacted" definition as the Dashboard's Lead Health tile. Unlike
+  /// [getLeads], this endpoint has no `month` support — only `startDate`/
+  /// `endDate`, same `YYYY-MM-DD` format via [_isoDate].
+  Future<LeadsPage> getUnattendedLeads({
+    int page = 1,
+    int pageSize = 20,
+    String? branchId,
+    String? source,
+    String? assignedTo,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/leads/unattended',
+        queryParameters: {
+          'page': page,
+          'pageSize': pageSize,
+          if (branchId != null && branchId.isNotEmpty) 'branchId': branchId,
+          if (source != null && source.isNotEmpty) 'source': source,
+          if (assignedTo != null && assignedTo.isNotEmpty) 'assignedTo': assignedTo,
+          if (startDate != null) 'startDate': _isoDate(startDate),
+          if (endDate != null) 'endDate': _isoDate(endDate),
+        },
+      );
+      return LeadsPage.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/leads/no-activity` (Dad-backend/src/controllers/
+  /// leadController.ts `getNoActivityLeads`) — "open, no update/interaction
+  /// in 30+ days". Same `startDate`/`endDate`-only date filtering as
+  /// [getUnattendedLeads].
+  Future<LeadsPage> getNoActivityLeads({
+    int page = 1,
+    int pageSize = 20,
+    String? branchId,
+    String? source,
+    String? assignedTo,
+    String? status,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/leads/no-activity',
+        queryParameters: {
+          'page': page,
+          'pageSize': pageSize,
+          if (branchId != null && branchId.isNotEmpty) 'branchId': branchId,
+          if (source != null && source.isNotEmpty) 'source': source,
+          if (assignedTo != null && assignedTo.isNotEmpty) 'assignedTo': assignedTo,
+          if (status != null && status.isNotEmpty) 'status': status,
+          if (startDate != null) 'startDate': _isoDate(startDate),
+          if (endDate != null) 'endDate': _isoDate(endDate),
+        },
+      );
+      return LeadsPage.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
   Future<Lead> getLeadById(String id) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>('/leads/$id');
@@ -185,8 +252,14 @@ class LeadsRepository {
           if (enquiryAbout != null) 'enquiryAbout': enquiryAbout,
           if (status != null) 'status': status,
           if (assignedTo != null) 'assignedTo': assignedTo,
+          // `.toUtc()` first — `nextFollowUp` comes from a date/time picker,
+          // which builds a LOCAL `DateTime`; `.toIso8601String()` on a local
+          // (non-UTC) DateTime omits the timezone suffix entirely (no `Z`,
+          // no offset), which Prisma's strict RFC-3339 DateTime parser then
+          // rejects with "premature end of input. Expected ISO-8601
+          // DateTime." — the exact crash this fixes.
           if (nextFollowUp != null)
-            'nextFollowUp': nextFollowUp.toIso8601String(),
+            'nextFollowUp': nextFollowUp.toUtc().toIso8601String(),
           if (potentialValue != null) 'potentialValue': potentialValue,
           // Full-replace, same as Dad-frontend's AddProductToLeadDialog —
           // there's no incremental add/remove endpoint, the whole array is
@@ -239,7 +312,18 @@ class LeadsRepository {
           if (lostReason != null) 'lostReason': lostReason,
         },
       );
-      return ConvertLeadResult.fromJson(response.data!);
+      // The backend wraps the actual payload in `{ message, data: {...} }`
+      // (Dad-backend/src/controllers/leadController.ts `convertLead`'s
+      // final `res.json`) — passing `response.data` straight to
+      // `ConvertLeadResult.fromJson` reads `opportunity` off the WRONG
+      // level (the envelope, not `data`), which is always null there. That
+      // null cast crashed with "type 'Null' is not a subtype of type
+      // 'Map<String, dynamic>'" on every single successful conversion — the
+      // opportunity really was created server-side by that point, this was
+      // a pure client-side parsing bug making a success look like a
+      // failure.
+      final data = response.data!['data'] as Map<String, dynamic>;
+      return ConvertLeadResult.fromJson(data);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
@@ -275,7 +359,7 @@ class LeadsRepository {
           'type': 'note',
           'subject': 'Note',
           'description': description,
-          'date': DateTime.now().toIso8601String(),
+          'date': DateTime.now().toUtc().toIso8601String(),
         },
       );
     } on DioException catch (e) {

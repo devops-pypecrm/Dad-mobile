@@ -125,7 +125,12 @@ class _CallLogsFilterSheetState extends ConsumerState<_CallLogsFilterSheet> {
                   ),
                   DropdownMenuItem(value: 'missed', child: Text('Missed')),
                   DropdownMenuItem(value: 'busy', child: Text('Busy')),
-                  DropdownMenuItem(value: 'failed', child: Text('Failed')),
+                  // Stored value is still 'failed' (matches the backend
+                  // filter param) — only the label is friendlier, same
+                  // relabeling as `call_log_card.dart`'s `_displayStatus`.
+                  // 'failed' means 0-second duration (never connected),
+                  // not a technical/sync failure.
+                  DropdownMenuItem(value: 'failed', child: Text('Not Answered')),
                 ],
                 onChanged: (value) => setState(() => _status = value),
               ),

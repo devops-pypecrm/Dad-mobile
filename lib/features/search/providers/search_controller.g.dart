@@ -6,7 +6,7 @@ part of 'search_controller.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchControllerHash() => r'9b90d080b0f8ced4b1ebf21b0ebd87bd024f9884';
+String _$searchControllerHash() => r'd117d45f4dade4939b68b891172a0006bc991bf0';
 
 /// Search Bar -> Debouncer -> API Call, per .claude/skills/search.md. A
 /// 1-character query fetches lightweight string suggestions (200ms

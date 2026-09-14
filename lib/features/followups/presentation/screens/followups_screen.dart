@@ -115,7 +115,7 @@ class _FollowUpsScreenState extends ConsumerState<FollowUpsScreen> {
                         child: Container(
                           height: 46,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: const Color(0xFFF9FAEF),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
                               color: Theme.of(
@@ -126,12 +126,17 @@ class _FollowUpsScreenState extends ConsumerState<FollowUpsScreen> {
                           child: TextField(
                             controller: _searchController,
                             textInputAction: TextInputAction.search,
+                            // Centers the hint/input text exactly between
+                            // this fixed-height (46) box's top and bottom
+                            // edges — `isDense`'s default padding alone reads
+                            // as sitting slightly above center.
+                            textAlignVertical: TextAlignVertical.center,
                             decoration: const InputDecoration(
                               hintText: 'Search follow-ups…',
                               prefixIcon: Icon(Icons.search),
                               isDense: true,
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: Color(0xFFF9FAEF),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(14),
@@ -450,7 +455,7 @@ class _PillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: const Color(0xFFF9FAEF),
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),

@@ -26,9 +26,23 @@ Future<AppRelease?> latestMobileRelease(AutoDisposeFutureProviderRef<AppRelease?
 /// (backed by the platform's real package manager metadata, not the
 /// `pubspec.yaml` value directly — the two can drift if a build overrides
 /// `--build-name`/`--build-number`).
+///
+/// Guarded the same way as [latestMobileReleaseProvider] above — this used
+/// to have no try/catch at all, so if the plugin channel threw for any
+/// reason (e.g. queried before it's fully registered), the exception
+/// propagated through [availableUpdateProvider] and turned the whole chain
+/// into `AsyncError`. [UpdateChecker] reads `next.valueOrNull`, which
+/// returns null for both "no update" and "errored" — so a real update was
+/// silently indistinguishable from "you're already up to date," and the
+/// popup just never appeared with no visible symptom anywhere.
 @riverpod
-Future<PackageInfo> currentPackageInfo(AutoDisposeFutureProviderRef<PackageInfo> ref) =>
-    PackageInfo.fromPlatform();
+Future<PackageInfo?> currentPackageInfo(AutoDisposeFutureProviderRef<PackageInfo?> ref) async {
+  try {
+    return await PackageInfo.fromPlatform();
+  } catch (_) {
+    return null;
+  }
+}
 
 /// Non-null only when the server's `versionCode` is strictly newer than
 /// this running build's own build number — the single source of truth
@@ -39,6 +53,7 @@ Future<AppRelease?> availableUpdate(AutoDisposeFutureProviderRef<AppRelease?> re
   if (release == null) return null;
 
   final info = await ref.watch(currentPackageInfoProvider.future);
+  if (info == null) return null;
   final currentBuildNumber = int.tryParse(info.buildNumber) ?? 0;
 
   return release.versionCode > currentBuildNumber ? release : null;

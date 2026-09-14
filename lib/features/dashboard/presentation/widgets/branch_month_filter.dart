@@ -3,20 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/branch.dart';
 import '../../providers/dashboard_provider.dart';
+import 'date_range_filter_sheet.dart';
 import 'fading_wheel_picker.dart';
 
-const _monthNames = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-/// Branch + Month filter row for the Dashboard, mirroring
-/// Dad-frontend/src/pages/Dashboard.tsx:206-250's underlying filter values
-/// (same `branches.length > 0` gate that hides the branch pill entirely
-/// rather than showing it empty/disabled) — the picker UI itself
-/// (`showBranchPickerPopup`/`showMonthYearPickerPopup`, a scrollable,
-/// center-active wheel with no border, just an edge fade) is mobile-only
-/// polish, not a web port; the web app just uses plain `<select>`s.
+/// Branch + date-range filter row for the Dashboard. The branch picker
+/// stays the mobile-only wheel popup it always was (`showBranchPickerPopup`,
+/// a scrollable, center-active wheel with no border, just an edge fade) —
+/// only the date filter changed, from a month/year wheel to a plain preset
+/// list (All Time / This Month / Last Month / Custom Range) matching
+/// Dad-frontend/src/components/dashboard-v2/DateRangeDropdown.tsx, the
+/// *current* web dashboard's filter (not the older single-month picker the
+/// wheel used to mirror).
 class BranchMonthFilter extends ConsumerWidget {
   const BranchMonthFilter({super.key});
 
@@ -29,9 +26,9 @@ class BranchMonthFilter extends ConsumerWidget {
       children: [
         if (branches.isNotEmpty) ...[
           Expanded(child: _BranchPill(branches: branches)),
-          const SizedBox(width: 8),
+          const SizedBox(width: 6),
         ],
-        const Expanded(child: _MonthPill()),
+        const Expanded(child: _DateRangePill()),
       ],
     );
   }
@@ -59,25 +56,19 @@ class _BranchPill extends ConsumerWidget {
   }
 }
 
-class _MonthPill extends ConsumerWidget {
-  const _MonthPill();
+class _DateRangePill extends ConsumerWidget {
+  const _DateRangePill();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selected = ref.watch(dashboardMonthProvider);
-
-    String labelFor(String? month) {
-      if (month == null) return 'All Time';
-      final parts = month.split('-');
-      return '${_monthNames[int.parse(parts[1]) - 1]} ${parts[0]}';
-    }
+    final selected = ref.watch(dashboardDateRangeProvider);
 
     return _Pill(
       icon: Icons.calendar_today_outlined,
-      label: labelFor(selected),
+      label: selected.label,
       onTap: () async {
-        final picked = await showMonthYearPickerPopup(context, selected: selected);
-        ref.read(dashboardMonthProvider.notifier).state = picked;
+        final picked = await showDashboardDateRangeFilterSheet(context, selected: selected);
+        ref.read(dashboardDateRangeProvider.notifier).state = picked;
       },
     );
   }
@@ -95,23 +86,23 @@ class _Pill extends StatelessWidget {
     final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        height: 44,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        height: 38,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: theme.colorScheme.outlineVariant),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
-            const SizedBox(width: 8),
+            Icon(icon, size: 15, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: 6),
             Expanded(
               child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1, style: theme.textTheme.bodyMedium),
             ),
-            Icon(Icons.keyboard_arrow_down, size: 18, color: theme.colorScheme.onSurfaceVariant),
+            Icon(Icons.keyboard_arrow_down, size: 16, color: theme.colorScheme.onSurfaceVariant),
           ],
         ),
       ),

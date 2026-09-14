@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
+import '../../domain/phone_number_utils.dart';
 import '../../providers/edit_lead_controller.dart';
 import '../widgets/lead_status_field.dart';
+import '../widgets/phone_country_code_field.dart';
 
 /// Same field set as Dad-frontend's `EditLeadDialog`: firstName*/phone*
 /// required, lastName/email/secondaryPhone/company/enquiryAbout/status
@@ -30,7 +33,11 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
   late final _emailController = TextEditingController(
     text: widget.lead.email ?? '',
   );
-  late final _phoneController = TextEditingController(text: widget.lead.phone);
+  late final _splitPhone = splitDialCode(widget.lead.phone);
+  late final _phoneController = TextEditingController(
+    text: _splitPhone.localNumber,
+  );
+  late String _dialCode = _splitPhone.dialCode;
   late final _secondaryPhoneController = TextEditingController(
     text: widget.lead.secondaryPhone ?? '',
   );
@@ -86,7 +93,7 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
           firstName: _firstNameController.text.trim(),
           lastName: _lastNameController.text.trim(),
           email: _emailController.text.trim(),
-          phone: _phoneController.text.trim(),
+          phone: combineDialCode(_dialCode, _phoneController.text),
           secondaryPhone: _secondaryPhoneController.text.trim(),
           company: _companyController.text.trim(),
           enquiryAbout: _enquiryAboutController.text.trim(),
@@ -96,9 +103,7 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
     if (!mounted) return;
     if (updated != null) {
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Lead updated.')));
+      showAppSnackBar(context, 'Lead updated.');
     }
   }
 
@@ -114,9 +119,7 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
     ref.listen(editLeadControllerProvider(widget.lead.id), (previous, next) {
       final error = next.error;
       if (error != null && !next.isLoading) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(error.toString())));
+        showAppSnackBar(context, error.toString(), isError: true);
       }
     });
 
@@ -139,7 +142,6 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
                     controller: _firstNameController,
                     decoration: const InputDecoration(
                       labelText: 'First name *',
-                      border: OutlineInputBorder(),
                     ),
                     validator: (value) =>
                         (value == null || value.trim().isEmpty)
@@ -153,7 +155,6 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
                     controller: _lastNameController,
                     decoration: const InputDecoration(
                       labelText: 'Last name',
-                      border: OutlineInputBorder(),
                     ),
                   ),
                 ),
@@ -165,17 +166,15 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'Email',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
-            TextFormField(
+            PhoneCountryCodeField(
               controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              decoration: const InputDecoration(
-                labelText: 'Phone *',
-                border: OutlineInputBorder(),
-              ),
+              label: 'Phone *',
+              initialCountryCode: _dialCode,
+              onCountryChanged: (code) =>
+                  setState(() => _dialCode = code.dialCode ?? _dialCode),
               validator: (value) => (value == null || value.trim().isEmpty)
                   ? 'Phone is required'
                   : null,
@@ -186,7 +185,6 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
               keyboardType: TextInputType.phone,
               decoration: const InputDecoration(
                 labelText: 'Secondary phone',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -194,7 +192,6 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
               controller: _companyController,
               decoration: const InputDecoration(
                 labelText: 'Company',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -202,7 +199,6 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
               controller: _enquiryAboutController,
               decoration: const InputDecoration(
                 labelText: 'Enquiry about',
-                border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),

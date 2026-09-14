@@ -24,7 +24,10 @@ mixin _$Lead {
   String get id => throw _privateConstructorUsedError;
   String get firstName => throw _privateConstructorUsedError;
   String? get lastName => throw _privateConstructorUsedError;
-  String? get email => throw _privateConstructorUsedError;
+  String? get email =>
+      throw _privateConstructorUsedError; // Non-nullable on the backend (`Lead.phone`), but defaulted rather than
+  // `required` here as the same crash-hardening measure as
+  // `LeadAssignee`'s name/email fields — see that file's doc comment.
   String get phone => throw _privateConstructorUsedError;
   String? get secondaryPhone => throw _privateConstructorUsedError;
   String? get company => throw _privateConstructorUsedError;
@@ -465,7 +468,7 @@ class _$LeadImpl extends _Lead {
     this.firstName = '',
     this.lastName,
     this.email,
-    required this.phone,
+    this.phone = '',
     this.secondaryPhone,
     this.company,
     this.jobTitle,
@@ -502,7 +505,11 @@ class _$LeadImpl extends _Lead {
   final String? lastName;
   @override
   final String? email;
+  // Non-nullable on the backend (`Lead.phone`), but defaulted rather than
+  // `required` here as the same crash-hardening measure as
+  // `LeadAssignee`'s name/email fields — see that file's doc comment.
   @override
+  @JsonKey()
   final String phone;
   @override
   final String? secondaryPhone;
@@ -671,7 +678,7 @@ abstract class _Lead extends Lead {
     final String firstName,
     final String? lastName,
     final String? email,
-    required final String phone,
+    final String phone,
     final String? secondaryPhone,
     final String? company,
     final String? jobTitle,
@@ -704,7 +711,9 @@ abstract class _Lead extends Lead {
   @override
   String? get lastName;
   @override
-  String? get email;
+  String? get email; // Non-nullable on the backend (`Lead.phone`), but defaulted rather than
+  // `required` here as the same crash-hardening measure as
+  // `LeadAssignee`'s name/email fields — see that file's doc comment.
   @override
   String get phone;
   @override

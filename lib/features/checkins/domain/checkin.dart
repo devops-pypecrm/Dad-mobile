@@ -20,6 +20,7 @@ class CheckIn with _$CheckIn {
     String? notes,
     String? photoUrl,
     required DateTime createdAt,
+    String? userId,
     String? leadId,
     String? contactId,
     String? accountId,

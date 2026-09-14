@@ -7,6 +7,8 @@ part 'call_settings_provider.g.dart';
 
 @riverpod
 class CallSettingsController extends _$CallSettingsController {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<CallSettings> build() => ref.watch(callSettingsRepositoryProvider).getSettings();
 

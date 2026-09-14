@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/list_skeleton.dart';
+import '../../domain/checkin_type_label.dart';
 import '../../providers/checkin_sync_controller.dart';
 import '../../providers/checkins_feed_provider.dart';
 import '../widgets/authenticated_thumbnail.dart';
@@ -98,7 +99,7 @@ class CheckInsFeedScreen extends ConsumerWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           trailing: Chip(
-                            label: Text(checkIn.type),
+                            label: Text(checkInTypeLabel(checkIn.type)),
                             visualDensity: VisualDensity.compact,
                           ),
                         ),

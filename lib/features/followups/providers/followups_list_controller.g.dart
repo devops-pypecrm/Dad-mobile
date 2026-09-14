@@ -7,7 +7,7 @@ part of 'followups_list_controller.dart';
 // **************************************************************************
 
 String _$followUpsListControllerHash() =>
-    r'85d5e5e42dd907cc7d9597598408efcc7bdb85ed';
+    r'763090f0842f74ed0c526f989105d87789aed52b';
 
 /// Backs the Follow Ups tab.
 ///

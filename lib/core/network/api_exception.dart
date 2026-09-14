@@ -3,14 +3,22 @@ import 'package:dio/dio.dart';
 /// Normalized error surfaced by Repositories so Presentation code never has
 /// to know about Dio/DioException directly.
 class ApiException implements Exception {
-  ApiException(this.message, {this.statusCode});
+  ApiException(this.message, {this.statusCode, this.errors});
 
   factory ApiException.fromDioException(DioException e) {
     final data = e.response?.data;
     final serverMessage = data is Map<String, dynamic> ? data['message'] as String? : null;
+    // Some endpoints (registration, change-password) return a detailed
+    // `errors: string[]` breakdown alongside the summary `message` — e.g.
+    // PasswordValidator's per-rule failures ("must contain a number",
+    // "must contain a special character", ...). Surfaced separately so
+    // callers that care can render a bullet list instead of just the
+    // generic summary sentence.
+    final errorsList = data is Map<String, dynamic> ? data['errors'] as List<dynamic>? : null;
     return ApiException(
       serverMessage ?? _fallbackMessage(e),
       statusCode: e.response?.statusCode,
+      errors: errorsList?.cast<String>(),
     );
   }
 
@@ -39,6 +47,7 @@ class ApiException implements Exception {
 
   final String message;
   final int? statusCode;
+  final List<String>? errors;
 
   @override
   String toString() => message;

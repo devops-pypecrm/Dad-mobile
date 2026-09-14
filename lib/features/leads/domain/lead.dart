@@ -44,7 +44,10 @@ class Lead with _$Lead {
     @Default('') String firstName,
     String? lastName,
     String? email,
-    required String phone,
+    // Non-nullable on the backend (`Lead.phone`), but defaulted rather than
+    // `required` here as the same crash-hardening measure as
+    // `LeadAssignee`'s name/email fields — see that file's doc comment.
+    @Default('') String phone,
     String? secondaryPhone,
     String? company,
     String? jobTitle,

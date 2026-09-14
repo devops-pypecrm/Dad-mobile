@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A fully transparent 1x1 drawable used as the Android 12+ SplashScreen
+     API's "animated icon" so the OS's mandatory pre-Flutter splash shows no
+     icon at all — just the plain white background below — instead of the
+     app's launcher icon flashing before our own in-Flutter opening
+     animation (`PypeLogoReveal`) takes over. See styles-v31.xml. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent" />
+    <size android:width="1dp" android:height="1dp" />
+</shape>

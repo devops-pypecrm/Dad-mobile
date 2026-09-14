@@ -33,3 +33,10 @@ bool isOrgAdminRole(String? role) {
   if (role == null) return false;
   return _orgAdminRoles.contains(role.toLowerCase().replaceAll(RegExp(r'[\s-]'), '_'));
 }
+
+/// Same check Dad-frontend's Field Force page uses to decide who counts as
+/// "field team" (`u.role === 'sales_rep' || u.role === 'field_agent'` in
+/// `pages/field-force/index.tsx`) — deliberately an exact, case-sensitive
+/// match with no normalization, unlike the other role checks above, so the
+/// mobile Field Operations dashboard's roster matches the web one exactly.
+bool isFieldRole(String? role) => role == 'sales_rep' || role == 'field_agent';

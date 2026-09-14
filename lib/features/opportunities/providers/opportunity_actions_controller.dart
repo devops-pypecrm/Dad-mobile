@@ -65,6 +65,24 @@ class OpportunityActionsController extends _$OpportunityActionsController {
     return !state.hasError;
   }
 
+  Future<void> payInstallment(String installmentId) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(opportunitiesRepositoryProvider);
+      await repository.markInstallmentPaid(installmentId);
+      ref.invalidate(opportunityDetailProvider(opportunityId));
+    });
+  }
+
+  Future<void> deleteInstallment(String installmentId) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(opportunitiesRepositoryProvider);
+      await repository.deleteInstallment(installmentId);
+      ref.invalidate(opportunityDetailProvider(opportunityId));
+    });
+  }
+
   Future<void> _update({
     String? stage,
     double? amount,

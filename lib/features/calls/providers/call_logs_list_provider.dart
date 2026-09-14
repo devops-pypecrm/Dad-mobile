@@ -38,6 +38,8 @@ class CallLogsListState with _$CallLogsListState {
 /// search-only).
 @riverpod
 class CallLogsList extends _$CallLogsList {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<CallLogsListState> build() async {
     final repository = ref.watch(callsRepositoryProvider);

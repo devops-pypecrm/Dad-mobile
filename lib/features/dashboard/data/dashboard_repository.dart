@@ -6,6 +6,7 @@ import '../../../core/network/dio_provider.dart';
 import '../../reports/domain/top_performer.dart';
 import '../domain/branch.dart';
 import '../domain/dashboard_stats.dart';
+import '../domain/lead_health.dart';
 import '../domain/lead_source_stat.dart';
 import '../domain/sales_forecast.dart';
 import '../domain/sales_target.dart';
@@ -35,15 +36,17 @@ class DashboardRepository {
 
   final Dio _dio;
 
-  /// `GET /api/analytics/dashboard` (alias: `/overview`). [month] (`YYYY-MM`)
-  /// scopes the revenue/pipeline/won/lost figures to that month server-side
-  /// (`getDateFilter` in analyticsController.ts); omit for all-time.
-  Future<DashboardStats> getStats({String? month, String? branchId}) async {
+  /// `GET /api/analytics/dashboard` (alias: `/overview`). [startDate]/[endDate]
+  /// (`YYYY-MM-DD`) scope the revenue/pipeline/won/lost figures server-side
+  /// (`getDateFilter` in analyticsController.ts, the same shared helper
+  /// `/forecast` and `/lead-health` below use); omit both for all-time.
+  Future<DashboardStats> getStats({String? startDate, String? endDate, String? branchId}) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
         '/analytics/dashboard',
         queryParameters: {
-          if (month != null) 'month': month,
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
           if (branchId != null) 'branchId': branchId,
         },
       );
@@ -55,16 +58,35 @@ class DashboardRepository {
 
   /// `GET /api/analytics/forecast` — backs the "Exp. Revenue" tile, same as
   /// `Dashboard.tsx`'s `forecast?.totalPipeline`.
-  Future<SalesForecast> getForecast({String? month, String? branchId}) async {
+  Future<SalesForecast> getForecast({String? startDate, String? endDate, String? branchId}) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
         '/analytics/forecast',
         queryParameters: {
-          if (month != null) 'month': month,
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
           if (branchId != null) 'branchId': branchId,
         },
       );
       return SalesForecast.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/analytics/lead-health` — backs the "Unattended Leads"/"No
+  /// Activity Leads" tiles.
+  Future<LeadHealth> getLeadHealth({String? startDate, String? endDate, String? branchId}) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/analytics/lead-health',
+        queryParameters: {
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
+          if (branchId != null) 'branchId': branchId,
+        },
+      );
+      return LeadHealth.fromJson(response.data!);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

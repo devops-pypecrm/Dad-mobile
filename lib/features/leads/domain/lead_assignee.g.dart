@@ -9,9 +9,9 @@ part of 'lead_assignee.dart';
 _$LeadAssigneeImpl _$$LeadAssigneeImplFromJson(Map<String, dynamic> json) =>
     _$LeadAssigneeImpl(
       id: json['id'] as String?,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      email: json['email'] as String,
+      firstName: json['firstName'] as String? ?? '',
+      lastName: json['lastName'] as String? ?? '',
+      email: json['email'] as String? ?? '',
     );
 
 Map<String, dynamic> _$$LeadAssigneeImplToJson(_$LeadAssigneeImpl instance) =>

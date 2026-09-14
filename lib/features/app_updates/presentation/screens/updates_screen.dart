@@ -39,32 +39,34 @@ class UpdatesScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: currentInfoAsync.when(
-                  data: (info) => Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: _brandColor.withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.smartphone_outlined, color: _brandColor),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  data: (info) => info == null
+                      ? const Text('Could not read app version')
+                      : Row(
                           children: [
-                            Text('You have', style: theme.textTheme.bodySmall),
-                            Text(
-                              'Version ${info.version} (${info.buildNumber})',
-                              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: _brandColor.withValues(alpha: 0.12),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.smartphone_outlined, color: _brandColor),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('You have', style: theme.textTheme.bodySmall),
+                                  Text(
+                                    'Version ${info.version} (${info.buildNumber})',
+                                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  ),
                   loading: () => const Center(child: CircularProgressIndicator()),
                   error: (error, stack) => Text('Could not read app version: $error'),
                 ),

@@ -6,7 +6,7 @@ part of 'checkins_feed_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$checkInsFeedHash() => r'fae7730addf51fe5f918d3847a6ccf5b22e69ebb';
+String _$checkInsFeedHash() => r'6c56b02ca2f519c9453a6bffb12bea70b2263c8a';
 
 /// The "Field Activity Feed" — today's check-ins across the visible team
 /// (visibility is server-side, via `getVisibleUserIds`, see

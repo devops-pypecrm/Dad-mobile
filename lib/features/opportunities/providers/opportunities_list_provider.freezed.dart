@@ -20,6 +20,7 @@ mixin _$OpportunitiesListState {
   List<Opportunity> get opportunities => throw _privateConstructorUsedError;
   int get page => throw _privateConstructorUsedError;
   int get totalPages => throw _privateConstructorUsedError;
+  int get totalOpportunities => throw _privateConstructorUsedError;
   bool get isLoadingMore => throw _privateConstructorUsedError;
   OpportunitiesScope get scope => throw _privateConstructorUsedError;
   String? get search => throw _privateConstructorUsedError;
@@ -48,6 +49,7 @@ abstract class $OpportunitiesListStateCopyWith<$Res> {
     List<Opportunity> opportunities,
     int page,
     int totalPages,
+    int totalOpportunities,
     bool isLoadingMore,
     OpportunitiesScope scope,
     String? search,
@@ -81,6 +83,7 @@ class _$OpportunitiesListStateCopyWithImpl<
     Object? opportunities = null,
     Object? page = null,
     Object? totalPages = null,
+    Object? totalOpportunities = null,
     Object? isLoadingMore = null,
     Object? scope = null,
     Object? search = freezed,
@@ -104,6 +107,10 @@ class _$OpportunitiesListStateCopyWithImpl<
             totalPages: null == totalPages
                 ? _value.totalPages
                 : totalPages // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalOpportunities: null == totalOpportunities
+                ? _value.totalOpportunities
+                : totalOpportunities // ignore: cast_nullable_to_non_nullable
                       as int,
             isLoadingMore: null == isLoadingMore
                 ? _value.isLoadingMore
@@ -160,6 +167,7 @@ abstract class _$$OpportunitiesListStateImplCopyWith<$Res>
     List<Opportunity> opportunities,
     int page,
     int totalPages,
+    int totalOpportunities,
     bool isLoadingMore,
     OpportunitiesScope scope,
     String? search,
@@ -190,6 +198,7 @@ class __$$OpportunitiesListStateImplCopyWithImpl<$Res>
     Object? opportunities = null,
     Object? page = null,
     Object? totalPages = null,
+    Object? totalOpportunities = null,
     Object? isLoadingMore = null,
     Object? scope = null,
     Object? search = freezed,
@@ -213,6 +222,10 @@ class __$$OpportunitiesListStateImplCopyWithImpl<$Res>
         totalPages: null == totalPages
             ? _value.totalPages
             : totalPages // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalOpportunities: null == totalOpportunities
+            ? _value.totalOpportunities
+            : totalOpportunities // ignore: cast_nullable_to_non_nullable
                   as int,
         isLoadingMore: null == isLoadingMore
             ? _value.isLoadingMore
@@ -262,6 +275,7 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
     final List<Opportunity> opportunities = const <Opportunity>[],
     this.page = 1,
     this.totalPages = 1,
+    this.totalOpportunities = 0,
     this.isLoadingMore = false,
     this.scope = OpportunitiesScope.team,
     this.search,
@@ -291,6 +305,9 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
   final int totalPages;
   @override
   @JsonKey()
+  final int totalOpportunities;
+  @override
+  @JsonKey()
   final bool isLoadingMore;
   @override
   @JsonKey()
@@ -312,7 +329,7 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
 
   @override
   String toString() {
-    return 'OpportunitiesListState(opportunities: $opportunities, page: $page, totalPages: $totalPages, isLoadingMore: $isLoadingMore, scope: $scope, search: $search, stage: $stage, type: $type, leadSource: $leadSource, ownerId: $ownerId, startDate: $startDate, endDate: $endDate)';
+    return 'OpportunitiesListState(opportunities: $opportunities, page: $page, totalPages: $totalPages, totalOpportunities: $totalOpportunities, isLoadingMore: $isLoadingMore, scope: $scope, search: $search, stage: $stage, type: $type, leadSource: $leadSource, ownerId: $ownerId, startDate: $startDate, endDate: $endDate)';
   }
 
   @override
@@ -327,6 +344,8 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
             (identical(other.page, page) || other.page == page) &&
             (identical(other.totalPages, totalPages) ||
                 other.totalPages == totalPages) &&
+            (identical(other.totalOpportunities, totalOpportunities) ||
+                other.totalOpportunities == totalOpportunities) &&
             (identical(other.isLoadingMore, isLoadingMore) ||
                 other.isLoadingMore == isLoadingMore) &&
             (identical(other.scope, scope) || other.scope == scope) &&
@@ -347,6 +366,7 @@ class _$OpportunitiesListStateImpl extends _OpportunitiesListState {
     const DeepCollectionEquality().hash(_opportunities),
     page,
     totalPages,
+    totalOpportunities,
     isLoadingMore,
     scope,
     search,
@@ -376,6 +396,7 @@ abstract class _OpportunitiesListState extends OpportunitiesListState {
     final List<Opportunity> opportunities,
     final int page,
     final int totalPages,
+    final int totalOpportunities,
     final bool isLoadingMore,
     final OpportunitiesScope scope,
     final String? search,
@@ -394,6 +415,8 @@ abstract class _OpportunitiesListState extends OpportunitiesListState {
   int get page;
   @override
   int get totalPages;
+  @override
+  int get totalOpportunities;
   @override
   bool get isLoadingMore;
   @override

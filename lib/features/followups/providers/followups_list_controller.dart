@@ -31,6 +31,8 @@ part 'followups_list_controller.g.dart';
 /// contain the requested bucket and fetching only those.
 @Riverpod(keepAlive: true)
 class FollowUpsListController extends _$FollowUpsListController {
+  void hardReset() => state = const AsyncValue.loading();
+
   static const _pageSize = 100;
   // Cap on how many rows one bucket ever displays. A bucket larger than
   // this shows its first [_bucketCap] (earliest-due) rows rather than
@@ -288,8 +290,33 @@ class FollowUpsListController extends _$FollowUpsListController {
     }
   }
 
+  /// Optimistic due-date change, same pattern as [updateStatus] — without
+  /// this, a failed PUT (network blip, stale auth, etc.) had no try/catch
+  /// anywhere in the call chain (contrast [updateStatus] just above), so
+  /// the exception was silently swallowed by the `onTap` zone: no rollback,
+  /// no error surfaced to the user, nothing on screen changed, and it
+  /// looked exactly like "Reschedule doesn't do anything."
   Future<void> reschedule(String id, DateTime dueDate) async {
-    await ref.read(followUpsRepositoryProvider).reschedule(id, dueDate);
-    await refresh();
+    final current = state.valueOrNull;
+    if (current == null) {
+      await ref.read(followUpsRepositoryProvider).reschedule(id, dueDate);
+      await refresh();
+      return;
+    }
+
+    state = AsyncValue.data(current.copyWith(
+      allTasks: [
+        for (final t in current.allTasks)
+          if (t.id == id) t.copyWith(dueDate: dueDate) else t,
+      ],
+    ));
+
+    try {
+      await ref.read(followUpsRepositoryProvider).reschedule(id, dueDate);
+      await refresh();
+    } catch (e) {
+      state = AsyncValue.data(current);
+      rethrow;
+    }
   }
 }

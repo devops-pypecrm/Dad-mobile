@@ -6,7 +6,7 @@ part of 'products_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$productsListHash() => r'7b37a11e57af16299954511893c086d2dcbb6ae0';
+String _$productsListHash() => r'f1946a17cc3cb272df84aeb520277b9d4c2edcef';
 
 /// Infinite-scroll Products list — same shape as `AccountsList`.
 ///

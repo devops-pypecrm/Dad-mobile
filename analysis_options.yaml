@@ -16,6 +16,13 @@ include: package:flutter_lints/flutter.yaml
 analyzer:
   errors:
     invalid_annotation_target: ignore
+  # `build/` is gitignored output, not source — but a vendored SPM/CocoaPods
+  # checkout can land a full nested package (with its own examples) under
+  # build/ios/SourcePackages/checkouts/, which `flutter analyze` otherwise
+  # picks up and floods the output with thousands of unrelated errors from
+  # someone else's example code.
+  exclude:
+    - build/**
 
 linter:
   # The lint rules applied to this project can be customized in the

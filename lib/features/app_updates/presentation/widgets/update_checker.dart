@@ -17,14 +17,19 @@ class UpdateChecker extends ConsumerStatefulWidget {
 }
 
 class _UpdateCheckerState extends ConsumerState<UpdateChecker> {
-  bool _shown = false;
+  // Tracks which versionCode the dialog has already been shown for in this
+  // session — was a plain bool before, which meant a SECOND, newer release
+  // published while the app stayed open (e.g. a live FCM `app_update` push
+  // triggering a re-check) got silently suppressed forever after the first
+  // dialog, since the bool never reset.
+  int? _shownForVersionCode;
 
   @override
   Widget build(BuildContext context) {
     ref.listen(pendingUpdatePromptProvider, (previous, next) {
       final release = next.valueOrNull;
-      if (release == null || _shown) return;
-      _shown = true;
+      if (release == null || _shownForVersionCode == release.versionCode) return;
+      _shownForVersionCode = release.versionCode;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         showDialog<void>(

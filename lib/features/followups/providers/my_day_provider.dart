@@ -13,6 +13,8 @@ part 'my_day_provider.g.dart';
 /// notifier does not recompute those numbers itself.
 @Riverpod(keepAlive: true)
 class MyDay extends _$MyDay {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<FollowUpsPage> build() {
     final repository = ref.watch(followUpsRepositoryProvider);

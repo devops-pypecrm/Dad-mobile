@@ -7,7 +7,7 @@ part of 'call_settings_provider.dart';
 // **************************************************************************
 
 String _$callSettingsControllerHash() =>
-    r'b17d3d48e7f05e763b3195f68bd1105503bee2e0';
+    r'b06f2b3769509b20aeac713633ef73171765c42b';
 
 /// See also [CallSettingsController].
 @ProviderFor(CallSettingsController)

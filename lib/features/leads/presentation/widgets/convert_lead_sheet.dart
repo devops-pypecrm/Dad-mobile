@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../domain/lead.dart';
 import '../../providers/lead_convert_controller.dart';
 
@@ -112,9 +113,7 @@ class _ConvertLeadFormState extends ConsumerState<_ConvertLeadForm> {
     ref.listen(leadConvertControllerProvider(widget.lead.id), (previous, next) {
       final error = next.error;
       if (error != null && !next.isLoading) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(error.toString())));
+        showAppSnackBar(context, error.toString(), isError: true);
       }
     });
 

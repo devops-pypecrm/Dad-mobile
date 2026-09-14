@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/opportunities_repository.dart';
 import '../domain/opportunity_note.dart';
+import 'opportunity_timeline_provider.dart';
 
 part 'opportunity_notes_controller.g.dart';
 
@@ -25,6 +26,7 @@ class OpportunityNotesController extends _$OpportunityNotesController {
       final repository = ref.read(opportunitiesRepositoryProvider);
       await repository.addOpportunityNote(opportunityId, description);
       ref.invalidate(opportunityNotesProvider(opportunityId));
+      ref.invalidate(opportunityTimelineProvider(opportunityId));
     });
   }
 }

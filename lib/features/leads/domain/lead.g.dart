@@ -11,7 +11,7 @@ _$LeadImpl _$$LeadImplFromJson(Map<String, dynamic> json) => _$LeadImpl(
   firstName: json['firstName'] as String? ?? '',
   lastName: json['lastName'] as String?,
   email: json['email'] as String?,
-  phone: json['phone'] as String,
+  phone: json['phone'] as String? ?? '',
   secondaryPhone: json['secondaryPhone'] as String?,
   company: json['company'] as String?,
   jobTitle: json['jobTitle'] as String?,

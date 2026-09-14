@@ -41,7 +41,6 @@ class LeadStatusField extends StatelessWidget {
       initialValue: value,
       decoration: const InputDecoration(
         labelText: 'Status',
-        border: OutlineInputBorder(),
       ),
       items: [
         for (final id in items)

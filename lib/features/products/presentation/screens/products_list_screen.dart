@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/role_utils.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/list_skeleton.dart';
@@ -74,11 +75,7 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
     if (!context.mounted) return;
     if (!success) {
       final error = ref.read(productActionsControllerProvider).error;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text("Couldn't delete product: $error")),
-        );
+      showAppSnackBar(context, "Couldn't delete product: $error", isError: true);
     }
   }
 

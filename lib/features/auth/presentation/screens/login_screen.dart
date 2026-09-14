@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../providers/session_provider.dart';
 import '../widgets/login_form.dart';
 
@@ -23,9 +24,7 @@ class LoginScreen extends ConsumerWidget {
     if (ref.read(sessionControllerProvider.notifier).consumeForcedLogoutFlag()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(const SnackBar(content: Text('Your session expired — please log in again.')));
+        showAppSnackBar(context, 'Your session expired — please log in again.', isError: true);
       });
     }
 

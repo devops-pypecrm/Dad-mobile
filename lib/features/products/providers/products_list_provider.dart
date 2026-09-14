@@ -25,6 +25,8 @@ class ProductsListState with _$ProductsListState {
 /// Infinite-scroll Products list — same shape as `AccountsList`.
 @riverpod
 class ProductsList extends _$ProductsList {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<ProductsListState> build() async {
     final repository = ref.watch(productsRepositoryProvider);

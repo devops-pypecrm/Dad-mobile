@@ -6,7 +6,7 @@ part of 'leads_list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$leadsListHash() => r'17d625f21f6a78c8d56daf607649bf9132bed6e3';
+String _$leadsListHash() => r'9096e0525839d2533da4ed04389c103a5af221fc';
 
 /// Infinite-scroll Leads list. Search/filters are forwarded straight to
 /// `GET /api/leads` — the backend already scopes results to what the

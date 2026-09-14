@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../../users/providers/users_provider.dart';
 import '../../domain/lead.dart';
@@ -31,6 +32,15 @@ Future<void> showAssignLeadSheet(
     // the sheet's own bounds. `useSafeArea: true` caps the sheet's own
     // height at the safe area from the start, matching the rest of the app.
     useSafeArea: true,
+    // On top of `useSafeArea`, also leave visible breathing room below the
+    // status bar (rather than letting the sheet grow edge-to-edge right up
+    // to that safe-area line) — reads less like a full screen and more like
+    // an overlay, even with a long assignable-user list.
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.sizeOf(context).height -
+          MediaQuery.paddingOf(context).top -
+          32,
+    ),
     builder: (context) => _AssignLeadSheet(lead: lead),
   );
 }
@@ -63,27 +73,38 @@ class _AssignLeadSheetState extends ConsumerState<_AssignLeadSheet> {
 
     ref.listen(assignLeadControllerProvider(widget.lead.id), (previous, next) {
       if (next.hasError && !next.isLoading) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(next.error.toString())));
+        showAppSnackBar(context, next.error.toString(), isError: true);
       } else if (previous?.isLoading == true &&
           !next.isLoading &&
           !next.hasError) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Lead reassigned.')));
+        showAppSnackBar(context, 'Lead reassigned.');
       }
     });
 
     return SafeArea(
       bottom: false,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(16, 16, 16, safeBottomInset(context) + 16),
+        padding: EdgeInsets.fromLTRB(16, 12, 16, sheetBottomPadding(context)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // A plain visual affordance signaling "this sheet can be swiped
+            // down to dismiss" — this sheet has no visible AppBar/close
+            // button, so without it there's no hint at all that it isn't a
+            // full permanent screen.
+            Center(
+              child: Container(
+                width: 36,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
             Text(
               'Assign Lead',
               style: theme.textTheme.titleLarge?.copyWith(

@@ -45,6 +45,8 @@ class LeadsListState with _$LeadsListState {
 /// this notifier does no client-side filtering of its own.
 @riverpod
 class LeadsList extends _$LeadsList {
+  void hardReset() => state = const AsyncValue.loading();
+
   @override
   Future<LeadsListState> build() async {
     final repository = ref.watch(leadsRepositoryProvider);

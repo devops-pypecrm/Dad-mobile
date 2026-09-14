@@ -63,11 +63,30 @@ class CheckInsRepository {
   }
 
   /// `date` as `yyyy-MM-dd`. Response is a raw JSON array, not `{ data: [] }`.
-  Future<List<CheckIn>> getCheckIns({String? date, int limit = 50}) async {
+  /// `offset`/`sortBy`/`sortOrder`/`branchId` mirror the same query params
+  /// Dad-frontend's Field Force page and its report use (`getCheckIns` in
+  /// `checkInService.ts`) — the backend already supports all of them
+  /// (`checkInController.ts`'s `getCheckIns`), the mobile client just
+  /// wasn't passing them through yet.
+  Future<List<CheckIn>> getCheckIns({
+    String? date,
+    int limit = 50,
+    int offset = 0,
+    String? sortBy,
+    String? sortOrder,
+    String? branchId,
+  }) async {
     try {
       final response = await _dio.get<List<dynamic>>(
         '/checkins',
-        queryParameters: {'limit': limit, if (date != null) 'date': date},
+        queryParameters: {
+          'limit': limit,
+          'offset': offset,
+          if (date != null) 'date': date,
+          if (sortBy != null) 'sortBy': sortBy,
+          if (sortOrder != null) 'sortOrder': sortOrder,
+          if (branchId != null) 'branchId': branchId,
+        },
       );
       return response.data!.map((e) => CheckIn.fromJson(e as Map<String, dynamic>)).toList();
     } on DioException catch (e) {

@@ -28,20 +28,6 @@ import '../widgets/quick_report_tile.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/target_progress_card.dart';
 
-const _monthNames = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
 
 /// Brand purple, matching the nav bar/login button/greeting card — used here
 /// instead of `theme.colorScheme.primary` (a Material3-seeded blue, not this
@@ -94,23 +80,18 @@ class DashboardScreen extends ConsumerWidget {
 
     final summaryAsync = ref.watch(dashboardSummaryProvider);
     final forecastAsync = ref.watch(dashboardForecastProvider);
+    final leadHealthAsync = ref.watch(dashboardLeadHealthProvider);
     final myDayAsync = ref.watch(myDayProvider);
     final leadSourcesAsync = ref.watch(leadSourcesProvider);
     final salesBookAsync = ref.watch(salesBookThisMonthProvider);
     // final checkInsAsync = ref.watch(checkInsFeedProvider); // Field Force hidden for now
     final session = ref.watch(sessionControllerProvider).valueOrNull;
-    final selectedMonth = ref.watch(dashboardMonthProvider);
+    final selectedRange = ref.watch(dashboardDateRangeProvider);
     final selectedBranchId = ref.watch(dashboardBranchProvider);
     final branches =
         ref.watch(dashboardBranchesProvider).valueOrNull ?? const [];
     final theme = Theme.of(context);
     final currency = session?.organisation.currency;
-
-    String monthLabel() {
-      if (selectedMonth == null) return 'All Time';
-      final parts = selectedMonth.split('-');
-      return '${_monthNames[int.parse(parts[1]) - 1]} ${parts[0]}';
-    }
 
     String branchLabel() {
       if (selectedBranchId == null) return 'All Branches';
@@ -122,11 +103,28 @@ class DashboardScreen extends ConsumerWidget {
       await Future.wait([
         ref.refresh(dashboardSummaryProvider.future),
         ref.refresh(dashboardForecastProvider.future),
+        ref.refresh(dashboardLeadHealthProvider.future),
         ref.refresh(leadSourcesProvider.future),
         ref.refresh(salesBookThisMonthProvider.future),
         ref.read(myDayProvider.notifier).refresh(),
         // ref.read(checkInsFeedProvider.notifier).refresh(), // Field Force hidden for now
       ]);
+    }
+
+    // Carries the Dashboard's own branch/date-range filter through to
+    // whatever detail page a tile/card links to — Lead Health, and now the
+    // Performance Overview tiles (Pipeline/Won/Lost/Exp. Revenue) below —
+    // same query-param convention the destination routes parse in
+    // app_router.dart. [extraParams] adds anything tile-specific on top
+    // (e.g. `stage` for the Opportunities list).
+    void openWithFilters(String path, {Map<String, String> extraParams = const {}}) {
+      final query = <String, String>{
+        ...extraParams,
+        if (selectedBranchId != null) 'branchId': selectedBranchId,
+        if (selectedRange.apiStartDate != null) 'startDate': selectedRange.apiStartDate!,
+        if (selectedRange.apiEndDate != null) 'endDate': selectedRange.apiEndDate!,
+      };
+      context.push(Uri(path: path, queryParameters: query.isEmpty ? null : query).toString());
     }
 
     return Scaffold(
@@ -163,19 +161,6 @@ class DashboardScreen extends ConsumerWidget {
 
             // --- Branch + month filter, matching Dashboard.tsx:206-250 ---
             const BranchMonthFilter(),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton.icon(
-                onPressed: () => context.push(AppRoutes.leads),
-                style: FilledButton.styleFrom(
-                  backgroundColor: _brandColor,
-                  foregroundColor: Colors.white,
-                ),
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Add Lead'),
-              ),
-            ),
             const SizedBox(height: 24),
 
             Text('Today', style: theme.textTheme.titleLarge),
@@ -297,7 +282,7 @@ class DashboardScreen extends ConsumerWidget {
                 // width constraint under `spaceBetween`.
                 Flexible(
                   child: Text(
-                    '${monthLabel()} · ${branchLabel()}',
+                    '${selectedRange.label} · ${branchLabel()}',
                     textAlign: TextAlign.right,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -324,14 +309,18 @@ class DashboardScreen extends ConsumerWidget {
                           : '—',
                       icon: Icons.trending_up,
                       color: _brandColor,
-                      onTap: () => context.push(AppRoutes.opportunities),
+                      onTap: () => openWithFilters(AppRoutes.expectedRevenue),
                     ),
                     StatTile(
                       label: 'Pipeline',
                       value: '${stats.activeOpportunities}',
                       icon: Icons.check_circle_outline,
                       color: const Color(0xFF6366F1),
-                      onTap: () => context.push(AppRoutes.opportunities),
+                      // Never date-filtered — see openWithFilters/
+                      // OpportunitiesListScreen's own doc comments on why
+                      // "expected" always shows every currently-open deal
+                      // regardless of the Dashboard's selected period.
+                      onTap: () => openWithFilters(AppRoutes.opportunities, extraParams: const {'stage': 'expected'}),
                     ),
                     StatTile(
                       label: 'Follow-ups',
@@ -345,14 +334,16 @@ class DashboardScreen extends ConsumerWidget {
                       value: '${stats.opportunities?.won ?? 0}',
                       icon: Icons.emoji_events_outlined,
                       color: const Color(0xFF22C55E),
-                      onTap: () => context.push(AppRoutes.opportunities),
+                      onTap: () =>
+                          openWithFilters(AppRoutes.opportunities, extraParams: const {'stage': 'closed_won'}),
                     ),
                     StatTile(
                       label: 'Lost Deals',
                       value: '${stats.opportunities?.lost ?? 0}',
                       icon: Icons.error_outline,
                       color: const Color(0xFFEF4444),
-                      onTap: () => context.push(AppRoutes.opportunities),
+                      onTap: () =>
+                          openWithFilters(AppRoutes.opportunities, extraParams: const {'stage': 'closed_lost'}),
                     ),
                     StatTile(
                       label: 'Revenue',
@@ -374,6 +365,39 @@ class DashboardScreen extends ConsumerWidget {
               error: (error, stack) => ErrorStateView(
                 error: error,
                 onRetry: () => ref.invalidate(dashboardSummaryProvider),
+              ),
+            ),
+
+            // --- Lead Health: Unattended / No Activity --------------------
+            const SizedBox(height: 24),
+            Text('Lead Health', style: theme.textTheme.titleLarge),
+            const SizedBox(height: 8),
+            leadHealthAsync.when(
+              data: (health) => TwoColumnGrid(
+                children: [
+                  StatTile(
+                    label: 'Unattended Leads',
+                    value: '${health.unattendedLeads}',
+                    icon: Icons.person_off_outlined,
+                    color: const Color(0xFFF59E0B),
+                    onTap: () => openWithFilters('/leads/unattended'),
+                  ),
+                  StatTile(
+                    label: 'No Activity Leads',
+                    value: '${health.noActivityLeads}',
+                    icon: Icons.hourglass_disabled_outlined,
+                    color: const Color(0xFFEF4444),
+                    onTap: () => openWithFilters('/leads/no-activity'),
+                  ),
+                ],
+              ),
+              loading: () => const Padding(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (error, stack) => ErrorStateView(
+                error: error,
+                onRetry: () => ref.invalidate(dashboardLeadHealthProvider),
               ),
             ),
 

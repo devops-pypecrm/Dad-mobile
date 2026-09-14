@@ -2,7 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/global_app_bar.dart';
@@ -11,6 +13,7 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/user_performance.dart';
 import '../../providers/reports_providers.dart';
 import '../widgets/lead_funnel_chart.dart';
+import '../widgets/reports_date_range_filter.dart';
 
 const _managerRoles = {
   'manager',
@@ -57,18 +60,24 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-/// A faint decorative wavy line tucked into a stat card's corner — purely
-/// cosmetic, no data behind it.
+/// A small decorative sparkline (line graph + soft area fill, gradient
+/// tinted to the card's own accent color) tucked into a stat card's bottom-
+/// right corner — purely cosmetic, no real data behind the trend it draws.
+/// Always used inside a `Stack` via `Positioned(right: ..., bottom: ...)` by
+/// its callers, never laid out inline — that's what keeps it pinned to the
+/// corner instead of drifting into the card's normal content flow.
 class _Sparkline extends StatelessWidget {
-  const _Sparkline({required this.color});
+  const _Sparkline({required this.color, this.width = 84, this.height = 26});
 
   final Color color;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 84,
-      height: 26,
+      width: width,
+      height: height,
       child: CustomPaint(painter: _SparklinePainter(color)),
     );
   }
@@ -79,32 +88,57 @@ class _SparklinePainter extends CustomPainter {
 
   final Color color;
 
+  // A handful of straight segments between varying-height points — reads as
+  // an actual up-trending line graph, unlike a single smooth decorative
+  // curve (which just looks like a stray squiggle at a glance).
+  static const List<double> _points = [0.85, 0.5, 0.68, 0.32, 0.42, 0.08];
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.45)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    final path = Path()
-      ..moveTo(0, size.height * 0.65)
-      ..cubicTo(
-        size.width * 0.22,
-        size.height * 0.1, //
-        size.width * 0.32,
-        size.height * 0.95,
-        size.width * 0.52,
-        size.height * 0.4,
-      )
-      ..cubicTo(
-        size.width * 0.68,
-        size.height * 0.0, //
-        size.width * 0.82,
-        size.height * 0.85,
-        size.width,
-        size.height * 0.3,
-      );
-    canvas.drawPath(path, paint);
+    final offsets = [
+      for (var i = 0; i < _points.length; i++)
+        Offset(size.width * i / (_points.length - 1), size.height * _points[i]),
+    ];
+
+    final linePath = Path()..moveTo(offsets.first.dx, offsets.first.dy);
+    for (final p in offsets.skip(1)) {
+      linePath.lineTo(p.dx, p.dy);
+    }
+
+    // Soft area fill under the line, fading to nothing — the same visual
+    // shorthand real sparkline/mini-chart widgets use, so this reads as a
+    // graph rather than a bare line.
+    final fillPath = Path.from(linePath)
+      ..lineTo(offsets.last.dx, size.height)
+      ..lineTo(offsets.first.dx, size.height)
+      ..close();
+    canvas.drawPath(
+      fillPath,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [color.withValues(alpha: 0.22), color.withValues(alpha: 0)],
+        ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)),
+    );
+
+    // The line itself, gradient-stroked left-to-right in the card's own
+    // accent color (faint start, fuller color by the trending-up end).
+    canvas.drawPath(
+      linePath,
+      Paint()
+        ..shader = LinearGradient(
+          colors: [color.withValues(alpha: 0.35), color.withValues(alpha: 0.95)],
+        ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+
+    // A small dot marking the trend's endpoint, same touch real sparkline
+    // widgets use to draw the eye to "where it ends up."
+    canvas.drawCircle(offsets.last, 2.2, Paint()..color = color);
   }
 
   @override
@@ -215,34 +249,90 @@ class ReportsScreen extends ConsumerWidget {
         // The Me/Team tab bar used to live in the AppBar's `bottom` slot;
         // now a plain section at the top of the body, since the AppBar is
         // shared across every tab and carries no screen-specific controls.
-        body: showTeamTab
-            ? const Column(
-                children: [
-                  Material(
-                    child: TabBar(
-                      tabs: [
-                        Tab(text: 'Me'),
-                        Tab(text: 'Team'),
-                      ],
-                      indicatorSize: TabBarIndicatorSize.label,
-                      indicatorColor: _brandColor,
-                      indicatorWeight: 3,
-                      labelColor: _brandColor,
-                      unselectedLabelColor: Colors.grey,
-                      labelStyle: TextStyle(fontWeight: FontWeight.bold),
-                      unselectedLabelStyle: TextStyle(
-                        fontWeight: FontWeight.normal,
-                      ),
-                    ),
+        body: Column(
+          children: [
+            const ReportsDateRangeFilter(),
+            if (showTeamTab) ...[
+              const Material(
+                child: TabBar(
+                  tabs: [
+                    Tab(text: 'Me'),
+                    Tab(text: 'Team'),
+                  ],
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorColor: _brandColor,
+                  indicatorWeight: 3,
+                  labelColor: _brandColor,
+                  unselectedLabelColor: Colors.grey,
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold),
+                  unselectedLabelStyle: TextStyle(
+                    fontWeight: FontWeight.normal,
                   ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [_MyPerformanceTab(), _TeamTab()],
-                    ),
+                ),
+              ),
+              const Expanded(
+                child: TabBarView(
+                  children: [_MyPerformanceTab(), _TeamTab()],
+                ),
+              ),
+            ] else
+              const Expanded(child: _MyPerformanceTab()),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point into the dedicated Call Report subpage (own daily numbers,
+/// plus — per the caller's hierarchy — each visible subordinate broken out
+/// separately, entirely server-computed). A full-width tappable card here
+/// rather than folding call stats into the grid above, since this report
+/// has its own filters (period/direction) and a per-user breakdown that
+/// doesn't fit a single stat tile.
+class _CallReportEntry extends StatelessWidget {
+  const _CallReportEntry();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: () => context.push(AppRoutes.callReport),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(color: _brandColor.withValues(alpha: 0.12), shape: BoxShape.circle),
+              child: const Icon(Icons.call_outlined, color: _brandColor, size: 22),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Call Report', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    'Daily call breakdown — you and your team',
+                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    maxLines: 2,
                   ),
                 ],
-              )
-            : const _MyPerformanceTab(),
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: _brandColor),
+          ],
+        ),
       ),
     );
   }
@@ -256,13 +346,14 @@ class _MyPerformanceTab extends ConsumerWidget {
     final myUserId = ref.watch(sessionControllerProvider).valueOrNull?.id;
     final performanceAsync = ref.watch(myPerformanceProvider);
     final funnelAsync = ref.watch(myLeadsFunnelProvider);
-    final salesBookAsync = ref.watch(salesBookThisMonthProvider);
+    final salesBookAsync = ref.watch(reportsSalesBookProvider);
+    final dateRangeLabel = ref.watch(reportsDateRangeProvider).label;
 
     return RefreshIndicator(
       onRefresh: () => Future.wait([
         ref.refresh(myPerformanceProvider.future),
         ref.refresh(myLeadsFunnelProvider.future),
-        ref.refresh(salesBookThisMonthProvider.future),
+        ref.refresh(reportsSalesBookProvider.future),
       ]),
       child: ListView(
         // Bottom padding clears the floating bottom nav bar (see AppShell —
@@ -339,6 +430,8 @@ class _MyPerformanceTab extends ConsumerWidget {
               onRetry: () => ref.invalidate(myPerformanceProvider),
             ),
           ),
+          const SizedBox(height: 12),
+          const _CallReportEntry(),
           const SizedBox(height: 24),
           const _SectionHeader('Lead Funnel'),
           const SizedBox(height: 12),
@@ -367,7 +460,7 @@ class _MyPerformanceTab extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const _SectionHeader('Sales Book (This Month)'),
+          _SectionHeader('Sales Book ($dateRangeLabel)'),
           const SizedBox(height: 12),
           salesBookAsync.when(
             data: (summary) => Container(
@@ -415,7 +508,7 @@ class _MyPerformanceTab extends ConsumerWidget {
             ),
             error: (error, stack) => ErrorStateView(
               error: error,
-              onRetry: () => ref.invalidate(salesBookThisMonthProvider),
+              onRetry: () => ref.invalidate(reportsSalesBookProvider),
             ),
           ),
         ],
@@ -761,7 +854,11 @@ class _StatCard extends StatelessWidget {
         children: [
           Positioned(right: 10, bottom: 8, child: _Sparkline(color: color)),
           Padding(
-            padding: const EdgeInsets.all(16),
+            // Bottom padding reserves clearance for the sparkline pinned in
+            // the corner (8px from the bottom + its own 26px height = 34) —
+            // without it, a 2-line label could render right on top of the
+            // graph instead of leaving a visible gap above it.
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 34),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -817,40 +914,60 @@ class _SalesBookMetric extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    // The sparkline used to sit inline at the end of this Column — which,
+    // laid out inside a narrow `Expanded` segment of the shared Sales Book
+    // Row, just looked like a stray slanted squiggle floating under the
+    // label instead of a graph pinned to a corner. A `Stack` +
+    // `Positioned(right: 0, bottom: 0, ...)` anchors it to this metric's own
+    // bottom-right corner instead, matching `_StatCard`'s pattern.
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.topCenter,
       children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: _brandColor.withValues(alpha: 0.12),
-            shape: BoxShape.circle,
+        Padding(
+          // Reserves space at the bottom so the centered content doesn't
+          // visually collide with the corner sparkline sitting under it.
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: _brandColor.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: _brandColor, size: 20),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: _brandColor,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                label,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          child: Icon(icon, color: _brandColor, size: 20),
         ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: _brandColor,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: _Sparkline(color: _brandColor, width: 48, height: 16),
         ),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 6),
-        _Sparkline(color: _brandColor),
       ],
     );
   }

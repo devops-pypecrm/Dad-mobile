@@ -5,12 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../../../../core/utils/safe_bottom_padding.dart';
+import '../../../../core/widgets/app_snackbar.dart';
 import '../../data/location_service.dart';
 import '../../data/photo_service.dart';
+import '../../domain/checkin_type_label.dart';
 import '../../domain/pending_checkin.dart';
 import '../../providers/checkin_sync_controller.dart';
 
-const _checkInTypes = ['visit', 'meeting', 'call', 'other'];
+// Matches Dad-frontend's CheckIn `type` enum exactly (checkInService.ts) so
+// check-ins from both clients read consistently in the Field Operations
+// dashboard's merged history/stats.
+const _checkInTypes = ['CHECK_IN', 'CHECK_OUT', 'VISIT', 'MEETING'];
 
 class CheckInFormScreen extends ConsumerStatefulWidget {
   const CheckInFormScreen({
@@ -30,7 +35,7 @@ class CheckInFormScreen extends ConsumerStatefulWidget {
 
 class _CheckInFormScreenState extends ConsumerState<CheckInFormScreen> {
   final _notesController = TextEditingController();
-  String _type = 'visit';
+  String _type = 'CHECK_IN';
   Position? _position;
   File? _photo;
   bool _isFetchingLocation = false;
@@ -138,21 +143,16 @@ class _CheckInFormScreenState extends ConsumerState<CheckInFormScreen> {
           .submit(draft);
       if (!mounted) return;
       Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            outcome == CheckInSubmitOutcome.submitted
-                ? 'Check-in submitted.'
-                : "You're offline — check-in saved and will sync automatically.",
-          ),
-        ),
+      showAppSnackBar(
+        context,
+        outcome == CheckInSubmitOutcome.submitted
+            ? 'Check-in submitted.'
+            : "You're offline — check-in saved and will sync automatically.",
       );
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text('Could not save check-in: $e')));
+      showAppSnackBar(context, 'Could not save check-in: $e', isError: true);
     }
   }
 
@@ -171,7 +171,7 @@ class _CheckInFormScreenState extends ConsumerState<CheckInFormScreen> {
             children: _checkInTypes
                 .map(
                   (t) => ChoiceChip(
-                    label: Text(t),
+                    label: Text(checkInTypeLabel(t)),
                     selected: _type == t,
                     // Default Chip padding renders well under the 48dp
                     // minimum tap target since it's the sole way to pick a type.
