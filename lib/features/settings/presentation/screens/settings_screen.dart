@@ -61,6 +61,13 @@ class SettingsScreen extends ConsumerWidget {
                       onTap: () => context.push(AppRoutes.security),
                     ),
                     SettingsRow(
+                      icon: Icons.devices_outlined,
+                      iconColor: const Color(0xFF0EA5E9),
+                      title: 'Devices',
+                      subtitle: 'See where your account is logged in',
+                      onTap: () => context.push(AppRoutes.devices),
+                    ),
+                    SettingsRow(
                       icon: Icons.notifications_outlined,
                       iconColor: const Color(0xFFEF4444),
                       title: 'Notifications',

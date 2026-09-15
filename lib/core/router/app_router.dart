@@ -37,6 +37,7 @@ import '../../features/reports/presentation/screens/top_performers_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/settings/presentation/screens/account_screen.dart';
 import '../../features/settings/presentation/screens/change_password_screen.dart';
+import '../../features/settings/presentation/screens/devices_screen.dart';
 import '../../features/settings/presentation/screens/notifications_settings_screen.dart';
 import '../../features/settings/presentation/screens/security_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
@@ -74,6 +75,7 @@ class AppRoutes {
   // the unrelated CRM "Accounts" (company) feature.
   static const account = '/settings/account';
   static const notificationsSettings = '/settings/notifications';
+  static const devices = '/settings/devices';
   static const security = '/settings/security';
   static const changePassword = '/settings/security/change-password';
   // Deliberately NOT nested under `/accounts` — that path (and `/accounts/:id`
@@ -273,6 +275,7 @@ GoRouter goRouter(ProviderRef<GoRouter> ref) {
       GoRoute(path: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
       GoRoute(path: AppRoutes.account, builder: (context, state) => const AccountScreen()),
       GoRoute(path: AppRoutes.notificationsSettings, builder: (context, state) => const NotificationsSettingsScreen()),
+      GoRoute(path: AppRoutes.devices, builder: (context, state) => const DevicesScreen()),
       GoRoute(path: AppRoutes.security, builder: (context, state) => const SecurityScreen()),
       GoRoute(path: AppRoutes.changePassword, builder: (context, state) => const ChangePasswordScreen()),
       GoRoute(path: AppRoutes.accountSwitcher, builder: (context, state) => const AccountSwitcherScreen()),

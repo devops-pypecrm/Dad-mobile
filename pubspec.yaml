@@ -77,6 +77,11 @@ dependencies:
   # the server's published version manifest for in-app update checks.
   package_info_plus: ^8.1.2
 
+  # Device model name (e.g. "Redmi Note 12") sent at login so the backend's
+  # UserSession row — and the Settings > Devices screen reading it back —
+  # can show something human-recognizable instead of a bare platform string.
+  device_info_plus: ^11.2.0
+
   # Cache dir to download the update .apk into (already a transitive dep
   # via other plugins, promoted to direct since we import it ourselves).
   path_provider: ^2.1.5
