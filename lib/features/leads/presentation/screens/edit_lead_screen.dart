@@ -33,11 +33,24 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
   late final _emailController = TextEditingController(
     text: widget.lead.email ?? '',
   );
-  late final _splitPhone = splitDialCode(widget.lead.phone);
+  // `phone` is stored raw/national (no dial code embedded) whenever
+  // `phoneCountryCode` is present — only fall back to guessing a dial code
+  // out of the digits themselves (which defaults to India when it can't
+  // tell) for legacy leads created before that field existed. Using
+  // `splitDialCode` unconditionally here used to silently re-prepend "91"
+  // onto an already-correct number on every save, even without touching
+  // the phone field, because it always assumed +91 for any bare number.
+  late final _hasStoredCountryCode =
+      (widget.lead.phoneCountryCode ?? '').isNotEmpty;
+  late final _splitPhone = _hasStoredCountryCode
+      ? null
+      : splitDialCode(widget.lead.phone);
   late final _phoneController = TextEditingController(
-    text: _splitPhone.localNumber,
+    text: _hasStoredCountryCode ? widget.lead.phone : _splitPhone!.localNumber,
   );
-  late String _dialCode = _splitPhone.dialCode;
+  late String _dialCode = _hasStoredCountryCode
+      ? widget.lead.phoneCountryCode!
+      : _splitPhone!.dialCode;
   late final _secondaryPhoneController = TextEditingController(
     text: widget.lead.secondaryPhone ?? '',
   );
@@ -93,7 +106,8 @@ class _EditLeadScreenState extends ConsumerState<EditLeadScreen> {
           firstName: _firstNameController.text.trim(),
           lastName: _lastNameController.text.trim(),
           email: _emailController.text.trim(),
-          phone: combineDialCode(_dialCode, _phoneController.text),
+          phone: sanitizeLocalNumber(_phoneController.text),
+          phoneCountryCode: _dialCode,
           secondaryPhone: _secondaryPhoneController.text.trim(),
           company: _companyController.text.trim(),
           enquiryAbout: _enquiryAboutController.text.trim(),

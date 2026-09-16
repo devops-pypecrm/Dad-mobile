@@ -28,7 +28,13 @@ mixin _$Lead {
       throw _privateConstructorUsedError; // Non-nullable on the backend (`Lead.phone`), but defaulted rather than
   // `required` here as the same crash-hardening measure as
   // `LeadAssignee`'s name/email fields — see that file's doc comment.
-  String get phone => throw _privateConstructorUsedError;
+  String get phone =>
+      throw _privateConstructorUsedError; // e.g. "+91" — kept separate from `phone` (which is stored raw/national,
+  // no dial code embedded) so edit/WhatsApp flows don't have to guess the
+  // country from the digits alone. Was missing entirely before, which is
+  // what let the Edit Lead screen's dial-code guesswork silently
+  // re-prepend "91" onto an already-correct number on every save.
+  String? get phoneCountryCode => throw _privateConstructorUsedError;
   String? get secondaryPhone => throw _privateConstructorUsedError;
   String? get company => throw _privateConstructorUsedError;
   String? get jobTitle => throw _privateConstructorUsedError;
@@ -70,6 +76,7 @@ abstract class $LeadCopyWith<$Res> {
     String? lastName,
     String? email,
     String phone,
+    String? phoneCountryCode,
     String? secondaryPhone,
     String? company,
     String? jobTitle,
@@ -116,6 +123,7 @@ class _$LeadCopyWithImpl<$Res, $Val extends Lead>
     Object? lastName = freezed,
     Object? email = freezed,
     Object? phone = null,
+    Object? phoneCountryCode = freezed,
     Object? secondaryPhone = freezed,
     Object? company = freezed,
     Object? jobTitle = freezed,
@@ -159,6 +167,10 @@ class _$LeadCopyWithImpl<$Res, $Val extends Lead>
                 ? _value.phone
                 : phone // ignore: cast_nullable_to_non_nullable
                       as String,
+            phoneCountryCode: freezed == phoneCountryCode
+                ? _value.phoneCountryCode
+                : phoneCountryCode // ignore: cast_nullable_to_non_nullable
+                      as String?,
             secondaryPhone: freezed == secondaryPhone
                 ? _value.secondaryPhone
                 : secondaryPhone // ignore: cast_nullable_to_non_nullable
@@ -287,6 +299,7 @@ abstract class _$$LeadImplCopyWith<$Res> implements $LeadCopyWith<$Res> {
     String? lastName,
     String? email,
     String phone,
+    String? phoneCountryCode,
     String? secondaryPhone,
     String? company,
     String? jobTitle,
@@ -332,6 +345,7 @@ class __$$LeadImplCopyWithImpl<$Res>
     Object? lastName = freezed,
     Object? email = freezed,
     Object? phone = null,
+    Object? phoneCountryCode = freezed,
     Object? secondaryPhone = freezed,
     Object? company = freezed,
     Object? jobTitle = freezed,
@@ -375,6 +389,10 @@ class __$$LeadImplCopyWithImpl<$Res>
             ? _value.phone
             : phone // ignore: cast_nullable_to_non_nullable
                   as String,
+        phoneCountryCode: freezed == phoneCountryCode
+            ? _value.phoneCountryCode
+            : phoneCountryCode // ignore: cast_nullable_to_non_nullable
+                  as String?,
         secondaryPhone: freezed == secondaryPhone
             ? _value.secondaryPhone
             : secondaryPhone // ignore: cast_nullable_to_non_nullable
@@ -469,6 +487,7 @@ class _$LeadImpl extends _Lead {
     this.lastName,
     this.email,
     this.phone = '',
+    this.phoneCountryCode,
     this.secondaryPhone,
     this.company,
     this.jobTitle,
@@ -511,6 +530,13 @@ class _$LeadImpl extends _Lead {
   @override
   @JsonKey()
   final String phone;
+  // e.g. "+91" — kept separate from `phone` (which is stored raw/national,
+  // no dial code embedded) so edit/WhatsApp flows don't have to guess the
+  // country from the digits alone. Was missing entirely before, which is
+  // what let the Edit Lead screen's dial-code guesswork silently
+  // re-prepend "91" onto an already-correct number on every save.
+  @override
+  final String? phoneCountryCode;
   @override
   final String? secondaryPhone;
   @override
@@ -575,7 +601,7 @@ class _$LeadImpl extends _Lead {
 
   @override
   String toString() {
-    return 'Lead(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, secondaryPhone: $secondaryPhone, company: $company, jobTitle: $jobTitle, enquiryAbout: $enquiryAbout, status: $status, source: $source, sourceDetails: $sourceDetails, potentialValue: $potentialValue, leadScore: $leadScore, isHotLead: $isHotLead, tags: $tags, isReEnquiry: $isReEnquiry, reEnquiryCount: $reEnquiryCount, lastEnquiryDate: $lastEnquiryDate, nextFollowUp: $nextFollowUp, createdAt: $createdAt, updatedAt: $updatedAt, branchId: $branchId, assignedTo: $assignedTo, products: $products)';
+    return 'Lead(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, phoneCountryCode: $phoneCountryCode, secondaryPhone: $secondaryPhone, company: $company, jobTitle: $jobTitle, enquiryAbout: $enquiryAbout, status: $status, source: $source, sourceDetails: $sourceDetails, potentialValue: $potentialValue, leadScore: $leadScore, isHotLead: $isHotLead, tags: $tags, isReEnquiry: $isReEnquiry, reEnquiryCount: $reEnquiryCount, lastEnquiryDate: $lastEnquiryDate, nextFollowUp: $nextFollowUp, createdAt: $createdAt, updatedAt: $updatedAt, branchId: $branchId, assignedTo: $assignedTo, products: $products)';
   }
 
   @override
@@ -590,6 +616,8 @@ class _$LeadImpl extends _Lead {
                 other.lastName == lastName) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.phoneCountryCode, phoneCountryCode) ||
+                other.phoneCountryCode == phoneCountryCode) &&
             (identical(other.secondaryPhone, secondaryPhone) ||
                 other.secondaryPhone == secondaryPhone) &&
             (identical(other.company, company) || other.company == company) &&
@@ -636,6 +664,7 @@ class _$LeadImpl extends _Lead {
     lastName,
     email,
     phone,
+    phoneCountryCode,
     secondaryPhone,
     company,
     jobTitle,
@@ -679,6 +708,7 @@ abstract class _Lead extends Lead {
     final String? lastName,
     final String? email,
     final String phone,
+    final String? phoneCountryCode,
     final String? secondaryPhone,
     final String? company,
     final String? jobTitle,
@@ -715,7 +745,13 @@ abstract class _Lead extends Lead {
   // `required` here as the same crash-hardening measure as
   // `LeadAssignee`'s name/email fields — see that file's doc comment.
   @override
-  String get phone;
+  String get phone; // e.g. "+91" — kept separate from `phone` (which is stored raw/national,
+  // no dial code embedded) so edit/WhatsApp flows don't have to guess the
+  // country from the digits alone. Was missing entirely before, which is
+  // what let the Edit Lead screen's dial-code guesswork silently
+  // re-prepend "91" onto an already-correct number on every save.
+  @override
+  String? get phoneCountryCode;
   @override
   String? get secondaryPhone;
   @override

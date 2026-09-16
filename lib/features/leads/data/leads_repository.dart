@@ -177,6 +177,7 @@ class LeadsRepository {
   /// fields, which mobile doesn't render).
   Future<CreateLeadResult> createLead({
     required String phone,
+    String? phoneCountryCode,
     String? firstName,
     String? lastName,
     String? email,
@@ -194,6 +195,8 @@ class LeadsRepository {
         '/leads',
         data: {
           'phone': phone,
+          if (phoneCountryCode != null && phoneCountryCode.isNotEmpty)
+            'phoneCountryCode': phoneCountryCode,
           if (firstName != null && firstName.isNotEmpty) 'firstName': firstName,
           if (lastName != null && lastName.isNotEmpty) 'lastName': lastName,
           if (email != null && email.isNotEmpty) 'email': email,
@@ -230,6 +233,7 @@ class LeadsRepository {
     String? lastName,
     String? email,
     String? phone,
+    String? phoneCountryCode,
     String? secondaryPhone,
     String? company,
     String? enquiryAbout,
@@ -247,6 +251,7 @@ class LeadsRepository {
           if (lastName != null) 'lastName': lastName,
           if (email != null) 'email': email,
           if (phone != null) 'phone': phone,
+          if (phoneCountryCode != null) 'phoneCountryCode': phoneCountryCode,
           if (secondaryPhone != null) 'secondaryPhone': secondaryPhone,
           if (company != null) 'company': company,
           if (enquiryAbout != null) 'enquiryAbout': enquiryAbout,

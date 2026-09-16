@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/utils/hex_color.dart';
 import '../../../../core/utils/url_launch_helper.dart';
+import '../../domain/phone_number_utils.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
 
@@ -236,7 +237,7 @@ class LeadCard extends ConsumerWidget {
                               onTap: () => launchUriWithFeedback(
                                 context,
                                 Uri.parse(
-                                  'https://wa.me/${lead.phone.replaceAll(RegExp(r'[^0-9]'), '')}',
+                                  'https://wa.me/${formatWhatsAppNumber(lead.phone, lead.phoneCountryCode)}',
                                 ),
                               ),
                             ),

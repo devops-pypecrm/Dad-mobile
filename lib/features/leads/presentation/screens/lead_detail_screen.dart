@@ -287,7 +287,11 @@ class LeadDetailScreen extends ConsumerWidget {
                 const SizedBox(height: 20),
 
                 // --- Quick actions: Call / WhatsApp / Email ---------------
-                LeadQuickActions(phone: lead.phone, email: lead.email),
+                LeadQuickActions(
+                  phone: lead.phone,
+                  phoneCountryCode: lead.phoneCountryCode,
+                  email: lead.email,
+                ),
                 if (lead.secondaryPhone != null &&
                     lead.secondaryPhone!.isNotEmpty) ...[
                   const SizedBox(height: 8),

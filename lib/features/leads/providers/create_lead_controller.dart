@@ -13,6 +13,7 @@ class CreateLeadController extends _$CreateLeadController {
 
   Future<void> submit({
     required String phone,
+    String? phoneCountryCode,
     String? firstName,
     String? lastName,
     String? email,
@@ -30,6 +31,7 @@ class CreateLeadController extends _$CreateLeadController {
       final repository = ref.read(leadsRepositoryProvider);
       final result = await repository.createLead(
         phone: phone,
+        phoneCountryCode: phoneCountryCode,
         firstName: firstName,
         lastName: lastName,
         email: email,

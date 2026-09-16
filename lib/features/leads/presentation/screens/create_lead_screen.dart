@@ -66,7 +66,8 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
     await ref
         .read(createLeadControllerProvider.notifier)
         .submit(
-          phone: combineDialCode(_dialCode, _phoneController.text),
+          phone: sanitizeLocalNumber(_phoneController.text),
+          phoneCountryCode: _dialCode,
           firstName: _firstNameController.text.trim(),
           lastName: _lastNameController.text.trim(),
           email: _emailController.text.trim(),

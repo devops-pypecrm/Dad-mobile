@@ -7,7 +7,7 @@ part of 'edit_lead_controller.dart';
 // **************************************************************************
 
 String _$editLeadControllerHash() =>
-    r'e7088f45c59f0616c083c7395009dbf8c8ce78fa';
+    r'dfcb278b21ebc72d21c8cc725199595496bf02e8';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -7,7 +7,7 @@ part of 'create_lead_controller.dart';
 // **************************************************************************
 
 String _$createLeadControllerHash() =>
-    r'b3008718f0ff19678799f996fbc9d6fed440eca9';
+    r'2eaf461c676e4e7f41a8871e1416715fcd3c3be1';
 
 /// See also [CreateLeadController].
 @ProviderFor(CreateLeadController)

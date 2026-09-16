@@ -25,18 +25,36 @@ import 'package:country_code_picker/country_code_picker.dart';
   return (dialCode: '+91', localNumber: trimmed);
 }
 
-/// Combines a country dial code (e.g. "+91") with the digits the user typed
-/// in the phone field, guarding against the user having already typed a
-/// leading "+" or a leading "0" (common when pasting a number copied from
-/// somewhere else) so the result doesn't end up double-prefixed.
-String combineDialCode(String dialCode, String rawNumber) {
-  final trimmed = rawNumber.trim();
-  if (trimmed.isEmpty) return trimmed;
-  if (trimmed.startsWith('+')) return trimmed;
+/// Cleans a user-typed local number for storage: digits only, with a
+/// leading "0" dropped (common when pasting a number copied from
+/// somewhere else) — the dial code is sent separately as
+/// `phoneCountryCode` rather than being embedded in `phone`.
+String sanitizeLocalNumber(String rawNumber) {
+  final digitsOnly = rawNumber.trim().replaceAll(RegExp(r'[^0-9]'), '');
+  return digitsOnly.startsWith('0') ? digitsOnly.substring(1) : digitsOnly;
+}
 
-  final digitsOnly = trimmed.replaceAll(RegExp(r'[^0-9]'), '');
-  final withoutLeadingZero = digitsOnly.startsWith('0')
-      ? digitsOnly.substring(1)
-      : digitsOnly;
-  return '$dialCode$withoutLeadingZero';
+/// Formats a lead's phone for a `wa.me` link — digits only, always
+/// prefixed with the country's calling code. Mirrors
+/// Dad-frontend/src/lib/utils.ts's `formatWhatsAppNumber`: idempotent (won't
+/// double-prefix a number that already includes the country code), and
+/// falls back to assuming India for a bare 10-digit mobile number when no
+/// `phoneCountryCode` is stored (legacy leads created before that field
+/// existed).
+String formatWhatsAppNumber(String phone, String? countryCode) {
+  final cleanedPhone = phone.replaceAll(RegExp(r'[^0-9]'), '');
+  if (cleanedPhone.isEmpty) return '';
+
+  final cleanedCc = (countryCode ?? '').replaceAll(RegExp(r'[^0-9]'), '');
+  if (cleanedCc.isNotEmpty) {
+    if (cleanedPhone.startsWith(cleanedCc) && cleanedPhone.length > 10) {
+      return cleanedPhone;
+    }
+    return '$cleanedCc$cleanedPhone';
+  }
+
+  if (cleanedPhone.length == 10 && RegExp(r'^[6-9]').hasMatch(cleanedPhone)) {
+    return '91$cleanedPhone';
+  }
+  return cleanedPhone;
 }

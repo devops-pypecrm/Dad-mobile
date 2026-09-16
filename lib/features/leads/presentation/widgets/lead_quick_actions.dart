@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/utils/url_launch_helper.dart';
+import '../../domain/phone_number_utils.dart';
 
 const _brandColor = Color(0xFF578732);
 
 /// Call / Email / WhatsApp buttons on the Lead Detail screen — launches the
 /// native dialer/mail client/WhatsApp rather than doing anything in-app.
 class LeadQuickActions extends StatelessWidget {
-  const LeadQuickActions({super.key, required this.phone, this.email});
+  const LeadQuickActions({
+    super.key,
+    required this.phone,
+    this.phoneCountryCode,
+    this.email,
+  });
 
   final String phone;
+  final String? phoneCountryCode;
   final String? email;
 
   @override
@@ -40,7 +47,7 @@ class LeadQuickActions extends StatelessWidget {
             onTap: () => launchUriWithFeedback(
               context,
               Uri.parse(
-                'https://wa.me/${phone.replaceAll(RegExp(r'[^0-9]'), '')}',
+                'https://wa.me/${formatWhatsAppNumber(phone, phoneCountryCode)}',
               ),
             ),
           ),

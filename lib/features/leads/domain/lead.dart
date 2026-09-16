@@ -48,6 +48,12 @@ class Lead with _$Lead {
     // `required` here as the same crash-hardening measure as
     // `LeadAssignee`'s name/email fields — see that file's doc comment.
     @Default('') String phone,
+    // e.g. "+91" — kept separate from `phone` (which is stored raw/national,
+    // no dial code embedded) so edit/WhatsApp flows don't have to guess the
+    // country from the digits alone. Was missing entirely before, which is
+    // what let the Edit Lead screen's dial-code guesswork silently
+    // re-prepend "91" onto an already-correct number on every save.
+    String? phoneCountryCode,
     String? secondaryPhone,
     String? company,
     String? jobTitle,
