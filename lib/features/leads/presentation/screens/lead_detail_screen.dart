@@ -11,6 +11,7 @@ import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/fading_wheel_picker.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
+import '../../domain/lead_status_options.dart';
 import '../../providers/lead_detail_provider.dart';
 import '../../providers/lead_status_controller.dart';
 import '../widgets/assign_lead_sheet.dart';
@@ -176,8 +177,8 @@ class LeadDetailScreen extends ConsumerWidget {
         data: (lead) {
           String statusLabel = lead.status;
           Color statusColor = hexToColor(null);
-          final match = leadStatuses?.where((o) => o.id == lead.status);
-          if (match != null && match.isNotEmpty) {
+          final match = withShuffledStatus(leadStatuses).where((o) => o.id == lead.status);
+          if (match.isNotEmpty) {
             statusLabel = match.first.label ?? lead.status;
             statusColor = hexToColor(match.first.color);
           }

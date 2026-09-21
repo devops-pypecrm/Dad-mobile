@@ -8,6 +8,7 @@ import '../../../dashboard/domain/branch.dart';
 import '../../../dashboard/providers/dashboard_provider.dart';
 import '../../../users/providers/users_provider.dart';
 import '../../domain/lead.dart';
+import '../../domain/lead_status_options.dart';
 import '../../providers/leads_list_provider.dart';
 
 /// Filter bottom sheet for the Leads list — Status/Source/Owner/Branch/Date
@@ -141,7 +142,7 @@ class _LeadsFilterSheetState extends ConsumerState<_LeadsFilterSheet> {
                     value: null,
                     child: Text('All statuses'),
                   ),
-                  for (final option in (leadStatuses ?? const []))
+                  for (final option in withShuffledStatus(leadStatuses))
                     DropdownMenuItem(
                       value: option.id,
                       child: Text(option.label ?? option.id),

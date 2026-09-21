@@ -7,6 +7,7 @@ import '../../../../core/utils/url_launch_helper.dart';
 import '../../domain/phone_number_utils.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
+import '../../domain/lead_status_options.dart';
 
 const _brandColor = Color(0xFF578732);
 
@@ -47,8 +48,8 @@ class LeadCard extends ConsumerWidget {
 
     String statusLabel = lead.status;
     Color statusColor = hexToColor(null);
-    final match = leadStatuses?.where((o) => o.id == lead.status);
-    if (match != null && match.isNotEmpty) {
+    final match = withShuffledStatus(leadStatuses).where((o) => o.id == lead.status);
+    if (match.isNotEmpty) {
       statusLabel = match.first.label ?? lead.status;
       statusColor = hexToColor(match.first.color);
     }

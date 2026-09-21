@@ -13,6 +13,7 @@ import '../../../../core/widgets/list_skeleton.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../../dashboard/providers/dashboard_provider.dart';
 import '../../../users/providers/users_provider.dart';
+import '../../domain/lead_status_options.dart';
 import '../../providers/leads_list_provider.dart';
 import '../widgets/lead_card.dart';
 import '../widgets/leads_filter_sheet.dart';
@@ -470,10 +471,8 @@ class _ActiveFilterChips extends ConsumerWidget {
         ref.watch(dashboardBranchesProvider).valueOrNull ?? const [];
 
     String statusLabel(String id) {
-      final match = leadStatuses?.where((o) => o.id == id);
-      return (match != null && match.isNotEmpty)
-          ? (match.first.label ?? id)
-          : id;
+      final match = withShuffledStatus(leadStatuses).where((o) => o.id == id);
+      return match.isNotEmpty ? (match.first.label ?? id) : id;
     }
 
     String ownerLabel(String id) {
