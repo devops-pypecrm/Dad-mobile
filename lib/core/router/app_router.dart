@@ -216,9 +216,9 @@ GoRouter goRouter(ProviderRef<GoRouter> ref) {
           final stage = state.uri.queryParameters['stage'];
           OpportunitiesList.pendingInitialStage = stage;
           OpportunitiesList.pendingInitialStartDate =
-              stage == 'expected' ? null : DateTime.tryParse(state.uri.queryParameters['startDate'] ?? '');
+              stage == 'expected' ? null : _parseUtcFilterDate(state.uri.queryParameters['startDate']);
           OpportunitiesList.pendingInitialEndDate =
-              stage == 'expected' ? null : DateTime.tryParse(state.uri.queryParameters['endDate'] ?? '');
+              stage == 'expected' ? null : _parseUtcFilterDate(state.uri.queryParameters['endDate']);
           return const OpportunitiesListScreen();
         },
       ),
@@ -281,6 +281,29 @@ GoRouter goRouter(ProviderRef<GoRouter> ref) {
       GoRoute(path: AppRoutes.accountSwitcher, builder: (context, state) => const AccountSwitcherScreen()),
     ],
   );
+}
+
+/// The Dashboard's Won/Lost/Pipeline tiles forward `startDate`/`endDate` as
+/// bare `YYYY-MM-DD` strings (`DashboardDateRange.apiStartDate`/`apiEndDate`)
+/// — the SAME calendar-date convention the backend's own `getDateFilter`
+/// (analyticsController.ts) treats as a UTC date via `new Date("YYYY-MM-DD")`.
+/// `DateTime.tryParse` on a string with no time/offset component instead
+/// returns LOCAL midnight, which `OpportunitiesRepository.getOpportunities`
+/// later re-serializes via `.toUtc()` — on any device not in UTC (e.g. IST,
+/// UTC+5:30), that silently shifts the date backward by the offset before
+/// it ever reaches the backend, so a deal closed "today" could be counted
+/// by the dashboard's tile but excluded from the very list that tile links
+/// to. Reinterpret a bare date-only string as UTC explicitly so the two
+/// screens agree on the same calendar day; a full timestamp (already
+/// carrying its own offset/`Z`) is left as `DateTime.tryParse` returns it.
+DateTime? _parseUtcFilterDate(String? raw) {
+  if (raw == null || raw.isEmpty) return null;
+  final parsed = DateTime.tryParse(raw);
+  if (parsed == null) return null;
+  if (!raw.contains('T')) {
+    return DateTime.utc(parsed.year, parsed.month, parsed.day);
+  }
+  return parsed;
 }
 
 /// Bridges Riverpod state changes into go_router's `Listenable`-based
