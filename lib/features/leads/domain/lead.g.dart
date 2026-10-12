@@ -19,11 +19,7 @@ _$LeadImpl _$$LeadImplFromJson(Map<String, dynamic> json) => _$LeadImpl(
   enquiryAbout: json['enquiryAbout'] as String?,
   status: json['status'] as String? ?? 'new',
   source: json['source'] as String? ?? 'manual',
-  sourceDetails: json['sourceDetails'] == null
-      ? null
-      : LeadSourceDetails.fromJson(
-          json['sourceDetails'] as Map<String, dynamic>,
-        ),
+  sourceDetails: _sourceDetailsFromJson(json['sourceDetails']),
   potentialValue: (json['potentialValue'] as num?)?.toDouble() ?? 0,
   leadScore: (json['leadScore'] as num?)?.toInt() ?? 0,
   isHotLead: json['isHotLead'] as bool? ?? false,

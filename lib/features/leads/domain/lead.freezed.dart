@@ -41,6 +41,7 @@ mixin _$Lead {
   String? get enquiryAbout => throw _privateConstructorUsedError;
   String get status => throw _privateConstructorUsedError;
   String get source => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _sourceDetailsFromJson)
   LeadSourceDetails? get sourceDetails => throw _privateConstructorUsedError;
   double get potentialValue => throw _privateConstructorUsedError;
   int get leadScore => throw _privateConstructorUsedError;
@@ -83,7 +84,7 @@ abstract class $LeadCopyWith<$Res> {
     String? enquiryAbout,
     String status,
     String source,
-    LeadSourceDetails? sourceDetails,
+    @JsonKey(fromJson: _sourceDetailsFromJson) LeadSourceDetails? sourceDetails,
     double potentialValue,
     int leadScore,
     bool isHotLead,
@@ -306,7 +307,7 @@ abstract class _$$LeadImplCopyWith<$Res> implements $LeadCopyWith<$Res> {
     String? enquiryAbout,
     String status,
     String source,
-    LeadSourceDetails? sourceDetails,
+    @JsonKey(fromJson: _sourceDetailsFromJson) LeadSourceDetails? sourceDetails,
     double potentialValue,
     int leadScore,
     bool isHotLead,
@@ -494,7 +495,7 @@ class _$LeadImpl extends _Lead {
     this.enquiryAbout,
     this.status = 'new',
     this.source = 'manual',
-    this.sourceDetails,
+    @JsonKey(fromJson: _sourceDetailsFromJson) this.sourceDetails,
     this.potentialValue = 0,
     this.leadScore = 0,
     this.isHotLead = false,
@@ -552,6 +553,7 @@ class _$LeadImpl extends _Lead {
   @JsonKey()
   final String source;
   @override
+  @JsonKey(fromJson: _sourceDetailsFromJson)
   final LeadSourceDetails? sourceDetails;
   @override
   @JsonKey()
@@ -715,6 +717,7 @@ abstract class _Lead extends Lead {
     final String? enquiryAbout,
     final String status,
     final String source,
+    @JsonKey(fromJson: _sourceDetailsFromJson)
     final LeadSourceDetails? sourceDetails,
     final double potentialValue,
     final int leadScore,
@@ -765,6 +768,7 @@ abstract class _Lead extends Lead {
   @override
   String get source;
   @override
+  @JsonKey(fromJson: _sourceDetailsFromJson)
   LeadSourceDetails? get sourceDetails;
   @override
   double get potentialValue;

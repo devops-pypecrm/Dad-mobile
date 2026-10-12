@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'lead_assignee.dart';
@@ -6,6 +8,33 @@ import 'lead_source_details.dart';
 
 part 'lead.freezed.dart';
 part 'lead.g.dart';
+
+/// `sourceDetails` is untyped `Json?` on the backend (Dad-backend/prisma/
+/// schema.prisma:361) - in practice it arrives as a plain object, a JSON
+/// string, or malformed/empty data depending on which write path produced
+/// it (mirrors Dad-frontend/src/pages/leads/[id].tsx's `safeSourceDetails`
+/// helper). The generated `_$LeadFromJson` used to hard-cast this to
+/// `Map<String, dynamic>`, which threw a raw `TypeError` - not a
+/// `DioException` - that skipped the repository's error handling entirely
+/// whenever a lead's `sourceDetails` wasn't already a plain object.
+LeadSourceDetails? _sourceDetailsFromJson(Object? value) {
+  if (value == null) return null;
+  Object? decoded = value;
+  if (decoded is String) {
+    if (decoded.trim().isEmpty) return null;
+    try {
+      decoded = jsonDecode(decoded);
+    } catch (_) {
+      return null;
+    }
+  }
+  if (decoded is! Map<String, dynamic>) return null;
+  try {
+    return LeadSourceDetails.fromJson(decoded);
+  } catch (_) {
+    return null;
+  }
+}
 
 /// Statuses that unlock backend-side special behavior — see
 /// Dad-backend/src/controllers/leadController.ts:649: a lead cannot move to
@@ -60,7 +89,7 @@ class Lead with _$Lead {
     String? enquiryAbout,
     @Default('new') String status,
     @Default('manual') String source,
-    LeadSourceDetails? sourceDetails,
+    @JsonKey(fromJson: _sourceDetailsFromJson) LeadSourceDetails? sourceDetails,
     @Default(0) double potentialValue,
     @Default(0) int leadScore,
     @Default(false) bool isHotLead,
