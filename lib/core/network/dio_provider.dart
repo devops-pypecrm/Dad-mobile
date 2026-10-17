@@ -27,6 +27,7 @@ Dio dio(ProviderRef<Dio> ref) {
   );
 
   dio.interceptors.add(_AuthInterceptor(storage, ref));
+  dio.interceptors.add(_ConnectionRetryInterceptor(dio));
   // One compact line per request/response so you can see what the app is
   // calling while developing, without flooding the console. Gated on
   // kDebugMode so it's compiled out of release builds — never runs in prod.
@@ -113,6 +114,53 @@ class _AuthInterceptor extends Interceptor {
     final isLoginRequest = err.requestOptions.path.contains('/auth/login');
     if (err.response?.statusCode == 401 && !isLoginRequest) {
       await _ref.read(sessionControllerProvider.notifier).forceLogout();
+    }
+    handler.next(err);
+  }
+}
+
+/// Transparently retries a request that failed before any bytes reached the
+/// server - `connectionError` (DNS/socket/TLS handshake failure) or
+/// `connectionTimeout` (never got a connection at all). Reported live: the
+/// app shows "Could not reach the server" on mobile while the web app is
+/// fine from the same account - pypecrm.com has no AAAA record, so on an
+/// IPv6-only cellular network the device has to go through carrier-side
+/// NAT64/DNS64 translation to reach this IPv4-only server, and dart:io's
+/// HttpClient doesn't fall back between address families nearly as
+/// aggressively as a browser's networking stack does. A short retry absorbs
+/// the one-off translation/handoff hiccup instead of surfacing it to the
+/// user immediately.
+///
+/// Deliberately NOT retrying `sendTimeout`/`receiveTimeout` - by then the
+/// request may have already reached the server, and blindly resending could
+/// duplicate a mutation (e.g. a lead create) that actually went through.
+class _ConnectionRetryInterceptor extends Interceptor {
+  _ConnectionRetryInterceptor(this._dio);
+
+  final Dio _dio;
+
+  static const _maxRetries = 2;
+  static const _retryDelay = Duration(seconds: 2);
+
+  @override
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+    final isRetryable = err.type == DioExceptionType.connectionError ||
+        err.type == DioExceptionType.connectionTimeout;
+    final attempt = (err.requestOptions.extra['retryAttempt'] as int?) ?? 0;
+
+    if (isRetryable && attempt < _maxRetries) {
+      await Future.delayed(_retryDelay);
+      final options = err.requestOptions..extra['retryAttempt'] = attempt + 1;
+      try {
+        final response = await _dio.fetch<dynamic>(options);
+        return handler.resolve(response);
+      } catch (_) {
+        // Falls through to the next attempt (or final failure) below -
+        // _dio.fetch re-runs every interceptor including this one, so a
+        // second connectionError lands back here with attempt=1 and retries
+        // again; once attempt reaches _maxRetries it falls through to
+        // handler.next(err) and the real error finally reaches the caller.
+      }
     }
     handler.next(err);
   }
