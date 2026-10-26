@@ -409,7 +409,7 @@ class _CallReportCard extends StatelessWidget {
                 _cellDivider(theme),
                 Expanded(
                   child: _MetricCell(
-                    label: 'Converted',
+                    label: 'Won',
                     value: '${row.totalConverted}',
                     valueColor: const Color(0xFF7C3AED),
                   ),

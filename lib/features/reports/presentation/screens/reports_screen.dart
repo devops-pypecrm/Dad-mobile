@@ -749,7 +749,7 @@ class _TeamPerformanceTile extends StatelessWidget {
                   icon: Icons.trending_up,
                   color: const Color(0xFF16A34A),
                   value: '${metrics.leadsConverted}',
-                  label: 'Converted',
+                  label: 'Won',
                 ),
               ),
               Expanded(

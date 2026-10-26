@@ -84,7 +84,7 @@ Future<void> exportDailyReportPdf({
             pw.TableRow(
               decoration: const pw.BoxDecoration(color: _pdfBrandColor),
               children: [
-                for (final label in ['User', 'Branch', 'Calls', 'Connected', 'Unconn.', 'Converted', 'Lost'])
+                for (final label in ['User', 'Branch', 'Calls', 'Connected', 'Unconn.', 'Won', 'Lost'])
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(6),
                     child: pw.Text(
