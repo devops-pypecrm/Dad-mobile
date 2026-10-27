@@ -6,7 +6,7 @@ import '../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../providers/change_password_controller.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Change Password form — `POST /api/profile/change-password`
 /// (Dad-backend/src/controllers/profileController.ts). Requires the
@@ -130,7 +130,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDC2626).withValues(alpha: 0.08),
+                    color: const Color(0xFFFF6B4A).withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -142,14 +142,14 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(Icons.close, size: 14, color: Color(0xFFDC2626)),
+                              const Icon(Icons.close, size: 14, color: Color(0xFFFF6B4A)),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   message,
                                   style: Theme.of(
                                     context,
-                                  ).textTheme.bodySmall?.copyWith(color: const Color(0xFFDC2626)),
+                                  ).textTheme.bodySmall?.copyWith(color: const Color(0xFFFF6B4A)),
                                 ),
                               ),
                             ],

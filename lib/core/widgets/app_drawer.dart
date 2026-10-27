@@ -5,12 +5,13 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/providers/saved_accounts_unread_provider.dart';
 import '../../features/auth/providers/session_provider.dart';
 import '../router/app_router.dart';
+import '../theme/app_theme.dart';
 import '../utils/role_utils.dart';
 
 /// Brand purple — matches the nav bar/login button/greeting card, used here
 /// instead of `theme.colorScheme.primary` (a Material3-seeded blue, not
 /// this brand color).
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Grouped app-wide navigation drawer. Reference structure only, not a
 /// literal port, from Dad-frontend/src/components/shared/Sidebar.tsx's
@@ -107,7 +108,7 @@ class AppDrawer extends ConsumerWidget {
                                     child: Container(
                                       width: 7,
                                       height: 7,
-                                      decoration: const BoxDecoration(color: Colors.orangeAccent, shape: BoxShape.circle),
+                                      decoration: const BoxDecoration(color: kCoral, shape: BoxShape.circle),
                                     ),
                                   ),
                               ],

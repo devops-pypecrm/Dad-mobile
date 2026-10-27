@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 /// corner-wipe — you see a solid colored blob balloon out from the bell
 /// first, and only once it's grown do the (white-background) notifications
 /// settle in on top of it.
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// A page transition that pops a colored circle open from [origin] (screen
 /// coordinates — typically wherever the user tapped to navigate, e.g. the

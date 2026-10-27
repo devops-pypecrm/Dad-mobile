@@ -11,7 +11,7 @@ import 'app_router.dart';
 /// color, not theme-derived, per explicit request. Kept as a named
 /// constant so `_NavItem`'s "contrast against the white circle" color
 /// stays in sync with the bar automatically if this ever changes.
-const _navBarColor = Color(0xFF578732);
+const _navBarColor = Color(0xFF9654B5);
 
 /// A blanket floor here (tried and reverted — see git history) forced a
 /// visible dead gap under the bar on any device correctly reporting a
@@ -151,14 +151,18 @@ class AppShell extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(8, 0, 8, bottomMargin),
               child: CurvedNavigationBar(
                 index: currentIndex,
-                // Bar fill is white; the floating circle is the fixed brand
-                // purple. `backgroundColor` stays transparent (real content shows
+                // Bar fill follows the theme's own surface tone (white in
+                // light mode, a dark card-like tone in dark mode) rather
+                // than a hardcoded white — a fixed white bar was reading as
+                // a glaring, immersion-breaking patch in dark mode. The
+                // floating circle is the fixed brand purple regardless.
+                // `backgroundColor` stays transparent (real content shows
                 // through the notch corners as you scroll) — the bar no longer
                 // depends on a color-contrast trick to read against that
                 // transparent backdrop because `barElevation` below gives the
                 // curved shape itself a drop shadow, drawn on its own path via
                 // `canvas.drawShadow` (see the vendored painter's file header).
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 buttonBackgroundColor: _navBarColor,
                 backgroundColor: Colors.transparent,
                 // Rounds all 4 corners of the bar itself (see the vendored

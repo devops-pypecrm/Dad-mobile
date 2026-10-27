@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../auth/domain/user_device_session.dart';
 import '../../../auth/providers/devices_provider.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = kBrandColor;
 
 /// "Devices" — every device this account is currently logged into, with a
 /// remote sign-out per device. Backed by `UserSession` rows created at
@@ -29,7 +30,7 @@ class DevicesScreen extends ConsumerWidget {
         actions: [
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: kCoral),
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Sign Out'),
           ),
@@ -151,7 +152,7 @@ class _DeviceTile extends StatelessWidget {
       ),
       trailing: TextButton(
         onPressed: onSignOut,
-        child: const Text('Sign Out', style: TextStyle(color: Colors.red)),
+        child: const Text('Sign Out', style: TextStyle(color: kCoral)),
       ),
     );
   }

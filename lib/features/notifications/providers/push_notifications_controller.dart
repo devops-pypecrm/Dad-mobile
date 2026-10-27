@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/router/app_router.dart';
+import '../../../core/startup/app_bootstrap.dart';
 import '../../app_updates/providers/app_update_provider.dart';
+import '../../followups/providers/followups_list_controller.dart';
 import '../data/local_notifications_service.dart';
 import '../data/notifications_repository.dart';
 import 'notifications_controller.dart';
@@ -32,6 +34,11 @@ class PushNotificationsController extends _$PushNotificationsController {
     // never initialized on web, so touching FirebaseMessaging.instance
     // there would throw. Push is meaningless in a desktop browser anyway.
     if (kIsWeb) return;
+
+    // `main()` kicks this off unawaited so it doesn't block the first
+    // frame — await the same memoized Future here in case this runs
+    // before that's finished (see its doc comment).
+    await ensureBackgroundServicesInitialized();
 
     ref.onDispose(() {
       _tokenRefreshSub?.cancel();
@@ -78,6 +85,16 @@ class PushNotificationsController extends _$PushNotificationsController {
       if (message.data['type'] == 'app_update') {
         ref.invalidate(latestMobileReleaseProvider);
       }
+
+      // A follow-up created/reassigned push - was previously only reflected
+      // in the notification bell, never in the Follow-ups list/Overdue count
+      // itself, which otherwise has no TTL and only refreshes on manual
+      // pull-to-refresh or a filter change (see FollowUpsListController's
+      // own doc comment). This keeps it in sync the same moment the push
+      // arrives, same spirit as the `app_update` case above.
+      if (message.data['relatedResource'] == 'FollowUp') {
+        ref.read(followUpsListControllerProvider.notifier).refresh();
+      }
     });
 
     _openedAppSub = FirebaseMessaging.onMessageOpenedApp.listen((message) {
@@ -108,6 +125,7 @@ class PushNotificationsController extends _$PushNotificationsController {
   Future<void> reRegisterCurrentToken() async {
     if (kIsWeb) return;
     try {
+      await ensureBackgroundServicesInitialized();
       final token = await FirebaseMessaging.instance.getToken();
       if (token != null) await _registerToken(token);
     } catch (_) {

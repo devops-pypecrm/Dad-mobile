@@ -7,7 +7,7 @@ part of 'product_actions_controller.dart';
 // **************************************************************************
 
 String _$productActionsControllerHash() =>
-    r'e9b761bd9b6a99c210441440a07215022238c1c8';
+    r'aaa920d26ba64215aed50d3209d1586a8e33ffaa';
 
 /// Create/edit/delete for a single product — see `ProductsRepository`'s
 /// doc comment for the org-admin-only server gating this wraps.

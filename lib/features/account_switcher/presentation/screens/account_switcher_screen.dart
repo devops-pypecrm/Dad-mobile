@@ -9,6 +9,7 @@ import '../../../auth/domain/user_session.dart';
 import '../../../auth/providers/saved_accounts_provider.dart';
 import '../../../auth/providers/saved_accounts_unread_provider.dart';
 import '../../../auth/providers/session_provider.dart';
+import '../../../settings/presentation/widgets/authenticated_avatar.dart';
 import '../widgets/add_account_sheet.dart';
 
 /// Reachable from the drawer's green profile banner ("Switch Account") and
@@ -147,9 +148,10 @@ class _AccountTile extends StatelessWidget {
       ),
       child: ListTile(
         onTap: onTap,
-        leading: CircleAvatar(
-          backgroundColor: kBrandColor.withValues(alpha: 0.15),
-          child: Text(account.initial, style: const TextStyle(color: kBrandColor, fontWeight: FontWeight.bold)),
+        leading: AuthenticatedAvatar(
+          imageUrl: account.profileImage,
+          fallbackInitial: account.initial,
+          size: 44,
         ),
         title: Text('${account.firstName} ${account.lastName}', maxLines: 1, overflow: TextOverflow.ellipsis),
         subtitle: Text(
@@ -177,12 +179,12 @@ class _AccountTile extends StatelessWidget {
                       margin: const EdgeInsets.only(right: 4),
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.orangeAccent.withValues(alpha: 0.15),
+                        color: kCoral.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         unreadCount > 9 ? '9+' : '$unreadCount',
-                        style: const TextStyle(color: Colors.deepOrange, fontWeight: FontWeight.bold, fontSize: 11),
+                        style: const TextStyle(color: kCoral, fontWeight: FontWeight.bold, fontSize: 11),
                       ),
                     ),
                   IconButton(

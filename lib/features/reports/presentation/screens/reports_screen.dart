@@ -22,7 +22,7 @@ const _managerRoles = {
   'branch_manager',
   'org_admin',
 };
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 Widget _divider() =>
     Container(width: 1, height: 44, color: Colors.grey.withValues(alpha: 0.2));
@@ -302,10 +302,10 @@ class _CallReportEntry extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(color: Theme.of(context).shadowColor.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Row(
@@ -398,19 +398,19 @@ class _MyPerformanceTab extends ConsumerWidget {
                     label: 'Leads Converted',
                     value: '${metrics.leadsConverted}',
                     icon: Icons.trending_up,
-                    color: const Color(0xFF16A34A),
+                    color: const Color(0xFF9654B5),
                   ),
                   _StatCard(
                     label: 'Conversion Rate',
                     value: '${metrics.conversionRate.toStringAsFixed(1)}%',
                     icon: Icons.pie_chart_outline,
-                    color: const Color(0xFFEA580C),
+                    color: const Color(0xFFF5B82E),
                   ),
                   _StatCard(
                     label: 'Calls Made',
                     value: '${metrics.callsMade}',
                     icon: Icons.call_outlined,
-                    color: const Color(0xFF2563EB),
+                    color: const Color(0xFF00A8D6),
                   ),
                   _StatCard(
                     label: 'Meetings Held',
@@ -437,7 +437,7 @@ class _MyPerformanceTab extends ConsumerWidget {
           const SizedBox(height: 12),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
             ),
             clipBehavior: Clip.antiAlias,
@@ -465,7 +465,7 @@ class _MyPerformanceTab extends ConsumerWidget {
           salesBookAsync.when(
             data: (summary) => Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
               clipBehavior: Clip.antiAlias,
@@ -622,19 +622,19 @@ class _TeamSummaryCard extends StatelessWidget {
           label: 'Leads Converted',
           value: '$totalConverted',
           icon: Icons.trending_up,
-          color: const Color(0xFF16A34A),
+          color: const Color(0xFF9654B5),
         ),
         _StatCard(
           label: 'Conversion Rate',
           value: '${overallRate.toStringAsFixed(1)}%',
           icon: Icons.pie_chart_outline,
-          color: const Color(0xFFEA580C),
+          color: const Color(0xFFF5B82E),
         ),
         _StatCard(
           label: 'Calls Made',
           value: '$totalCalls',
           icon: Icons.call_outlined,
-          color: const Color(0xFF2563EB),
+          color: const Color(0xFF00A8D6),
         ),
         _StatCard(
           label: 'Meetings Held',
@@ -661,11 +661,11 @@ class _TeamPerformanceTile extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -747,7 +747,7 @@ class _TeamPerformanceTile extends StatelessWidget {
               Expanded(
                 child: _MiniStat(
                   icon: Icons.trending_up,
-                  color: const Color(0xFF16A34A),
+                  color: const Color(0xFF9654B5),
                   value: '${metrics.leadsConverted}',
                   label: 'Won',
                 ),
@@ -755,7 +755,7 @@ class _TeamPerformanceTile extends StatelessWidget {
               Expanded(
                 child: _MiniStat(
                   icon: Icons.call_outlined,
-                  color: const Color(0xFF2563EB),
+                  color: const Color(0xFF00A8D6),
                   value: '${metrics.callsMade}',
                   label: 'Calls',
                 ),
@@ -763,7 +763,7 @@ class _TeamPerformanceTile extends StatelessWidget {
               Expanded(
                 child: _MiniStat(
                   icon: Icons.calendar_today_outlined,
-                  color: const Color(0xFFEA580C),
+                  color: const Color(0xFFF5B82E),
                   value: '${metrics.meetingsHeld}',
                   label: 'Meetings',
                 ),
@@ -839,11 +839,11 @@ class _StatCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

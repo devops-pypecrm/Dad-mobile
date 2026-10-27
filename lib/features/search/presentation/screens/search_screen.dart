@@ -15,16 +15,16 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/search_result.dart';
 import '../../providers/search_controller.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Same type -> icon/color mapping as `getIcon` in
 /// Dad-frontend/src/components/shared/GlobalSearch.tsx:122-131.
 const _typeIcons = {
-  'lead': (Icons.person_outline, Color(0xFF2563EB)),
-  'contact': (Icons.person_outline, Color(0xFF16A34A)),
-  'account': (Icons.apartment_outlined, Color(0xFF9333EA)),
-  'opportunity': (Icons.trending_up, Color(0xFFEA580C)),
-  'task': (Icons.check_box_outlined, Color(0xFFDC2626)),
+  'lead': (Icons.person_outline, Color(0xFF00A8D6)),
+  'contact': (Icons.person_outline, Color(0xFF9654B5)),
+  'account': (Icons.apartment_outlined, Color(0xFF9654B5)),
+  'opportunity': (Icons.trending_up, Color(0xFFF5B82E)),
+  'task': (Icons.check_box_outlined, Color(0xFFFF6B4A)),
 };
 const _defaultTypeIcon = (Icons.description_outlined, Colors.grey);
 
@@ -100,7 +100,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             child: Container(
               height: 46,
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAEF),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: Theme.of(context).colorScheme.outlineVariant,
@@ -115,12 +115,12 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                 // default vertical padding reads as sitting slightly above
                 // center inside this fixed-height (46) container.
                 textAlignVertical: TextAlignVertical.center,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Search leads, accounts, opportunities…',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: const Icon(Icons.search),
                   isDense: true,
                   filled: true,
-                  fillColor: Color(0xFFF9FAEF),
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(14)),
                     borderSide: BorderSide.none,
@@ -275,14 +275,15 @@ class _SimpleResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
+            color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -376,11 +377,11 @@ class _ResultsList extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.only(bottom: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Colors.black.withValues(alpha: theme.brightness == Brightness.dark ? 0.25 : 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -430,7 +431,7 @@ class _ResultsList extends StatelessWidget {
                                     currency,
                                   ),
                                   style: theme.textTheme.labelMedium?.copyWith(
-                                    color: const Color(0xFF16A34A),
+                                    color: const Color(0xFF9654B5),
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

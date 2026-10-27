@@ -7,7 +7,7 @@ import '../../domain/opportunity_timeline_item.dart';
 import '../../providers/opportunity_timeline_provider.dart';
 import '../../../leads/presentation/widgets/lead_recording_player_sheet.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// The "Timeline & Files" tab's activity feed — a merged, newest-first list
 /// of Interactions/Tasks/Events/AuditLogs/CallRecordings/FollowUps/Documents
@@ -69,20 +69,20 @@ class OpportunityTimelineSection extends ConsumerWidget {
   switch (item.type) {
     case 'interaction':
       if (item.subType == 'call') return (Icons.call, _brandColor);
-      if (item.subType == 'whatsapp') return (Icons.chat_bubble_outline, const Color(0xFF16A34A));
+      if (item.subType == 'whatsapp') return (Icons.chat_bubble_outline, const Color(0xFF9654B5));
       return (Icons.mail_outline, _brandColor);
     case 'task':
-      return (Icons.check_box_outlined, const Color(0xFFEA580C));
+      return (Icons.check_box_outlined, const Color(0xFFF5B82E));
     case 'followUp':
-      return (Icons.schedule, const Color(0xFF4F46E5));
+      return (Icons.schedule, const Color(0xFF9654B5));
     case 'event':
-      return (Icons.event_outlined, const Color(0xFF9333EA));
+      return (Icons.event_outlined, const Color(0xFF9654B5));
     case 'audit':
       return (Icons.shield_outlined, Colors.grey);
     case 'recording':
-      return (Icons.call, const Color(0xFF2563EB));
+      return (Icons.call, const Color(0xFF00A8D6));
     case 'document':
-      return (Icons.description_outlined, const Color(0xFFD97706));
+      return (Icons.description_outlined, const Color(0xFFF5B82E));
     default:
       return (Icons.circle_outlined, Colors.grey);
   }

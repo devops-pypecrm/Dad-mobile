@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/auth/providers/session_provider.dart';
 import '../../features/notifications/presentation/widgets/notification_bell_button.dart';
 import '../../features/notifications/providers/notification_panel_provider.dart';
 import '../router/app_router.dart';
+import '../utils/logout_helper.dart';
 import 'profile_menu_button.dart';
 
 /// The one top bar shape used on every tab-root screen (Dashboard, Leads,
@@ -31,37 +31,10 @@ class GlobalAppBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
-  Future<void> _confirmLogout(BuildContext context, WidgetRef ref) async {
-    // Wording depends on whether logging out actually lands on the login
-    // screen or just switches to another saved account — see
-    // `SessionController.logout`'s doc comment for the mechanics.
-    final hasOtherSaved =
-        (await ref.read(sessionControllerProvider.notifier).loadSavedAccounts()).isNotEmpty;
-    if (!context.mounted) return;
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Log out?'),
-        content: Text(
-          hasOtherSaved
-              ? "You'll be switched to another account you're still signed into on this device."
-              : "You'll need to sign in again to use this account.",
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
-          TextButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Log Out')),
-        ],
-      ),
-    );
-    if (confirmed == true) {
-      await ref.read(sessionControllerProvider.notifier).logout();
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPanelOpen = ref.watch(notificationPanelOpenProvider);
+    final onSurface = Theme.of(context).colorScheme.onSurface;
 
     return AppBar(
       // The avatar moves from AppBar's dedicated `leading` slot into the
@@ -91,18 +64,19 @@ class GlobalAppBar extends ConsumerWidget implements PreferredSizeWidget {
               child: Text(
                 isPanelOpen ? 'Notifications' : title,
                 key: ValueKey(isPanelOpen),
-                style: const TextStyle(color: Colors.black),
+                style: TextStyle(color: onSurface),
               ),
             ),
           ),
         ],
       ),
       // Applies to every action Icon below (none of them set their own
-      // color) via the ambient IconTheme, so Accounts/Notifications/Logout
-      // all render pure black instead of the AppBar's Material3 default
-      // (theme.colorScheme.onSurface, a dark grey, not true black).
-      iconTheme: const IconThemeData(color: Colors.black),
-      actionsIconTheme: const IconThemeData(color: Colors.black),
+      // color) via the ambient IconTheme — follows the theme's own
+      // onSurface color (dark grey/near-black in light mode, light
+      // grey/near-white in dark mode) instead of a hardcoded pure black,
+      // which was unreadable against a dark app bar.
+      iconTheme: IconThemeData(color: onSurface),
+      actionsIconTheme: IconThemeData(color: onSurface),
       actions: [
         _CollapsingAction(
           collapsed: isPanelOpen,
@@ -119,7 +93,7 @@ class GlobalAppBar extends ConsumerWidget implements PreferredSizeWidget {
           collapsed: isPanelOpen,
           child: IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () => _confirmLogout(context, ref),
+            onPressed: () => confirmAndLogout(context, ref),
           ),
         ),
       ],

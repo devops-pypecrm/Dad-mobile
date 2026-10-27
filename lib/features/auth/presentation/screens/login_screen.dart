@@ -49,7 +49,9 @@ class LoginScreen extends ConsumerWidget {
                   const SizedBox(height: 6),
                   Text(
                     'Sign in to your organisation',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black),
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                   ),
                   const SizedBox(height: 32),
                   const LoginForm(),

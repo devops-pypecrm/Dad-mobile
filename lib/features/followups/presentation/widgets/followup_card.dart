@@ -3,22 +3,23 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../domain/followup.dart';
 import '../../providers/followups_list_controller.dart';
 
 const _statusColors = {
-  kFollowUpNotStarted: Color(0xFF578732),
-  kFollowUpInProgress: Color(0xFF2563EB),
-  kFollowUpCompleted: Color(0xFF16A34A),
-  kFollowUpDeferred: Color(0xFFDC2626),
+  kFollowUpNotStarted: kAccentColor,
+  kFollowUpInProgress: kCyan,
+  kFollowUpCompleted: kAccentColor,
+  kFollowUpDeferred: kCoral,
 };
 
 const _priorityColors = {
-  'high': Color(0xFFDC2626),
-  'medium': Color(0xFFCA8A04),
-  'low': Color(0xFF16A34A),
+  'high': kCoral,
+  'medium': kYellow,
+  'low': kAccentColor,
 };
 
 String _statusLabel(String status) => status.replaceAll('_', ' ');
@@ -272,13 +273,13 @@ class FollowUpCard extends ConsumerWidget {
                           height: 40,
                           decoration: BoxDecoration(
                             color: const Color(
-                              0xFF578732,
+                              0xFF9654B5,
                             ).withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.folder_outlined,
-                            color: Color(0xFF578732),
+                            color: Color(0xFF9654B5),
                             size: 20,
                           ),
                         ),
@@ -334,7 +335,7 @@ class FollowUpCard extends ConsumerWidget {
                               iconColor: isOverdue
                                   ? theme.colorScheme.error
                                   : isDueToday
-                                  ? const Color(0xFFEA580C)
+                                  ? kYellow
                                   : theme.colorScheme.onSurfaceVariant,
                               value: _formatDueDate(followUp.dueDate),
                               caption: 'Due Date',
@@ -364,7 +365,7 @@ class FollowUpCard extends ConsumerWidget {
                           else if (isDueToday)
                             const _Badge(
                               label: 'TODAY',
-                              color: Color(0xFFEA580C),
+                              color: kYellow,
                             ),
                         ],
                       ),
@@ -382,15 +383,15 @@ class FollowUpCard extends ConsumerWidget {
                               Text(
                                 'View Details',
                                 style: theme.textTheme.labelLarge?.copyWith(
-                                  color: const Color(0xFF578732),
+                                  color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               const SizedBox(width: 4),
-                              const Icon(
+                              Icon(
                                 Icons.arrow_forward,
                                 size: 16,
-                                color: Color(0xFF578732),
+                                color: theme.colorScheme.primary,
                               ),
                             ],
                           ),

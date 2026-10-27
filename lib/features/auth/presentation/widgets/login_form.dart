@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../providers/session_provider.dart';
 
@@ -66,7 +67,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     );
     final errorBorder = OutlineInputBorder(
       borderRadius: radius,
-      borderSide: BorderSide(color: Colors.red.shade400),
+      borderSide: BorderSide(color: kCoral),
     );
     // Content padding is 18 vertical, so icon edge-padding is set to match
     // (18) for a visually square, evenly-balanced inset on all four sides.
@@ -100,7 +101,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   Widget build(BuildContext context) {
     final sessionState = ref.watch(sessionControllerProvider);
     final isLoading = sessionState.isLoading;
-    const inputTextStyle = TextStyle(color: Colors.black, fontSize: 16);
+    final inputTextStyle = TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 16);
 
     final loginError = sessionState.hasError && !isLoading
         ? (sessionState.error is ApiException
@@ -161,7 +162,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             const SizedBox(height: 16),
             Text(
               loginError,
-              style: TextStyle(color: Colors.red.shade700, fontSize: 13),
+              style: TextStyle(color: kCoral, fontSize: 13),
               textAlign: TextAlign.center,
             ),
           ],

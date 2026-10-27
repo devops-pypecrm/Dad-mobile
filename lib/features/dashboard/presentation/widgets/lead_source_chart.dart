@@ -1,21 +1,18 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/lead_source_stat.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = kBrandColor;
 
-// Same COLORS array as Dad-frontend/src/components/dashboard/LeadSourcesWidget.tsx:8,
-// cycled the same way (`COLORS[index % COLORS.length]`) so a given source
-// lands on the same color on both platforms.
-const _palette = [
-  Color(0xFF34D399),
-  Color(0xFF2DD4BF),
-  Color(0xFF38BDF8),
-  Color(0xFF818CF8),
-  Color(0xFFA78BFA),
-  Color(0xFFF472B6),
-];
+// Brand palette, cycled the same way (`palette[index % palette.length]`) as
+// before. No longer matches Dad-frontend's own LeadSourcesWidget.tsx COLORS
+// array (that one still uses the old teal/blue/violet set) — this app's
+// recolor only covers Dad-mobile, so cross-platform color parity for a
+// given lead source is broken until/unless Dad-frontend adopts the same
+// palette.
+const _palette = kChartPalette;
 
 String _labelFor(String source) {
   final words = source.replaceAll('_', ' ').split(' ');

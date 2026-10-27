@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/ist_format.dart';
+import '../../../../core/widgets/app_snackbar.dart';
+import '../../domain/lead_re_enquiry_history.dart';
 import '../../domain/lead_whatsapp_activity.dart';
 import '../../providers/lead_activity_providers.dart';
+import '../../providers/lead_re_enquiry_split_controller.dart';
 import 'lead_recording_player_sheet.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 enum _ActivityTab {
   timeline,
@@ -14,6 +17,7 @@ enum _ActivityTab {
   whatsappCalls,
   callHistory,
   ownershipHistory,
+  reEnquiryHistory,
 }
 
 const _tabs = [
@@ -22,6 +26,7 @@ const _tabs = [
   (tab: _ActivityTab.whatsappCalls, label: 'WhatsApp Calls'),
   (tab: _ActivityTab.callHistory, label: 'Call History'),
   (tab: _ActivityTab.ownershipHistory, label: 'Ownership History'),
+  (tab: _ActivityTab.reEnquiryHistory, label: 'Re-Enquiry History'),
 ];
 
 /// The 5 activity tabs Dad-frontend's `pages/leads/[id].tsx` shows on the
@@ -84,6 +89,9 @@ class _LeadActivityTabsState extends ConsumerState<LeadActivityTabs> {
           ),
           _ActivityTab.callHistory => _CallHistoryTab(leadId: widget.leadId),
           _ActivityTab.ownershipHistory => _OwnershipHistoryTab(
+            leadId: widget.leadId,
+          ),
+          _ActivityTab.reEnquiryHistory => _ReEnquiryHistoryTab(
             leadId: widget.leadId,
           ),
         },
@@ -304,24 +312,24 @@ class _TabError extends StatelessWidget {
     case 'interaction':
       switch (subType) {
         case 'call':
-          return (Icons.call_outlined, const Color(0xFF2563EB));
+          return (Icons.call_outlined, const Color(0xFF00A8D6));
         case 'email':
-          return (Icons.email_outlined, const Color(0xFF9333EA));
+          return (Icons.email_outlined, const Color(0xFF9654B5));
         case 'meeting':
-          return (Icons.groups_outlined, const Color(0xFF16A34A));
+          return (Icons.groups_outlined, const Color(0xFF9654B5));
         case 'note':
           return (Icons.note_outlined, _brandColor);
         default:
           return (Icons.chat_bubble_outline, _neutralGrey);
       }
     case 'task':
-      return (Icons.check_circle_outline, const Color(0xFFEA580C));
+      return (Icons.check_circle_outline, const Color(0xFFF5B82E));
     case 'event':
-      return (Icons.event_outlined, const Color(0xFF2563EB));
+      return (Icons.event_outlined, const Color(0xFF00A8D6));
     case 'audit':
       return (Icons.history, _neutralGrey);
     case 'recording':
-      return (Icons.mic_none_outlined, const Color(0xFFDC2626));
+      return (Icons.mic_none_outlined, const Color(0xFFFF6B4A));
     case 'document':
       return (Icons.insert_drive_file_outlined, _neutralGrey);
     case 'followUp':
@@ -486,8 +494,8 @@ class _WhatsAppMessagesTab extends ConsumerWidget {
                             _IconCircle(
                               icon: Icons.message_outlined,
                               color: msg.direction == 'inbound'
-                                  ? const Color(0xFFEA580C)
-                                  : const Color(0xFF0D9488),
+                                  ? const Color(0xFFF5B82E)
+                                  : const Color(0xFF9654B5),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -616,8 +624,8 @@ class _WhatsAppCallsTab extends ConsumerWidget {
                             _IconCircle(
                               icon: Icons.call_outlined,
                               color: call.direction == 'inbound'
-                                  ? const Color(0xFFEA580C)
-                                  : const Color(0xFF10B981),
+                                  ? const Color(0xFFF5B82E)
+                                  : const Color(0xFF9654B5),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -787,8 +795,8 @@ class _CallHistoryTab extends ConsumerWidget {
                             _IconCircle(
                               icon: Icons.call_outlined,
                               color: call.direction == 'inbound'
-                                  ? const Color(0xFFEA580C)
-                                  : const Color(0xFF2563EB),
+                                  ? const Color(0xFFF5B82E)
+                                  : const Color(0xFF00A8D6),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -996,5 +1004,201 @@ class _OwnerPill extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Re-Enquiry History
+// ---------------------------------------------------------------------------
+
+/// Every past time this lead's phone number enquired again — not just the
+/// current merged name/count the rest of the app shows. Each event carries
+/// a "Create as separate lead" action for when it turns out to have been a
+/// different person sharing the same phone number, not the same customer.
+class _ReEnquiryHistoryTab extends ConsumerWidget {
+  const _ReEnquiryHistoryTab({required this.leadId});
+
+  final String leadId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(leadReEnquiryHistoryProvider(leadId))
+        .when(
+          loading: () => const _TabLoading(),
+          error: (error, stack) =>
+              _TabError(message: "Couldn't load re-enquiry history: $error"),
+          data: (history) {
+            if (history.events.isEmpty) {
+              return const _EmptyState(
+                icon: Icons.replay_outlined,
+                message: 'This lead has never re-enquired.',
+              );
+            }
+            return Column(
+              children: [
+                for (final event in history.events)
+                  _ReEnquiryEventCard(
+                    leadId: leadId,
+                    currentPhone: history.currentPhone,
+                    event: event,
+                  ),
+              ],
+            );
+          },
+        );
+  }
+}
+
+class _ReEnquiryEventCard extends ConsumerWidget {
+  const _ReEnquiryEventCard({
+    required this.leadId,
+    required this.currentPhone,
+    required this.event,
+  });
+
+  final String leadId;
+  final String currentPhone;
+  final LeadReEnquiryEvent event;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final splitState = ref.watch(
+      leadReEnquirySplitControllerProvider(leadId),
+    );
+
+    ref.listen(leadReEnquirySplitControllerProvider(leadId), (
+      previous,
+      next,
+    ) {
+      final error = next.error;
+      if (error != null && !next.isLoading) {
+        showAppSnackBar(context, error.toString(), isError: true);
+      }
+    });
+
+    return _ActivityCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const _IconCircle(
+                icon: Icons.replay_outlined,
+                color: _brandColor,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      event.name ?? 'Name not recorded',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      formatIST(event.date, 'MMM d, yyyy h:mm a'),
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (event.phone != null || event.email != null) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: [
+                if (event.phone != null) _StatusBadge(label: event.phone!),
+                if (event.email != null) _StatusBadge(label: event.email!),
+              ],
+            ),
+          ],
+          const SizedBox(height: 10),
+          if (event.alreadySplitLeadId != null)
+            Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Already created as a separate lead',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            )
+          else
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: splitState.isLoading
+                    ? null
+                    : () => _confirmAndSplit(context, ref),
+                icon: splitState.isLoading
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.call_split, size: 16),
+                label: const Text('Create as separate lead'),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmAndSplit(BuildContext context, WidgetRef ref) async {
+    final phoneForNewLead = event.phone ?? currentPhone;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Create as separate lead?'),
+        content: Text(
+          event.phone != null && event.phone != currentPhone
+              ? 'This will create a new lead for "${event.name}" using the phone number captured at that enquiry ($phoneForNewLead).'
+              : 'This re-enquiry didn\'t capture its own phone number, so the new '
+                    'lead for "${event.name}" will share this lead\'s phone number '
+                    '($phoneForNewLead).\n\n'
+                    'Warning: because both leads will have the same phone number, a '
+                    'future re-enquiry on this number could get matched to either one. '
+                    'Add a note, secondary phone, or email on the new lead as soon as '
+                    'possible to keep the two apart.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Create separate lead'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    final newLeadId = await ref
+        .read(leadReEnquirySplitControllerProvider(leadId).notifier)
+        .split(eventIndex: event.eventIndex);
+
+    if (newLeadId != null && context.mounted) {
+      showAppSnackBar(context, 'Created new lead for "${event.name}"');
+    }
   }
 }

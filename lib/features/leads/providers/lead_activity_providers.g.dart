@@ -587,5 +587,142 @@ class _LeadOwnershipHistoryProviderElement
   String get leadId => (origin as LeadOwnershipHistoryProvider).leadId;
 }
 
+String _$leadReEnquiryHistoryHash() =>
+    r'6c2ec472aa9e2a85e8aa72d7bc60e7cc70e8dcf9';
+
+/// Backs the Lead Detail "Re-Enquiry History" tab.
+///
+/// Copied from [leadReEnquiryHistory].
+@ProviderFor(leadReEnquiryHistory)
+const leadReEnquiryHistoryProvider = LeadReEnquiryHistoryFamily();
+
+/// Backs the Lead Detail "Re-Enquiry History" tab.
+///
+/// Copied from [leadReEnquiryHistory].
+class LeadReEnquiryHistoryFamily
+    extends Family<AsyncValue<LeadReEnquiryHistory>> {
+  /// Backs the Lead Detail "Re-Enquiry History" tab.
+  ///
+  /// Copied from [leadReEnquiryHistory].
+  const LeadReEnquiryHistoryFamily();
+
+  /// Backs the Lead Detail "Re-Enquiry History" tab.
+  ///
+  /// Copied from [leadReEnquiryHistory].
+  LeadReEnquiryHistoryProvider call(String leadId) {
+    return LeadReEnquiryHistoryProvider(leadId);
+  }
+
+  @override
+  LeadReEnquiryHistoryProvider getProviderOverride(
+    covariant LeadReEnquiryHistoryProvider provider,
+  ) {
+    return call(provider.leadId);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'leadReEnquiryHistoryProvider';
+}
+
+/// Backs the Lead Detail "Re-Enquiry History" tab.
+///
+/// Copied from [leadReEnquiryHistory].
+class LeadReEnquiryHistoryProvider
+    extends AutoDisposeFutureProvider<LeadReEnquiryHistory> {
+  /// Backs the Lead Detail "Re-Enquiry History" tab.
+  ///
+  /// Copied from [leadReEnquiryHistory].
+  LeadReEnquiryHistoryProvider(String leadId)
+    : this._internal(
+        (ref) => leadReEnquiryHistory(ref as LeadReEnquiryHistoryRef, leadId),
+        from: leadReEnquiryHistoryProvider,
+        name: r'leadReEnquiryHistoryProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$leadReEnquiryHistoryHash,
+        dependencies: LeadReEnquiryHistoryFamily._dependencies,
+        allTransitiveDependencies:
+            LeadReEnquiryHistoryFamily._allTransitiveDependencies,
+        leadId: leadId,
+      );
+
+  LeadReEnquiryHistoryProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.leadId,
+  }) : super.internal();
+
+  final String leadId;
+
+  @override
+  Override overrideWith(
+    FutureOr<LeadReEnquiryHistory> Function(LeadReEnquiryHistoryRef provider)
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: LeadReEnquiryHistoryProvider._internal(
+        (ref) => create(ref as LeadReEnquiryHistoryRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        leadId: leadId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<LeadReEnquiryHistory> createElement() {
+    return _LeadReEnquiryHistoryProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LeadReEnquiryHistoryProvider && other.leadId == leadId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, leadId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin LeadReEnquiryHistoryRef
+    on AutoDisposeFutureProviderRef<LeadReEnquiryHistory> {
+  /// The parameter `leadId` of this provider.
+  String get leadId;
+}
+
+class _LeadReEnquiryHistoryProviderElement
+    extends AutoDisposeFutureProviderElement<LeadReEnquiryHistory>
+    with LeadReEnquiryHistoryRef {
+  _LeadReEnquiryHistoryProviderElement(super.provider);
+
+  @override
+  String get leadId => (origin as LeadReEnquiryHistoryProvider).leadId;
+}
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

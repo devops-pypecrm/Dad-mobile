@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../dashboard/presentation/widgets/date_range_filter_sheet.dart';
 import '../../providers/reports_providers.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Same preset list/UI as the Dashboard's date filter (All Time / This
 /// Month / Last Month / Custom Range) — shared here via

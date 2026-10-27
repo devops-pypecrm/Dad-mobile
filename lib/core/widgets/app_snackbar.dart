@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Themed in-app notice — a rounded, floating, icon-led banner that matches
 /// the app's own design language (white card, brand green/red accents),
@@ -14,7 +14,7 @@ void showAppSnackBar(
   bool isError = false,
 }) {
   final theme = Theme.of(context);
-  final accent = isError ? const Color(0xFFDC2626) : _brandColor;
+  final accent = isError ? const Color(0xFFFF6B4A) : _brandColor;
 
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()

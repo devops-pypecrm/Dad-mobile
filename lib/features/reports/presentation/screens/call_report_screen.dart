@@ -11,7 +11,7 @@ import '../../domain/daily_report.dart';
 import '../../providers/reports_providers.dart';
 import '../widgets/daily_report_pdf.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 final _dateFormat = DateFormat('yyyy-MM-dd');
 
 const _periods = [
@@ -268,7 +268,7 @@ class _FilterChipRow extends StatelessWidget {
                   color: selected == value ? Colors.white : theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
-                backgroundColor: const Color(0xFFF9FAEF),
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 side: BorderSide(color: theme.colorScheme.outlineVariant),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               ),
@@ -292,7 +292,7 @@ class _BranchDropdown extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAEF),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -401,7 +401,7 @@ class _CallReportCard extends StatelessWidget {
                   child: _MetricCell(
                     label: 'Connected',
                     value: '${row.totalConnected}',
-                    valueColor: const Color(0xFF16A34A),
+                    valueColor: const Color(0xFF9654B5),
                   ),
                 ),
                 _cellDivider(theme),
@@ -411,12 +411,12 @@ class _CallReportCard extends StatelessWidget {
                   child: _MetricCell(
                     label: 'Won',
                     value: '${row.totalConverted}',
-                    valueColor: const Color(0xFF7C3AED),
+                    valueColor: const Color(0xFF9654B5),
                   ),
                 ),
                 _cellDivider(theme),
                 Expanded(
-                  child: _MetricCell(label: 'Lost', value: '${row.totalLost}', valueColor: const Color(0xFFDC2626)),
+                  child: _MetricCell(label: 'Lost', value: '${row.totalLost}', valueColor: const Color(0xFFFF6B4A)),
                 ),
               ],
             ),
@@ -470,14 +470,14 @@ class _SummaryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tiles = [
-      (Icons.call_outlined, 'Total Calls', '${summary.totalCalls}', _formatDuration(summary.totalDuration), const Color(0xFF2563EB)),
-      (Icons.call_received, 'Incoming', '${summary.incoming}', _formatDuration(summary.incomingDuration), const Color(0xFF16A34A)),
-      (Icons.call_made, 'Outgoing', '${summary.outgoing}', _formatDuration(summary.outgoingDuration), const Color(0xFF4F46E5)),
-      (Icons.phone_missed_outlined, 'Missed', '${summary.missed}', null, const Color(0xFFDC2626)),
-      (Icons.block_outlined, 'Rejected', '${summary.rejected}', null, const Color(0xFFEA580C)),
+      (Icons.call_outlined, 'Total Calls', '${summary.totalCalls}', _formatDuration(summary.totalDuration), const Color(0xFF00A8D6)),
+      (Icons.call_received, 'Incoming', '${summary.incoming}', _formatDuration(summary.incomingDuration), const Color(0xFF9654B5)),
+      (Icons.call_made, 'Outgoing', '${summary.outgoing}', _formatDuration(summary.outgoingDuration), const Color(0xFF9654B5)),
+      (Icons.phone_missed_outlined, 'Missed', '${summary.missed}', null, const Color(0xFFFF6B4A)),
+      (Icons.block_outlined, 'Rejected', '${summary.rejected}', null, const Color(0xFFF5B82E)),
       (Icons.do_not_disturb_alt_outlined, 'Never Attended', '${summary.neverAttended}', null, Colors.grey),
-      (Icons.phone_disabled_outlined, 'Not Picked Up', '${summary.notPickedUp}', null, const Color(0xFFCA8A04)),
-      (Icons.tag_outlined, 'Unique Numbers', '${summary.unique}', null, const Color(0xFF7C3AED)),
+      (Icons.phone_disabled_outlined, 'Not Picked Up', '${summary.notPickedUp}', null, const Color(0xFFF5B82E)),
+      (Icons.tag_outlined, 'Unique Numbers', '${summary.unique}', null, const Color(0xFF9654B5)),
     ];
 
     return GridView.builder(

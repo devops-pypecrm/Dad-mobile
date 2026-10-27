@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../checkins/data/location_service.dart';
@@ -18,7 +19,7 @@ import '../../providers/field_operations_provider.dart';
 import '../widgets/field_stat_card.dart';
 import '../widgets/team_locations_map.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// "Field Operations" — the mobile counterpart to Dad-frontend's
 /// `/field-force` page: live team-location map, KPI stat cards, a team
@@ -144,25 +145,25 @@ class _FieldOperationsScreenState extends ConsumerState<FieldOperationsScreen> {
               icon: Icons.check_circle_outline,
               value: '${snapshot.checkedInCount}',
               label: 'Currently Checked In',
-              color: Colors.green,
+              color: kAccentColor,
             ),
             FieldStatCard(
               icon: Icons.navigation_outlined,
               value: '${snapshot.inTransitCount}',
               label: 'In Transit',
-              color: Colors.blue,
+              color: kCyan,
             ),
             FieldStatCard(
               icon: Icons.location_on_outlined,
               value: '${snapshot.visitsToday}',
               label: 'Visits Today',
-              color: Colors.purple,
+              color: kBrandColor,
             ),
             FieldStatCard(
               icon: Icons.trending_up,
               value: '${snapshot.productivityScore}%',
               label: 'Productivity Score',
-              color: Colors.orange,
+              color: kYellow,
             ),
           ],
         ),
@@ -256,7 +257,7 @@ class _TeamActivityTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final statusColor = member.isCheckedIn ? Colors.green : theme.colorScheme.onSurfaceVariant;
+    final statusColor = member.isCheckedIn ? kAccentColor : theme.colorScheme.onSurfaceVariant;
     return ListTile(
       leading: Stack(
         clipBehavior: Clip.none,
@@ -289,8 +290,8 @@ class _TeamActivityTile extends StatelessWidget {
           Chip(
             label: Text(member.isCheckedIn ? 'Checked In' : 'Offline'),
             visualDensity: VisualDensity.compact,
-            backgroundColor: member.isCheckedIn ? Colors.green.withValues(alpha: 0.12) : null,
-            labelStyle: TextStyle(color: member.isCheckedIn ? Colors.green.shade800 : null, fontSize: 11),
+            backgroundColor: member.isCheckedIn ? kAccentColor.withValues(alpha: 0.12) : null,
+            labelStyle: TextStyle(color: member.isCheckedIn ? kAccentColor : null, fontSize: 11),
             side: BorderSide.none,
           ),
           const SizedBox(height: 2),

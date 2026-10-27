@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../../../core/utils/role_utils.dart';
 import '../../../../core/widgets/app_snackbar.dart';
@@ -62,7 +63,7 @@ class _ProductsListScreenState extends ConsumerState<ProductsListScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: const Text('Delete', style: TextStyle(color: kCoral)),
           ),
         ],
       ),

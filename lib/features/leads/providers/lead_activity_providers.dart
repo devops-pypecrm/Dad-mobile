@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../data/leads_repository.dart';
 import '../domain/lead_call_history_item.dart';
 import '../domain/lead_ownership_history_item.dart';
+import '../domain/lead_re_enquiry_history.dart';
 import '../domain/lead_timeline_item.dart';
 import '../domain/lead_whatsapp_activity.dart';
 
@@ -44,4 +45,13 @@ Future<List<LeadOwnershipHistoryItem>> leadOwnershipHistory(
   String leadId,
 ) {
   return ref.watch(leadsRepositoryProvider).getLeadOwnershipHistory(leadId);
+}
+
+/// Backs the Lead Detail "Re-Enquiry History" tab.
+@riverpod
+Future<LeadReEnquiryHistory> leadReEnquiryHistory(
+  AutoDisposeFutureProviderRef<LeadReEnquiryHistory> ref,
+  String leadId,
+) {
+  return ref.watch(leadsRepositoryProvider).getReEnquiryHistory(leadId);
 }

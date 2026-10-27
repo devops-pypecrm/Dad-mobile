@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/lead_notes_controller.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Notes/activity card on the Lead Detail screen — matches Dad-frontend's
 /// "Note" quick-action (`LogNoteDialog`, a bare textarea → `POST

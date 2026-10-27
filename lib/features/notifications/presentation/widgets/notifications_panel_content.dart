@@ -156,13 +156,13 @@ class _NotificationsPanelContentState extends ConsumerState<NotificationsPanelCo
 (IconData, Color) _iconFor(String type, ColorScheme colors) {
   switch (type) {
     case 'success':
-      return (Icons.check_circle, const Color(0xFF22C55E));
+      return (Icons.check_circle, const Color(0xFF45B83D));
     case 'warning':
-      return (Icons.warning_amber_rounded, const Color(0xFFF59E0B));
+      return (Icons.warning_amber_rounded, const Color(0xFFF5B82E));
     case 'error':
-      return (Icons.cancel, const Color(0xFFEF4444));
+      return (Icons.cancel, const Color(0xFFFF6B4A));
     default:
-      return (Icons.info, const Color(0xFF3B82F6));
+      return (Icons.info, const Color(0xFF00A8D6));
   }
 }
 

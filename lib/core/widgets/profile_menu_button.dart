@@ -7,7 +7,7 @@ import '../router/app_shell.dart';
 /// Brand purple — matches the nav bar/login button/greeting card/drawer
 /// header, used here instead of `theme.colorScheme.primary` (a Material3-
 /// seeded blue, not this brand color).
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Drop-in replacement for the AppBar's auto-generated hamburger icon on
 /// screens with a `Scaffold.drawer` set. There's no profile-photo upload

@@ -5,7 +5,7 @@ import 'package:printing/printing.dart';
 
 import '../../domain/daily_report.dart';
 
-const _pdfBrandColor = PdfColor.fromInt(0xFF578732);
+const _pdfBrandColor = PdfColor.fromInt(0xFF9654B5);
 
 /// Mobile equivalent of the web `/reports/daily` page's "Export PDF"/
 /// "Print" buttons combined into one: builds a clean, brand-colored PDF of

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../domain/product.dart';
 
@@ -36,9 +37,21 @@ class ProductCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(
-                  product.isCustom ? 'Custom Price' : CurrencyFormatter.compact(product.basePrice, product.currency),
-                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      product.isCustom
+                          ? 'Custom Price'
+                          : CurrencyFormatter.compact(product.basePrice, product.currency),
+                      style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    if (!product.isCustom)
+                      Text(
+                        '/ ${product.unit}',
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                      ),
+                  ],
                 ),
                 if (onEdit != null || onDelete != null)
                   PopupMenuButton<VoidCallback>(
@@ -50,7 +63,7 @@ class ProductCard extends StatelessWidget {
                       if (onDelete != null)
                         PopupMenuItem(
                           value: onDelete,
-                          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                          child: const Text('Delete', style: TextStyle(color: kCoral)),
                         ),
                     ],
                   ),
@@ -61,6 +74,22 @@ class ProductCard extends StatelessWidget {
                 'SKU: ${product.sku}',
                 style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
+            if (product.description != null && product.description!.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                product.description!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
+            ],
+            if (product.taxRate > 0) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Tax: ${product.taxRate.toStringAsFixed(product.taxRate.truncateToDouble() == product.taxRate ? 0 : 1)}%',
+                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
+            ],
             const SizedBox(height: 8),
             Row(
               children: [
@@ -76,9 +105,9 @@ class ProductCard extends StatelessWidget {
                 Chip(
                   label: Text(product.isActive ? 'Active' : 'Inactive'),
                   backgroundColor:
-                      (product.isActive ? const Color(0xFF16A34A) : Colors.grey).withValues(alpha: 0.12),
+                      (product.isActive ? const Color(0xFF9654B5) : Colors.grey).withValues(alpha: 0.12),
                   labelStyle: TextStyle(
-                    color: product.isActive ? const Color(0xFF16A34A) : Colors.grey.shade700,
+                    color: product.isActive ? const Color(0xFF9654B5) : Colors.grey.shade700,
                     fontWeight: FontWeight.w600,
                     fontSize: 11,
                   ),

@@ -9,6 +9,7 @@ import '../../data/calls_repository.dart';
 import '../../domain/call_log.dart';
 import '../../providers/call_logs_list_provider.dart';
 import 'call_recording_player_sheet.dart';
+import '../../../../core/theme/app_theme.dart';
 
 String _formatDuration(int seconds) {
   final m = seconds ~/ 60;
@@ -26,11 +27,11 @@ String _formatDate(DateTime dt) {
 }
 
 const _statusColors = {
-  'completed': Color(0xFF16A34A),
-  'missed': Color(0xFFDC2626),
-  'busy': Color(0xFFCA8A04),
-  'failed': Color(0xFFDC2626),
-  'initiated': Color(0xFF2563EB),
+  'completed': kAccentColor,
+  'missed': kCoral,
+  'busy': kYellow,
+  'failed': kCoral,
+  'initiated': kCyan,
 };
 
 /// `callStatus: 'failed'` doesn't mean sync/upload failed — it's the
@@ -71,7 +72,7 @@ class CallLogCard extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: const Text('Delete', style: TextStyle(color: kCoral)),
           ),
         ],
       ),
@@ -143,7 +144,7 @@ class CallLogCard extends ConsumerWidget {
                             if (isAdmin)
                               const PopupMenuItem(
                                 value: 'delete',
-                                child: Text('Delete recording', style: TextStyle(color: Colors.red)),
+                                child: Text('Delete recording', style: TextStyle(color: kCoral)),
                               ),
                           ],
                         ),

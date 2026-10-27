@@ -33,7 +33,7 @@ import '../widgets/target_progress_card.dart';
 /// instead of `theme.colorScheme.primary` (a Material3-seeded blue, not this
 /// brand color) so the Today card and Exp. Revenue tile read as on-brand
 /// rather than an accidental off-shade.
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// The primary landing screen. Layout mirrors
 /// Dad-frontend/src/pages/Dashboard.tsx: a branch+month filter row driving
@@ -315,7 +315,7 @@ class DashboardScreen extends ConsumerWidget {
                       label: 'Pipeline',
                       value: '${stats.activeOpportunities}',
                       icon: Icons.check_circle_outline,
-                      color: const Color(0xFF6366F1),
+                      color: const Color(0xFF9654B5),
                       // Never date-filtered — see openWithFilters/
                       // OpportunitiesListScreen's own doc comments on why
                       // "expected" always shows every currently-open deal
@@ -326,14 +326,14 @@ class DashboardScreen extends ConsumerWidget {
                       label: 'Follow-ups',
                       value: '${stats.pendingFollowUps}',
                       icon: Icons.schedule,
-                      color: const Color(0xFFF43F5E),
+                      color: const Color(0xFFFF6B4A),
                       onTap: () => context.push('/followups'),
                     ),
                     StatTile(
                       label: 'Won',
                       value: '${stats.opportunities?.won ?? 0}',
                       icon: Icons.emoji_events_outlined,
-                      color: const Color(0xFF22C55E),
+                      color: const Color(0xFF9654B5),
                       onTap: () =>
                           openWithFilters(AppRoutes.opportunities, extraParams: const {'stage': 'closed_won'}),
                     ),
@@ -341,7 +341,7 @@ class DashboardScreen extends ConsumerWidget {
                       label: 'Lost Deals',
                       value: '${stats.opportunities?.lost ?? 0}',
                       icon: Icons.error_outline,
-                      color: const Color(0xFFEF4444),
+                      color: const Color(0xFFFF6B4A),
                       onTap: () =>
                           openWithFilters(AppRoutes.opportunities, extraParams: const {'stage': 'closed_lost'}),
                     ),
@@ -352,7 +352,7 @@ class DashboardScreen extends ConsumerWidget {
                         currency,
                       ),
                       icon: Icons.trending_up,
-                      color: const Color(0xFFF59E0B),
+                      color: const Color(0xFFF5B82E),
                       onTap: () => context.push(AppRoutes.payments),
                     ),
                   ],
@@ -379,14 +379,14 @@ class DashboardScreen extends ConsumerWidget {
                     label: 'Unattended Leads',
                     value: '${health.unattendedLeads}',
                     icon: Icons.person_off_outlined,
-                    color: const Color(0xFFF59E0B),
+                    color: const Color(0xFFF5B82E),
                     onTap: () => openWithFilters('/leads/unattended'),
                   ),
                   StatTile(
                     label: 'No Activity Leads',
                     value: '${health.noActivityLeads}',
                     icon: Icons.hourglass_disabled_outlined,
-                    color: const Color(0xFFEF4444),
+                    color: const Color(0xFFFF6B4A),
                     onTap: () => openWithFilters('/leads/no-activity'),
                   ),
                 ],
@@ -411,7 +411,7 @@ class DashboardScreen extends ConsumerWidget {
                   title: 'Sales Book',
                   subtitle: 'Transaction logs & history',
                   icon: Icons.menu_book_outlined,
-                  color: const Color(0xFF3B82F6),
+                  color: const Color(0xFF00A8D6),
                   badge: salesBookAsync.valueOrNull != null
                       ? '${salesBookAsync.valueOrNull!.summary.totalDeals} entries'
                       : null,
@@ -421,7 +421,7 @@ class DashboardScreen extends ConsumerWidget {
                   title: 'User Sales',
                   subtitle: 'Performance leaderboard',
                   icon: Icons.emoji_events_outlined,
-                  color: const Color(0xFFF59E0B),
+                  color: const Color(0xFFF5B82E),
                   badge: 'Top 5',
                   onTap: () => context.push(AppRoutes.topPerformers),
                 ),
@@ -430,7 +430,7 @@ class DashboardScreen extends ConsumerWidget {
                 //   title: 'Field Force',
                 //   subtitle: 'Agent tracking & activity',
                 //   icon: Icons.location_on_outlined,
-                //   color: const Color(0xFF06B6D4),
+                //   color: const Color(0xFF00A8D6),
                 //   badge: checkInsAsync.valueOrNull != null
                 //       ? '${checkInsAsync.valueOrNull!.map((c) => c.user?.firstName).toSet().length} active'
                 //       : null,

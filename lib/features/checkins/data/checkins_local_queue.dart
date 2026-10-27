@@ -3,17 +3,21 @@ import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/startup/app_bootstrap.dart';
 import '../domain/pending_checkin.dart';
 
 part 'checkins_local_queue.g.dart';
 
 const kPendingCheckInsBoxName = 'pending_checkins';
 
-/// Opened once, app-wide (`Hive.initFlutter()` runs in `main_dev.dart`/
-/// `main_prod.dart` before `runApp`). Stored as JSON strings rather than a
-/// typed Hive adapter to avoid a second codegen step on top of Freezed.
+/// Opened once, app-wide — `Hive.initFlutter()` runs lazily via
+/// `ensureBackgroundServicesInitialized()` (started, unawaited, from
+/// `main()`; awaited here in case this runs first). Stored as JSON strings
+/// rather than a typed Hive adapter to avoid a second codegen step on top
+/// of Freezed.
 @Riverpod(keepAlive: true)
 Future<CheckInsLocalQueue> checkInsLocalQueue(FutureProviderRef<CheckInsLocalQueue> ref) async {
+  await ensureBackgroundServicesInitialized();
   final box = await Hive.openBox<String>(kPendingCheckInsBoxName);
   return CheckInsLocalQueue(box);
 }

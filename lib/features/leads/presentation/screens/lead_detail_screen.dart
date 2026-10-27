@@ -21,7 +21,7 @@ import '../widgets/lead_notes_section.dart';
 import '../widgets/lead_products_editor_sheet.dart';
 import '../widgets/lead_quick_actions.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 class LeadDetailScreen extends ConsumerWidget {
   const LeadDetailScreen({super.key, required this.leadId});
@@ -235,14 +235,14 @@ class LeadDetailScreen extends ConsumerWidget {
                                   ),
                                   decoration: BoxDecoration(
                                     color: const Color(
-                                      0xFFEA580C,
+                                      0xFFF5B82E,
                                     ).withValues(alpha: 0.12),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
                                   child: Text(
                                     'Re-enquiry ×${lead.reEnquiryCount}',
                                     style: theme.textTheme.labelSmall?.copyWith(
-                                      color: const Color(0xFFEA580C),
+                                      color: const Color(0xFFF5B82E),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),

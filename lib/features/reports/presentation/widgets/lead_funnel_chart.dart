@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Best-effort icon per stage, matched by keyword rather than an exact
 /// lookup table — stage names are org-configurable (`Organisation.

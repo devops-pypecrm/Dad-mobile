@@ -337,11 +337,15 @@ class _CatalogTile extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: kBrandColor.withValues(alpha: 0.12),
-            child: const Icon(Icons.inventory_2_outlined, color: kBrandColor, size: 18),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: CircleAvatar(
+              radius: 18,
+              backgroundColor: kBrandColor.withValues(alpha: 0.12),
+              child: const Icon(Icons.inventory_2_outlined, color: kBrandColor, size: 18),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -354,9 +358,33 @@ class _CatalogTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (product.sku != null && product.sku!.isNotEmpty || (product.category != null && product.category!.isNotEmpty))
+                  Text(
+                    [
+                      if (product.sku != null && product.sku!.isNotEmpty) 'SKU: ${product.sku}',
+                      if (product.category != null && product.category!.isNotEmpty) product.category!,
+                    ].join(' · '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                  ),
+                if (product.description != null && product.description!.isNotEmpty)
+                  Text(
+                    product.description!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
                 Text(
-                  product.basePrice.toStringAsFixed(0),
-                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                  '${product.currency} ${product.basePrice.toStringAsFixed(0)} / ${product.unit}'
+                  '${product.taxRate > 0 ? ' + ${product.taxRate.toStringAsFixed(0)}% tax' : ''}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -400,6 +428,7 @@ class _SelectedProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final displayName = item.customName ?? item.product?.name ?? item.productId;
+    final sku = item.product?.sku;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -445,6 +474,14 @@ class _SelectedProductCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (sku != null && sku.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Text(
+                          'SKU: $sku',
+                          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                        ),
+                      ),
                     Row(
                       children: [
                         Expanded(

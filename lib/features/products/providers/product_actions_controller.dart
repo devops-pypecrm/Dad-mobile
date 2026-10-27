@@ -19,6 +19,8 @@ class ProductActionsController extends _$ProductActionsController {
     required double basePrice,
     String? category,
     String? description,
+    String? unit,
+    double? taxRate,
     bool isCustom = false,
   }) async {
     state = const AsyncValue.loading();
@@ -30,6 +32,8 @@ class ProductActionsController extends _$ProductActionsController {
         basePrice: basePrice,
         category: category,
         description: description,
+        unit: unit,
+        taxRate: taxRate,
         isCustom: isCustom,
       );
       ref.read(productsListProvider.notifier).refresh();
@@ -48,6 +52,8 @@ class ProductActionsController extends _$ProductActionsController {
     double? basePrice,
     String? category,
     String? description,
+    String? unit,
+    double? taxRate,
     bool? isCustom,
   }) async {
     state = const AsyncValue.loading();
@@ -60,6 +66,8 @@ class ProductActionsController extends _$ProductActionsController {
         basePrice: basePrice,
         category: category,
         description: description,
+        unit: unit,
+        taxRate: taxRate,
         isCustom: isCustom,
       );
       ref.read(productsListProvider.notifier).refresh();

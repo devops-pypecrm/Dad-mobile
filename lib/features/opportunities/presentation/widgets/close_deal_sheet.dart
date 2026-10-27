@@ -8,7 +8,7 @@ import '../../domain/installment_input.dart';
 import '../../domain/opportunity.dart';
 import '../../providers/opportunity_actions_controller.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Close Won — mirrors Dad-frontend's `CloseWonDialog.tsx`: a payment-type
 /// choice (Fully Paid / Partially Paid / Full EMI), a down-payment field
@@ -188,7 +188,7 @@ class _CloseWonFormState extends ConsumerState<_CloseWonForm> {
           children: [
             Row(
               children: [
-                Icon(Icons.emoji_events, color: const Color(0xFF16A34A)),
+                Icon(Icons.emoji_events, color: const Color(0xFF9654B5)),
                 const SizedBox(width: 8),
                 Text('Close as Won', style: theme.textTheme.titleLarge),
               ],
@@ -293,7 +293,7 @@ class _CloseWonFormState extends ConsumerState<_CloseWonForm> {
               width: double.infinity,
               child: FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF16A34A),
+                  backgroundColor: const Color(0xFF9654B5),
                 ),
                 onPressed: (_canSubmit && !saving) ? _submit : null,
                 child: saving
@@ -447,7 +447,7 @@ class _CloseLostFormState extends ConsumerState<_CloseLostForm> {
           children: [
             Row(
               children: [
-                const Icon(Icons.cancel_outlined, color: Color(0xFFDC2626)),
+                const Icon(Icons.cancel_outlined, color: Color(0xFFFF6B4A)),
                 const SizedBox(width: 8),
                 Text('Close as Lost', style: theme.textTheme.titleLarge),
               ],
@@ -471,7 +471,7 @@ class _CloseLostFormState extends ConsumerState<_CloseLostForm> {
               width: double.infinity,
               child: FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFDC2626),
+                  backgroundColor: const Color(0xFFFF6B4A),
                 ),
                 onPressed: (_canSubmit && !saving) ? _submit : null,
                 child: saving

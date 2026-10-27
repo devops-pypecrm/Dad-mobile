@@ -18,7 +18,7 @@ import '../widgets/opportunity_card.dart';
 // screens (see Leads' `_brandColor` in leads_list_screen.dart) — the
 // reference design uses this same green for the Team/Mine toggle, the
 // filter button, and status accents.
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 const _tileStageTitles = {
   'expected': 'Pipeline',

@@ -10,6 +10,7 @@ import '../domain/lead.dart';
 import '../domain/lead_call_history_item.dart';
 import '../domain/lead_ownership_history_item.dart';
 import '../domain/lead_product.dart';
+import '../domain/lead_re_enquiry_history.dart';
 import '../domain/lead_timeline_item.dart';
 import '../domain/lead_whatsapp_activity.dart';
 import '../domain/leads_page.dart';
@@ -435,6 +436,46 @@ class LeadsRepository {
           .cast<Map<String, dynamic>>()
           .map(LeadOwnershipHistoryItem.fromJson)
           .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/leads/:id/re-enquiry-history` (Dad-backend/src/controllers/
+  /// leadController.ts `getReEnquiryHistory`) — every past time this lead's
+  /// phone number enquired again, most-recent first. Backs the Lead Detail
+  /// "Re-Enquiry History" tab.
+  Future<LeadReEnquiryHistory> getReEnquiryHistory(String leadId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/leads/$leadId/re-enquiry-history',
+      );
+      return LeadReEnquiryHistory.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `POST /api/leads/:id/re-enquiry-history/split` (Dad-backend/src/
+  /// controllers/leadController.ts `splitReEnquiryIntoLead`) — manually
+  /// splits one re-enquiry event off into its own separate Lead, for when
+  /// it turns out to have been a different person sharing the same phone
+  /// number rather than the same customer re-enquiring. [confirmed] must be
+  /// true — the caller is expected to have shown a warning first, since the
+  /// new lead necessarily shares the original's phone number (or the
+  /// event's own captured phone, if any) and could get matched back onto
+  /// either lead on a future re-enquiry.
+  Future<String> splitReEnquiryIntoLead(
+    String leadId, {
+    required int eventIndex,
+    required bool confirmed,
+  }) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/leads/$leadId/re-enquiry-history/split',
+        data: {'eventIndex': eventIndex, 'confirmed': confirmed},
+      );
+      return response.data!['newLeadId'] as String;
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

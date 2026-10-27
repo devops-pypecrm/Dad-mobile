@@ -55,7 +55,7 @@ class _ReEnquiriesScreenState extends ConsumerState<ReEnquiriesScreen> {
             child: Container(
               height: 46,
               decoration: BoxDecoration(
-                color: const Color(0xFFF9FAEF),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: theme.colorScheme.outlineVariant),
               ),
@@ -77,7 +77,7 @@ class _ReEnquiriesScreenState extends ConsumerState<ReEnquiriesScreen> {
                         ),
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF9FAEF),
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide.none,

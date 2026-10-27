@@ -22,7 +22,7 @@ import '../widgets/opportunity_timeline_section.dart';
 /// FABs, Follow Ups stat cards). This screen previously used a leftover
 /// purple (`#5B21B6`) from before the app-wide recolor; every accent here
 /// now matches.
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Fallback pipeline when the org hasn't configured
 /// `Organisation.opportunityLeadStatuses` — same idea as leads' fallback
@@ -475,8 +475,8 @@ class _StageAndActionsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final (bg, fg) = switch (opportunity.stage) {
-      'closed_won' => (const Color(0xFF16A34A), Colors.white),
-      'closed_lost' => (const Color(0xFFDC2626), Colors.white),
+      'closed_won' => (const Color(0xFF9654B5), Colors.white),
+      'closed_lost' => (const Color(0xFFFF6B4A), Colors.white),
       _ => (_brandColor.withValues(alpha: 0.12), _brandColor),
     };
 
@@ -573,7 +573,7 @@ class _StageAndActionsCard extends StatelessWidget {
                   Expanded(
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF16A34A),
+                        backgroundColor: const Color(0xFF9654B5),
                         minimumSize: const Size.fromHeight(44),
                       ),
                       onPressed: actionState.isLoading
@@ -587,7 +587,7 @@ class _StageAndActionsCard extends StatelessWidget {
                   Expanded(
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFDC2626),
+                        backgroundColor: const Color(0xFFFF6B4A),
                         minimumSize: const Size.fromHeight(44),
                       ),
                       onPressed: actionState.isLoading
@@ -628,7 +628,7 @@ class _ValueAndCloseDateRow extends StatelessWidget {
           Expanded(
             child: _MetricTile(
               icon: Icons.attach_money,
-              iconColor: const Color(0xFF16A34A),
+              iconColor: const Color(0xFF9654B5),
               label: 'Value',
               value: CurrencyFormatter.format(opportunity.amount, currency),
               valueStyle: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
@@ -638,7 +638,7 @@ class _ValueAndCloseDateRow extends StatelessWidget {
           Expanded(
             child: _MetricTile(
               icon: Icons.calendar_today_outlined,
-              iconColor: const Color(0xFF9333EA),
+              iconColor: const Color(0xFF9654B5),
               label: 'Close Date',
               value: opportunity.closeDate != null
                   ? '${opportunity.closeDate!.toLocal()}'.split(' ').first
@@ -802,9 +802,9 @@ class _LinkedLeadCard extends StatelessWidget {
     // action should stop being editable too rather than staying tappable.
     final canChangeStatus = !kTerminalOpportunityStages.contains(opportunity.stage);
     final (bg, fg) = switch (status) {
-      'converted' => (const Color(0xFF16A34A), Colors.white),
-      'lost' => (const Color(0xFFDC2626), Colors.white),
-      _ => (const Color(0xFF16A34A).withValues(alpha: 0.12), const Color(0xFF15803D)),
+      'converted' => (const Color(0xFF9654B5), Colors.white),
+      'lost' => (const Color(0xFFFF6B4A), Colors.white),
+      _ => (const Color(0xFF9654B5).withValues(alpha: 0.12), const Color(0xFF9654B5)),
     };
 
     return InkWell(
@@ -814,16 +814,16 @@ class _LinkedLeadCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFF16A34A).withValues(alpha: 0.08),
+          color: const Color(0xFF9654B5).withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFF16A34A).withValues(alpha: 0.2)),
+          border: Border.all(color: const Color(0xFF9654B5).withValues(alpha: 0.2)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(Icons.person_search_outlined, size: 16, color: Color(0xFF16A34A)),
+                const Icon(Icons.person_search_outlined, size: 16, color: Color(0xFF9654B5)),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -831,7 +831,7 @@ class _LinkedLeadCard extends StatelessWidget {
                     style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ),
-                const Icon(Icons.chevron_right, size: 18, color: Color(0xFF16A34A)),
+                const Icon(Icons.chevron_right, size: 18, color: Color(0xFF9654B5)),
               ],
             ),
             const SizedBox(height: 10),
@@ -972,7 +972,7 @@ class _AssociatedProductsSection extends ConsumerWidget {
                         Text(
                           'Differs from Opportunity Amount',
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: const Color(0xFFB45309),
+                            color: const Color(0xFFF5B82E),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -982,7 +982,7 @@ class _AssociatedProductsSection extends ConsumerWidget {
                 Text(
                   CurrencyFormatter.format(total, currency),
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: const Color(0xFF16A34A),
+                    color: const Color(0xFF9654B5),
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -994,8 +994,8 @@ class _AssociatedProductsSection extends ConsumerWidget {
                 width: double.infinity,
                 child: OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFFB45309),
-                    side: const BorderSide(color: Color(0xFFFCD34D)),
+                    foregroundColor: const Color(0xFFF5B82E),
+                    side: const BorderSide(color: Color(0xFFF5B82E)),
                   ),
                   onPressed: actionState.isLoading
                       ? null
@@ -1077,14 +1077,14 @@ class _EmiScheduleSection extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: emi.status == 'completed'
-                    ? const Color(0xFF16A34A).withValues(alpha: 0.12)
+                    ? const Color(0xFF9654B5).withValues(alpha: 0.12)
                     : _brandColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 humanizeSnakeCase(emi.status),
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: emi.status == 'completed' ? const Color(0xFF15803D) : _brandColor,
+                  color: emi.status == 'completed' ? const Color(0xFF9654B5) : _brandColor,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -1119,8 +1119,8 @@ class _EmiScheduleSection extends ConsumerWidget {
                         child: _EmiStatTile(
                           label: 'Paid',
                           value: CurrencyFormatter.format(emi.paidAmount, currency),
-                          color: const Color(0xFF15803D),
-                          background: const Color(0xFF16A34A).withValues(alpha: 0.1),
+                          color: const Color(0xFF9654B5),
+                          background: const Color(0xFF9654B5).withValues(alpha: 0.1),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -1128,8 +1128,8 @@ class _EmiScheduleSection extends ConsumerWidget {
                         child: _EmiStatTile(
                           label: 'Remaining',
                           value: CurrencyFormatter.format(emi.remainingAmount, currency),
-                          color: const Color(0xFFB45309),
-                          background: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                          color: const Color(0xFFF5B82E),
+                          background: const Color(0xFFF5B82E).withValues(alpha: 0.12),
                         ),
                       ),
                     ],
@@ -1157,7 +1157,7 @@ class _EmiScheduleSection extends ConsumerWidget {
                     value: progress,
                     minHeight: 10,
                     backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                    valueColor: const AlwaysStoppedAnimation(Color(0xFF16A34A)),
+                    valueColor: const AlwaysStoppedAnimation(Color(0xFF9654B5)),
                   ),
                 ),
               ],
@@ -1229,11 +1229,11 @@ class _EmiStatTile extends StatelessWidget {
 }
 
 const _kInstallmentStatusStyle = <String, (IconData, Color, String)>{
-  'pending': (Icons.schedule, Color(0xFFB45309), 'Pending'),
-  'paid': (Icons.check_circle, Color(0xFF16A34A), 'Paid'),
-  'overdue': (Icons.error_outline, Color(0xFFDC2626), 'Overdue'),
+  'pending': (Icons.schedule, Color(0xFFF5B82E), 'Pending'),
+  'paid': (Icons.check_circle, Color(0xFF9654B5), 'Paid'),
+  'overdue': (Icons.error_outline, Color(0xFFFF6B4A), 'Overdue'),
   'cancelled': (Icons.cancel_outlined, Colors.grey, 'Cancelled'),
-  'missed': (Icons.cancel_outlined, Color(0xFFDC2626), 'Missed'),
+  'missed': (Icons.cancel_outlined, Color(0xFFFF6B4A), 'Missed'),
 };
 
 class _InstallmentTile extends StatelessWidget {
@@ -1315,8 +1315,8 @@ class _InstallmentTile extends StatelessWidget {
               children: [
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF16A34A),
-                    side: const BorderSide(color: Color(0xFF16A34A)),
+                    foregroundColor: const Color(0xFF9654B5),
+                    side: const BorderSide(color: Color(0xFF9654B5)),
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -1330,7 +1330,7 @@ class _InstallmentTile extends StatelessWidget {
                   tooltip: 'Delete installment',
                   visualDensity: VisualDensity.compact,
                   onPressed: isBusy ? null : onDelete,
-                  icon: const Icon(Icons.delete_outline, size: 18, color: Color(0xFFDC2626)),
+                  icon: const Icon(Icons.delete_outline, size: 18, color: Color(0xFFFF6B4A)),
                 ),
               ],
             ),

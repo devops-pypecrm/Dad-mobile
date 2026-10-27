@@ -8,7 +8,7 @@ import '../../../users/providers/users_provider.dart';
 import '../../domain/lead.dart';
 import '../../providers/assign_lead_controller.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// "Assign Lead" bottom sheet — same picker + subordinate-scoping rule as
 /// Dad-frontend's `AssignLeadDialog.tsx`: admins/super_admins can assign to

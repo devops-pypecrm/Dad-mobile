@@ -9,7 +9,7 @@ import '../../../../core/widgets/error_state_view.dart';
 import '../../providers/profile_controller.dart';
 import '../widgets/authenticated_avatar.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// "Account" — photo, name, phone, position/title, plus a read-only email
 /// (email changes aren't supported; `profileController.ts`'s `updateProfile`

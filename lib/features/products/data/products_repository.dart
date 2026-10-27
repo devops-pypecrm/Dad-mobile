@@ -54,6 +54,8 @@ class ProductsRepository {
     required double basePrice,
     String? category,
     String? description,
+    String? unit,
+    double? taxRate,
     bool isCustom = false,
   }) async {
     try {
@@ -65,6 +67,8 @@ class ProductsRepository {
           'basePrice': basePrice,
           if (category != null && category.isNotEmpty) 'category': category,
           if (description != null && description.isNotEmpty) 'description': description,
+          if (unit != null && unit.isNotEmpty) 'unit': unit,
+          if (taxRate != null) 'taxRate': taxRate,
           'isCustom': isCustom,
         },
       );
@@ -84,6 +88,8 @@ class ProductsRepository {
     double? basePrice,
     String? category,
     String? description,
+    String? unit,
+    double? taxRate,
     bool? isCustom,
   }) async {
     try {
@@ -95,6 +101,8 @@ class ProductsRepository {
           if (basePrice != null) 'basePrice': basePrice,
           if (category != null) 'category': category,
           if (description != null) 'description': description,
+          if (unit != null) 'unit': unit,
+          if (taxRate != null) 'taxRate': taxRate,
           if (isCustom != null) 'isCustom': isCustom,
         },
       );

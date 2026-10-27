@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart' as ll;
 
 import '../../domain/field_team_member.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// "Live Team Locations" — OpenStreetMap tiles via `flutter_map`, the same
 /// no-API-key approach as Dad-frontend's Leaflet-based `MapComponent.tsx`.

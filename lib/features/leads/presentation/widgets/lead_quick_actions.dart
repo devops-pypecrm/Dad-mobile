@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/utils/url_launch_helper.dart';
 import '../../domain/phone_number_utils.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Call / Email / WhatsApp buttons on the Lead Detail screen — launches the
 /// native dialer/mail client/WhatsApp rather than doing anything in-app.

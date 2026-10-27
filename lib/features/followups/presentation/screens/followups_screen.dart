@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/empty_state_view.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../../../core/widgets/global_app_bar.dart';
@@ -115,7 +116,7 @@ class _FollowUpsScreenState extends ConsumerState<FollowUpsScreen> {
                         child: Container(
                           height: 46,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF9FAEF),
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
                               color: Theme.of(
@@ -131,12 +132,12 @@ class _FollowUpsScreenState extends ConsumerState<FollowUpsScreen> {
                             // edges — `isDense`'s default padding alone reads
                             // as sitting slightly above center.
                             textAlignVertical: TextAlignVertical.center,
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               hintText: 'Search follow-ups…',
-                              prefixIcon: Icon(Icons.search),
+                              prefixIcon: const Icon(Icons.search),
                               isDense: true,
                               filled: true,
-                              fillColor: Color(0xFFF9FAEF),
+                              fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(14),
@@ -275,9 +276,9 @@ class _StatusGrid extends ConsumerWidget {
                   label: 'Active',
                   value: counts.active,
                   icon: Icons.show_chart,
-                  gradient: const [Color(0xFFEFF7E9), Color(0xFFC3E1AC)],
-                  iconColor: const Color(0xFF578732),
-                  valueColor: const Color(0xFF578732),
+                  gradient: const [Color(0xFFE8F5E4), kBrandColor],
+                  iconColor: const Color(0xFF9654B5),
+                  valueColor: const Color(0xFF9654B5),
                   selected: quickFilter == null,
                   onTap: () => notifier.setQuickFilter(null),
                 ),
@@ -288,9 +289,9 @@ class _StatusGrid extends ConsumerWidget {
                   label: 'Overdue',
                   value: counts.overdue,
                   icon: Icons.access_time_filled,
-                  gradient: const [Color(0xFFFFE4E6), Color(0xFFFECDD3)],
-                  iconColor: const Color(0xFFDC2626),
-                  valueColor: const Color(0xFFDC2626),
+                  gradient: const [Color(0xFFFFE4DD), kCoral],
+                  iconColor: const Color(0xFFFF6B4A),
+                  valueColor: const Color(0xFFFF6B4A),
                   selected: quickFilter == FollowUpQuickFilter.overdue,
                   onTap: () =>
                       notifier.setQuickFilter(FollowUpQuickFilter.overdue),
@@ -308,9 +309,9 @@ class _StatusGrid extends ConsumerWidget {
                   label: 'Today',
                   value: counts.today,
                   icon: Icons.calendar_today,
-                  gradient: const [Color(0xFFFFEDD5), Color(0xFFFED7AA)],
-                  iconColor: const Color(0xFFEA580C),
-                  valueColor: const Color(0xFFEA580C),
+                  gradient: const [Color(0xFFFFF3D6), kYellow],
+                  iconColor: const Color(0xFFF5B82E),
+                  valueColor: const Color(0xFFF5B82E),
                   selected: quickFilter == FollowUpQuickFilter.today,
                   onTap: () =>
                       notifier.setQuickFilter(FollowUpQuickFilter.today),
@@ -322,9 +323,9 @@ class _StatusGrid extends ConsumerWidget {
                   label: 'Upcoming',
                   value: counts.upcoming,
                   icon: Icons.event_available,
-                  gradient: const [Color(0xFFDBEAFE), Color(0xFFBFDBFE)],
-                  iconColor: const Color(0xFF2563EB),
-                  valueColor: const Color(0xFF2563EB),
+                  gradient: const [Color(0xFFD6F0F7), kCyan],
+                  iconColor: const Color(0xFF00A8D6),
+                  valueColor: const Color(0xFF00A8D6),
                   selected: quickFilter == FollowUpQuickFilter.upcoming,
                   onTap: () =>
                       notifier.setQuickFilter(FollowUpQuickFilter.upcoming),
@@ -455,7 +456,7 @@ class _PillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFFF9FAEF),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),

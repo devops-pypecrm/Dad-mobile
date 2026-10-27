@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/error_state_view.dart';
-import '../../../../core/widgets/global_app_bar.dart';
 import '../../providers/apk_download_controller.dart';
 import '../../providers/apk_download_state.dart';
 import '../../providers/app_update_provider.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
-/// Sidebar-only destination (see `AppDrawer`) — shows the running build's
-/// own version alongside whatever's currently published, and drives the
-/// in-app download+install flow (`ApkDownloadController`) entirely —
-/// no more bouncing out to pypecrm.com/download in a browser. Reachable
-/// any time, not just when an update happens to be due, so a user can
-/// always double-check what they're running.
+/// Sidebar/Settings-only destination, reached via `context.push` (not a
+/// bottom-nav tab root) — shows the running build's own version alongside
+/// whatever's currently published, and drives the in-app download+install
+/// flow (`ApkDownloadController`) entirely — no more bouncing out to
+/// pypecrm.com/download in a browser. Reachable any time, not just when an
+/// update happens to be due, so a user can always double-check what
+/// they're running. Uses a plain `AppBar` (with its default back button),
+/// not the tab-root-only `GlobalAppBar` (which deliberately has no back
+/// button — it's for screens siblings-of the bottom nav, not pushed ones).
 class UpdatesScreen extends ConsumerWidget {
   const UpdatesScreen({super.key});
 
@@ -26,7 +29,7 @@ class UpdatesScreen extends ConsumerWidget {
     final downloadState = ref.watch(apkDownloadControllerProvider);
 
     return Scaffold(
-      appBar: const GlobalAppBar(title: 'Updates'),
+      appBar: AppBar(title: const Text('Updates')),
       body: RefreshIndicator(
         onRefresh: () => Future.wait([
           ref.refresh(latestMobileReleaseProvider.future),
@@ -81,7 +84,7 @@ class UpdatesScreen extends ConsumerWidget {
                       padding: EdgeInsets.all(16),
                       child: Row(
                         children: [
-                          Icon(Icons.check_circle_outline, color: Color(0xFF16A34A)),
+                          Icon(Icons.check_circle_outline, color: Color(0xFF9654B5)),
                           SizedBox(width: 12),
                           Expanded(child: Text("You're up to date.")),
                         ],
@@ -201,7 +204,7 @@ class _DownloadInstallSection extends ConsumerWidget {
         children: [
           const Row(
             children: [
-              Icon(Icons.check_circle_outline, color: Color(0xFF16A34A)),
+              Icon(Icons.check_circle_outline, color: Color(0xFF9654B5)),
               SizedBox(width: 8),
               Expanded(child: Text('Installer opened — follow the prompt to finish updating.')),
             ],
@@ -216,7 +219,7 @@ class _DownloadInstallSection extends ConsumerWidget {
       error: (message) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Download failed: $message', style: const TextStyle(color: Colors.red)),
+          Text('Download failed: $message', style: const TextStyle(color: kCoral)),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,

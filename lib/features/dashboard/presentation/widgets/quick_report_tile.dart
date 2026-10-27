@@ -32,7 +32,6 @@ class QuickReportTile extends StatelessWidget {
       color: color.withValues(alpha: 0.10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: color.withValues(alpha: 0.18)),
       ),
       child: InkWell(
         onTap: onTap,

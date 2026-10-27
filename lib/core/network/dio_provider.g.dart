@@ -6,7 +6,7 @@ part of 'dio_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dioHash() => r'7b8d0e7a6f615392e4062d1b9e52193b1c575532';
+String _$dioHash() => r'5adcabe095a7428bcbad03665a4b9b40f0e5a540';
 
 /// The single Dio instance for the whole app. UI/providers must never call
 /// Dio directly — go through a Repository (see .claude/skills/architecture.md).

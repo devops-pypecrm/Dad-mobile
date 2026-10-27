@@ -19,7 +19,7 @@ import '../widgets/lead_card.dart';
 import '../widgets/leads_filter_sheet.dart';
 import 'create_lead_screen.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 const _sortOptions = [
   ('createdAt', 'desc', 'Newest'),

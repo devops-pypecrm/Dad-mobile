@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../auth/domain/user_session.dart';
 import '../../domain/dashboard_summary.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 String _greeting() {
   final hour = DateTime.now().hour;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/hex_color.dart';
 import '../../../../core/utils/url_launch_helper.dart';
 import '../../domain/phone_number_utils.dart';
@@ -9,7 +10,7 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
 import '../../domain/lead_status_options.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Short "2h ago"/"1d ago" form — distinct from `formatRelativeDate`
 /// (which does day-level "Today"/"Yesterday"/"N days ago" for the search
@@ -114,7 +115,7 @@ class LeadCard extends ConsumerWidget {
                               Text(
                                 'RE-ENQUIRY ×${lead.reEnquiryCount}',
                                 style: theme.textTheme.labelSmall?.copyWith(
-                                  color: const Color(0xFFEA580C),
+                                  color: kCoral,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -123,7 +124,7 @@ class LeadCard extends ConsumerWidget {
                                 padding: EdgeInsets.only(left: 6),
                                 child: Icon(
                                   Icons.local_fire_department,
-                                  color: Color(0xFFEA580C),
+                                  color: kCoral,
                                   size: 18,
                                 ),
                               ),

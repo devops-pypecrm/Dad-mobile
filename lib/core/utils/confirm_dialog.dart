@@ -25,7 +25,7 @@ Future<bool> showConfirmDialog(
         TextButton(
           onPressed: () => Navigator.of(context).pop(true),
           style: destructive
-              ? TextButton.styleFrom(foregroundColor: const Color(0xFFDC2626))
+              ? TextButton.styleFrom(foregroundColor: const Color(0xFFFF6B4A))
               : null,
           child: Text(confirmLabel),
         ),

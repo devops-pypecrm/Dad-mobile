@@ -20,7 +20,7 @@ class SecurityScreen extends StatelessWidget {
           children: [
             SettingsRow(
               icon: Icons.lock_outline,
-              iconColor: const Color(0xFF22C55E),
+              iconColor: const Color(0xFF9654B5),
               title: 'Change Password',
               subtitle: 'Update your password using your current one',
               onTap: () => context.push(AppRoutes.changePassword),

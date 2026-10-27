@@ -7,11 +7,13 @@ part of 'checkins_local_queue.dart';
 // **************************************************************************
 
 String _$checkInsLocalQueueHash() =>
-    r'2fcfad4efe8aad89ffc1f7c99c2f6dfdb074ea4d';
+    r'e8eeceb2a6d2489bdd81fc7d432d227b20cff122';
 
-/// Opened once, app-wide (`Hive.initFlutter()` runs in `main_dev.dart`/
-/// `main_prod.dart` before `runApp`). Stored as JSON strings rather than a
-/// typed Hive adapter to avoid a second codegen step on top of Freezed.
+/// Opened once, app-wide — `Hive.initFlutter()` runs lazily via
+/// `ensureBackgroundServicesInitialized()` (started, unawaited, from
+/// `main()`; awaited here in case this runs first). Stored as JSON strings
+/// rather than a typed Hive adapter to avoid a second codegen step on top
+/// of Freezed.
 ///
 /// Copied from [checkInsLocalQueue].
 @ProviderFor(checkInsLocalQueue)

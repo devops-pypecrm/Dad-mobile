@@ -42,6 +42,12 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
   late final _description = TextEditingController(
     text: widget.editing?.description,
   );
+  late final _unit = TextEditingController(
+    text: widget.editing?.unit ?? 'unit',
+  );
+  late final _taxRate = TextEditingController(
+    text: widget.editing != null ? widget.editing!.taxRate.toStringAsFixed(0) : '0',
+  );
   late bool _isCustom = widget.editing?.isCustom ?? false;
 
   @override
@@ -51,6 +57,8 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
     _basePrice.dispose();
     _category.dispose();
     _description.dispose();
+    _unit.dispose();
+    _taxRate.dispose();
     super.dispose();
   }
 
@@ -64,6 +72,8 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
 
     final controller = ref.read(productActionsControllerProvider.notifier);
     final editing = widget.editing;
+    final unit = _unit.text.trim();
+    final taxRate = double.tryParse(_taxRate.text.trim()) ?? 0;
     final success = editing == null
         ? await controller.create(
             name: name,
@@ -71,6 +81,8 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
             basePrice: basePrice,
             category: _category.text.trim(),
             description: _description.text.trim(),
+            unit: unit.isEmpty ? null : unit,
+            taxRate: taxRate,
             isCustom: _isCustom,
           )
         : await controller.editProduct(
@@ -80,6 +92,8 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
             basePrice: basePrice,
             category: _category.text.trim(),
             description: _description.text.trim(),
+            unit: unit.isEmpty ? null : unit,
+            taxRate: taxRate,
             isCustom: _isCustom,
           );
 
@@ -137,6 +151,25 @@ class _ProductFormState extends ConsumerState<_ProductForm> {
               controller: _description,
               maxLines: 3,
               decoration: const InputDecoration(labelText: 'Description'),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _unit,
+                    decoration: const InputDecoration(labelText: 'Unit', hintText: 'e.g. unit, kg, hour'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _taxRate,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(labelText: 'Tax Rate (%)'),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             CheckboxListTile(

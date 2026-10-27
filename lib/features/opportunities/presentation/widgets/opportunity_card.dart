@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../domain/opportunity.dart';
 
 /// Icon + color pairing per pipeline stage — trophy/green for a win, a
-/// "loss" icon/red for `closed_lost`, an in-progress icon/amber for
+/// "loss" icon/coral for `closed_lost`, an in-progress icon/yellow for
 /// everything still open (prospecting through negotiation — the same
 /// bucket the Deal Stage filter calls "Expected").
 ({IconData icon, Color fg, Color bg}) _stageVisual(String stage) {
   switch (stage) {
     case 'closed_won':
-      const fg = Color(0xFF16A34A);
+      const fg = kAccentColor;
       return (icon: Icons.emoji_events_rounded, fg: fg, bg: fg.withValues(alpha: 0.12));
     case 'closed_lost':
-      const fg = Color(0xFFDC2626);
+      const fg = kCoral;
       return (icon: Icons.cancel_rounded, fg: fg, bg: fg.withValues(alpha: 0.12));
     default:
-      const fg = Color(0xFFD97706);
+      const fg = kYellow;
       return (icon: Icons.hourglass_top_rounded, fg: fg, bg: fg.withValues(alpha: 0.12));
   }
 }

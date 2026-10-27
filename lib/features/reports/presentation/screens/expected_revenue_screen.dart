@@ -9,13 +9,13 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/expected_revenue_report.dart';
 import '../../providers/reports_providers.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 final _closeDateFormat = DateFormat('MMM d, yyyy');
 
 const _statusMeta = {
-  ExpectedRevenueDealStatus.current: ('This Period', Color(0xFF16A34A)),
-  ExpectedRevenueDealStatus.carriedForward: ('Carried Forward', Color(0xFFCA8A04)),
-  ExpectedRevenueDealStatus.upcoming: ('Upcoming', Color(0xFF2563EB)),
+  ExpectedRevenueDealStatus.current: ('This Period', Color(0xFF9654B5)),
+  ExpectedRevenueDealStatus.carriedForward: ('Carried Forward', Color(0xFFF5B82E)),
+  ExpectedRevenueDealStatus.upcoming: ('Upcoming', Color(0xFF00A8D6)),
   ExpectedRevenueDealStatus.noDate: ('No Close Date', Colors.grey),
 };
 
@@ -102,19 +102,19 @@ class _ReportBody extends StatelessWidget {
               label: 'This Period',
               value: CurrencyFormatter.compact(summary.currentPeriodAmount, currency),
               sub: '${summary.currentPeriodCount} deals',
-              color: const Color(0xFF16A34A),
+              color: const Color(0xFF9654B5),
             ),
             _SummaryCard(
               label: 'Carried Forward',
               value: CurrencyFormatter.compact(summary.carriedForwardAmount, currency),
               sub: '${summary.carriedForwardCount} deals from earlier',
-              color: const Color(0xFFCA8A04),
+              color: const Color(0xFFF5B82E),
             ),
             _SummaryCard(
               label: 'Upcoming',
               value: CurrencyFormatter.compact(summary.upcomingAmount, currency),
               sub: '${summary.upcomingCount} deals',
-              color: const Color(0xFF2563EB),
+              color: const Color(0xFF00A8D6),
             ),
           ],
         ),

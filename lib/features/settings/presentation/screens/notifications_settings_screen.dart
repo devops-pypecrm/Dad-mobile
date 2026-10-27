@@ -5,7 +5,7 @@ import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../providers/profile_controller.dart';
 
-const _brandColor = Color(0xFF578732);
+const _brandColor = Color(0xFF9654B5);
 
 /// Real per-user notification preferences, backed by `User.notification
 /// Preferences` — a field `notificationService.ts` already reads to gate
