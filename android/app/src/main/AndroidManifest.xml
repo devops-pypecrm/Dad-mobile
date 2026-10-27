@@ -66,6 +66,10 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- Pype Dialer companion app: lets the "set up the dialer" prompt
+             see whether it is installed and launch it (Android 11+ package
+             visibility). -->
+        <package android:name="com.pypecrm.dialer" />
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

@@ -20,6 +20,10 @@ import java.io.File
 class MainActivity : FlutterActivity() {
     private val channelName = "com.pypecrm.dad_mobile/installer"
 
+    companion object {
+        private const val DIALER_PACKAGE = "com.pypecrm.dialer"
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -67,6 +71,37 @@ class MainActivity : FlutterActivity() {
                         result.success(null)
                     } catch (e: Exception) {
                         result.error("install_failed", e.message, null)
+                    }
+                }
+
+                // Pype Dialer companion-app status, for the "set up the
+                // dialer" prompt. getDefaultDialerPackage() needs no
+                // permission; seeing the dialer package at all needs the
+                // <package> entry in AndroidManifest.xml's <queries>.
+                "getDialerStatus" -> {
+                    val installed = try {
+                        packageManager.getPackageInfo(DIALER_PACKAGE, 0)
+                        true
+                    } catch (e: android.content.pm.PackageManager.NameNotFoundException) {
+                        false
+                    }
+                    val telecom = getSystemService(TELECOM_SERVICE) as android.telecom.TelecomManager
+                    result.success(
+                        mapOf(
+                            "installed" to installed,
+                            "isDefault" to (telecom.defaultDialerPackage == DIALER_PACKAGE),
+                        )
+                    )
+                }
+
+                "openDialer" -> {
+                    val launch = packageManager.getLaunchIntentForPackage(DIALER_PACKAGE)
+                    if (launch != null) {
+                        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(launch)
+                        result.success(true)
+                    } else {
+                        result.success(false)
                     }
                 }
 

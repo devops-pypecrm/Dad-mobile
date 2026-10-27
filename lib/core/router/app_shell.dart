@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/app_updates/presentation/widgets/update_checker.dart';
+import '../../features/dialer_setup/presentation/dialer_setup_checker.dart';
 import '../../features/notifications/presentation/widgets/notification_panel.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/curved_nav_bar/curved_navigation_bar.dart';
@@ -84,6 +85,7 @@ class AppShell extends StatelessWidget {
         _buildScaffold(context, currentIndex),
         const NotificationPanel(),
         const UpdateChecker(),
+        const DialerSetupChecker(),
       ],
     );
   }
