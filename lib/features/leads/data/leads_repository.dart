@@ -480,4 +480,29 @@ class LeadsRepository {
       throw ApiException.fromDioException(e);
     }
   }
+
+  /// `POST /api/bulk/leads` (Dad-backend/src/controllers/
+  /// bulkOperationsController.ts `bulkLeadOperations`) — the same endpoint
+  /// Dad-frontend's bulk-action toolbar uses. [action] is one of `assign`,
+  /// `update-status`, `add-tags`, `send-email`, `delete`, `export`
+  /// (`send-whatsapp` is rejected server-side — bulk WhatsApp must go
+  /// through an approved template campaign instead). Role gating
+  /// (`update-status`/`delete` require org admin or manager) is enforced
+  /// server-side with a 403 — this call doesn't duplicate that check, it
+  /// just forwards whatever the UI lets the current role attempt.
+  Future<String> bulkLeadAction({
+    required String action,
+    required List<String> leadIds,
+    Map<String, dynamic>? data,
+  }) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/bulk/leads',
+        data: {'action': action, 'leadIds': leadIds, if (data != null) 'data': data},
+      );
+      return response.data?['message'] as String? ?? 'Done';
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
 }

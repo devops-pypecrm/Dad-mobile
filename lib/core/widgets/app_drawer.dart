@@ -170,6 +170,12 @@ class AppDrawer extends ConsumerWidget {
               label: 'Call Logs',
               onTap: () => push(AppRoutes.calls),
             ),
+            _SectionLabel('WhatsApp'),
+            _DrawerItem(
+              icon: Icons.chat_outlined,
+              label: 'Templates',
+              onTap: () => push(AppRoutes.whatsappTemplates),
+            ),
             _SectionLabel('Productivity'),
             _DrawerItem(
               icon: Icons.checklist,

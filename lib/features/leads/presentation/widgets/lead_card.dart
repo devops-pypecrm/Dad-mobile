@@ -5,7 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/hex_color.dart';
 import '../../../../core/utils/url_launch_helper.dart';
-import '../../domain/phone_number_utils.dart';
+import '../../../whatsapp_templates/presentation/widgets/whatsapp_send_sheet.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
 import '../../domain/lead_status_options.dart';
@@ -33,10 +33,29 @@ String _shortTimeAgo(DateTime date) {
 /// Dad-backend/CLAUDE.md's gotchas — this card has no business trying to
 /// know which ones mean "pay attention").
 class LeadCard extends ConsumerWidget {
-  const LeadCard({super.key, required this.lead, required this.onTap});
+  const LeadCard({
+    super.key,
+    required this.lead,
+    required this.onTap,
+    this.onLongPress,
+    this.selectionMode = false,
+    this.selected = false,
+    this.onSelectToggle,
+  });
 
   final Lead lead;
   final VoidCallback onTap;
+
+  /// Starts bulk-selection mode (see `LeadsListScreen`) — bulk actions'
+  /// entry point, same gesture convention as most list UIs for "select
+  /// multiple" since there's no always-visible checkbox otherwise.
+  final VoidCallback? onLongPress;
+
+  /// While true, tapping the card toggles [selected] instead of calling
+  /// [onTap], and a checkbox renders in place of the usual leading content.
+  final bool selectionMode;
+  final bool selected;
+  final VoidCallback? onSelectToggle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -71,7 +90,8 @@ class LeadCard extends ConsumerWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: selectionMode ? onSelectToggle : onTap,
+          onLongPress: onLongPress,
           // `CrossAxisAlignment.stretch` needs a bounded height to stretch
           // the colored left bar to — everything above this (Material,
           // InkWell, the outer Container) sizes itself to content inside a
@@ -85,6 +105,15 @@ class LeadCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(width: 4, color: statusColor),
+                if (selectionMode)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 6),
+                    child: Checkbox(
+                      value: selected,
+                      activeColor: _brandColor,
+                      onChanged: (_) => onSelectToggle?.call(),
+                    ),
+                  ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
@@ -236,11 +265,10 @@ class LeadCard extends ConsumerWidget {
                                 color: Colors.white,
                               ),
                               background: const Color(0xFF25D366),
-                              onTap: () => launchUriWithFeedback(
+                              onTap: () => showWhatsAppSendSheet(
                                 context,
-                                Uri.parse(
-                                  'https://wa.me/${formatWhatsAppNumber(lead.phone, lead.phoneCountryCode)}',
-                                ),
+                                phone: lead.phone,
+                                phoneCountryCode: lead.phoneCountryCode,
                               ),
                             ),
                             const SizedBox(width: 6),

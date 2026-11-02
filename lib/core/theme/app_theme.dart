@@ -20,7 +20,12 @@ const kChartPalette = [kBrandColor, kAccentColor, kCoral, kCyan, kYellow, kMidni
 class AppTheme {
   AppTheme._();
 
-  static ThemeData light = ThemeData(
+  /// [seedColor] drives `ColorScheme.fromSeed` (and the input/focus-border
+  /// accents below) — see `AppSeedColor` (app_theme_color_provider.dart)
+  /// for the user-facing "Theme Color" picker that selects it. Defaults to
+  /// the original brand purple so every existing call site that doesn't
+  /// pass one keeps its old look unchanged.
+  static ThemeData light({Color seedColor = kBrandColor}) => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     // Poppins was already bundled as an asset (see pubspec.yaml) but never
@@ -30,11 +35,11 @@ class AppTheme {
     // explicitly override its own fontFamily) use it app-wide, matching
     // Dad-frontend's own "make Poppins the real default, not opt-in" fix.
     fontFamily: 'Poppins',
-    colorScheme: ColorScheme.fromSeed(seedColor: kBrandColor),
+    colorScheme: ColorScheme.fromSeed(seedColor: seedColor),
     scaffoldBackgroundColor: const Color(0xFFFAFAFC),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: kBrandColor.withValues(alpha: 0.05),
+      fillColor: seedColor.withValues(alpha: 0.05),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
@@ -46,7 +51,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: kBrandColor, width: 1.6),
+        borderSide: BorderSide(color: seedColor, width: 1.6),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
@@ -72,12 +77,12 @@ class AppTheme {
   /// hex) invert correctly. `kMidnight` backs the scaffold/surface tone
   /// instead of Material's own near-black default, matching the new
   /// palette's own dark-neutral color.
-  static ThemeData dark = ThemeData(
+  static ThemeData dark({Color seedColor = kBrandColor}) => ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
     fontFamily: 'Poppins',
     colorScheme: ColorScheme.fromSeed(
-      seedColor: kBrandColor,
+      seedColor: seedColor,
       brightness: Brightness.dark,
       surface: kMidnight,
     ),
@@ -96,7 +101,7 @@ class AppTheme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: kBrandColor, width: 1.6),
+        borderSide: BorderSide(color: seedColor, width: 1.6),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),

@@ -15,6 +15,7 @@ import '../../../dashboard/providers/dashboard_provider.dart';
 import '../../../users/providers/users_provider.dart';
 import '../../domain/lead_status_options.dart';
 import '../../providers/leads_list_provider.dart';
+import '../widgets/bulk_lead_action_bar.dart';
 import '../widgets/lead_card.dart';
 import '../widgets/leads_filter_sheet.dart';
 import 'create_lead_screen.dart';
@@ -40,6 +41,25 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
   final _scrollController = ScrollController();
   final _searchController = TextEditingController();
   Timer? _debounce;
+
+  final Set<String> _selectedIds = {};
+  bool get _selectionMode => _selectedIds.isNotEmpty;
+
+  void _toggleSelected(String leadId) {
+    setState(() {
+      if (_selectedIds.contains(leadId)) {
+        _selectedIds.remove(leadId);
+      } else {
+        _selectedIds.add(leadId);
+      }
+    });
+  }
+
+  void _startSelection(String leadId) {
+    setState(() => _selectedIds.add(leadId));
+  }
+
+  void _clearSelection() => setState(_selectedIds.clear);
 
   @override
   void dispose() {
@@ -120,7 +140,27 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
     final data = state.valueOrNull;
 
     return Scaffold(
-      appBar: const GlobalAppBar(title: 'Leads'),
+      appBar: _selectionMode
+          ? AppBar(
+              leading: IconButton(onPressed: _clearSelection, icon: const Icon(Icons.close)),
+              title: Text('${_selectedIds.length} selected'),
+              actions: [
+                TextButton(
+                  onPressed: data == null
+                      ? null
+                      : () => setState(() {
+                            _selectedIds
+                              ..clear()
+                              ..addAll(data.leads.map((l) => l.id));
+                          }),
+                  child: const Text('Select all'),
+                ),
+              ],
+            )
+          : const GlobalAppBar(title: 'Leads'),
+      bottomNavigationBar: _selectionMode
+          ? BulkLeadActionBar(selectedIds: _selectedIds.toList(), onDone: _clearSelection)
+          : null,
       // Padding clears the floating bottom nav bar (see AppShell). With
       // `extendBody: true` on AppShell's outer Scaffold, Flutter already
       // wraps this screen's `context` in a MediaQuery whose `padding.bottom`
@@ -133,16 +173,18 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
       // doesn't need to guess at OEM under-reporting since it's reading the
       // bar's already-merged, already-accurate on-screen height, not a raw
       // system inset.
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(
-          bottom: math.max(MediaQuery.paddingOf(context).bottom + 12, 95),
-        ),
-        child: FloatingActionButton(
-          backgroundColor: _brandColor,
-          onPressed: () => showQuickAddLeadSheet(context),
-          child: const Icon(Icons.add, color: Colors.white),
-        ),
-      ),
+      floatingActionButton: _selectionMode
+          ? null
+          : Padding(
+              padding: EdgeInsets.only(
+                bottom: math.max(MediaQuery.paddingOf(context).bottom + 12, 95),
+              ),
+              child: FloatingActionButton(
+                backgroundColor: _brandColor,
+                onPressed: () => showQuickAddLeadSheet(context),
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
       body: Column(
         children: [
           // Search + sort/filter — previously lived in the AppBar's `bottom`
@@ -276,6 +318,10 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
               child: _LeadsListSection(
                 data: data,
                 scrollController: _scrollController,
+                selectionMode: _selectionMode,
+                selectedIds: _selectedIds,
+                onToggleSelected: _toggleSelected,
+                onStartSelection: _startSelection,
               ),
             ),
           ],
@@ -289,10 +335,21 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
 /// bar/filter row above stay permanently mounted (see the `build()` call
 /// site) instead of tearing down and remounting on every keystroke.
 class _LeadsListSection extends ConsumerWidget {
-  const _LeadsListSection({required this.data, required this.scrollController});
+  const _LeadsListSection({
+    required this.data,
+    required this.scrollController,
+    required this.selectionMode,
+    required this.selectedIds,
+    required this.onToggleSelected,
+    required this.onStartSelection,
+  });
 
   final LeadsListState data;
   final ScrollController scrollController;
+  final bool selectionMode;
+  final Set<String> selectedIds;
+  final ValueChanged<String> onToggleSelected;
+  final ValueChanged<String> onStartSelection;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -325,6 +382,10 @@ class _LeadsListSection extends ConsumerWidget {
           return LeadCard(
             lead: lead,
             onTap: () => context.push('/leads/${lead.id}'),
+            onLongPress: () => onStartSelection(lead.id),
+            selectionMode: selectionMode,
+            selected: selectedIds.contains(lead.id),
+            onSelectToggle: () => onToggleSelected(lead.id),
           );
         },
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/utils/role_utils.dart';
 import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/providers/session_provider.dart';
@@ -115,6 +116,64 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
     });
   }
 
+  /// Lets an org admin create a brand-new catalog product right from this
+  /// sheet, for the "it's not in the catalog yet" case, instead of having
+  /// to cancel out, go create it from the Products page, then come back
+  /// and search again. Server-side gated to org admins (`createProduct`
+  /// in productController.ts returns 403 otherwise) — this dialog is only
+  /// ever reachable when [canQuickAddProduct] is true, so a non-admin
+  /// never sees it offered and then hits that 403.
+  Future<void> _quickAddProduct(String initialName) async {
+    final nameController = TextEditingController(text: initialName);
+    final priceController = TextEditingController();
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add new product'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              autofocus: true,
+              decoration: const InputDecoration(labelText: 'Product name *'),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: priceController,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: const InputDecoration(labelText: 'Base price *'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Add')),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+
+    final name = nameController.text.trim();
+    final price = double.tryParse(priceController.text.trim());
+    if (name.isEmpty || price == null) {
+      showAppSnackBar(context, 'A name and a valid price are required.', isError: true);
+      return;
+    }
+
+    try {
+      final created = await ref.read(productsRepositoryProvider).createProduct(name: name, basePrice: price);
+      if (!mounted) return;
+      _addProduct(created);
+      await _search(_searchController.text);
+      showAppSnackBar(context, '"$name" added to the catalog and to this lead.');
+    } catch (error) {
+      if (!mounted) return;
+      showAppSnackBar(context, "Couldn't create product: $error", isError: true);
+    }
+  }
+
   void _removeProduct(String productId) {
     setState(
       () => _items = _items.where((p) => p.productId != productId).toList(),
@@ -178,6 +237,7 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
         .isLoading;
     final canEditNameAndPrice =
         ref.watch(sessionControllerProvider).valueOrNull?.organisation.id == _kEdufolioOrgId;
+    final canQuickAddProduct = isOrgAdminRole(ref.watch(sessionControllerProvider).valueOrNull?.role);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.92,
@@ -259,9 +319,26 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 else if (_searchResults.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('No products found.'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('No products found.'),
+                        if (canQuickAddProduct) ...[
+                          const SizedBox(height: 8),
+                          OutlinedButton.icon(
+                            onPressed: () => _quickAddProduct(_searchController.text.trim()),
+                            icon: const Icon(Icons.add, size: 18),
+                            label: Text(
+                              _searchController.text.trim().isEmpty
+                                  ? 'Add new product'
+                                  : 'Add "${_searchController.text.trim()}" as a new product',
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   )
                 else
                   for (final product in _searchResults)

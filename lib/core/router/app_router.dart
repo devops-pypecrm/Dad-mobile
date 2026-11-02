@@ -11,6 +11,7 @@ import '../../features/auth/providers/session_provider.dart';
 import '../../features/auth/providers/splash_provider.dart';
 import '../../features/app_updates/presentation/screens/updates_screen.dart';
 import '../../features/calls/presentation/screens/call_logs_screen.dart';
+import '../../features/whatsapp_templates/presentation/screens/whatsapp_templates_screen.dart';
 import '../../features/checkins/presentation/screens/checkin_form_screen.dart';
 import '../../features/checkins/presentation/screens/checkins_feed_screen.dart';
 import '../../features/field_operations/presentation/screens/field_operations_screen.dart';
@@ -68,6 +69,7 @@ class AppRoutes {
   static const products = '/products';
   static const reEnquiries = '/re-enquiries';
   static const calls = '/calls';
+  static const whatsappTemplates = '/whatsapp-templates';
   static const updates = '/updates';
   static const settings = '/settings';
   // Personal profile ("Account" in Settings) — deliberately not nested
@@ -271,6 +273,7 @@ GoRouter goRouter(ProviderRef<GoRouter> ref) {
       GoRoute(path: AppRoutes.products, builder: (context, state) => const ProductsListScreen()),
       GoRoute(path: AppRoutes.reEnquiries, builder: (context, state) => const ReEnquiriesScreen()),
       GoRoute(path: AppRoutes.calls, builder: (context, state) => const CallLogsScreen()),
+      GoRoute(path: AppRoutes.whatsappTemplates, builder: (context, state) => const WhatsAppTemplatesScreen()),
       GoRoute(path: AppRoutes.updates, builder: (context, state) => const UpdatesScreen()),
       GoRoute(path: AppRoutes.settings, builder: (context, state) => const SettingsScreen()),
       GoRoute(path: AppRoutes.account, builder: (context, state) => const AccountScreen()),

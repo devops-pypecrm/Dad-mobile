@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../../core/utils/url_launch_helper.dart';
-import '../../domain/phone_number_utils.dart';
+import '../../../whatsapp_templates/presentation/widgets/whatsapp_send_sheet.dart';
 
 const _brandColor = Color(0xFF9654B5);
 
@@ -44,12 +44,7 @@ class LeadQuickActions extends StatelessWidget {
               color: _brandColor,
             ),
             label: 'WhatsApp',
-            onTap: () => launchUriWithFeedback(
-              context,
-              Uri.parse(
-                'https://wa.me/${formatWhatsAppNumber(phone, phoneCountryCode)}',
-              ),
-            ),
+            onTap: () => showWhatsAppSendSheet(context, phone: phone, phoneCountryCode: phoneCountryCode),
           ),
         ),
         if (email != null && email!.isNotEmpty) ...[

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -254,6 +255,21 @@ class LeadDetailScreen extends ConsumerWidget {
                             icon: Icons.person_outline,
                             text: lead.fullName,
                           ),
+                          if (lead.phone.isNotEmpty) ...[
+                            const SizedBox(height: 2),
+                            InkWell(
+                              onTap: () async {
+                                await Clipboard.setData(ClipboardData(text: lead.phone));
+                                if (context.mounted) {
+                                  showAppSnackBar(context, 'Phone number copied');
+                                }
+                              },
+                              child: _IconLine(
+                                icon: Icons.phone_outlined,
+                                text: lead.phone,
+                              ),
+                            ),
+                          ],
                           if (lead.company != null &&
                               lead.company!.isNotEmpty) ...[
                             const SizedBox(height: 2),
