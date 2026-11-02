@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_provider.dart';
 import '../domain/product.dart';
+import '../domain/product_share_link.dart';
 import '../domain/products_page.dart';
 
 part 'products_repository.g.dart';
@@ -120,6 +121,46 @@ class ProductsRepository {
   Future<void> deleteProduct(String id) async {
     try {
       await _dio.delete<void>('/products/$id');
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/products/:id/share` — any existing share link/config for
+  /// this product (org-wide, one link per product — not per-user). `url`
+  /// is null if nothing has been shared yet.
+  Future<ProductShareLink> getShareConfig(String productId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/products/$productId/share');
+      return ProductShareLink.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `POST /api/products/:id/share` — creates the share link on first
+  /// call, or updates its optional YouTube/title/description on
+  /// subsequent calls (same slug/URL either way — matches Dad-frontend's
+  /// `generateShareLink`). Passing [leadId] also drops a timeline entry
+  /// on that lead ("Product Link Shared: ...") server-side.
+  Future<ProductShareLink> generateShareLink(
+    String productId, {
+    String? youtubeUrl,
+    String? customTitle,
+    String? customDescription,
+    String? leadId,
+  }) async {
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        '/products/$productId/share',
+        data: {
+          if (youtubeUrl != null) 'youtubeUrl': youtubeUrl,
+          if (customTitle != null) 'customTitle': customTitle,
+          if (customDescription != null) 'customDescription': customDescription,
+          if (leadId != null) 'leadId': leadId,
+        },
+      );
+      return ProductShareLink.fromJson(response.data!);
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

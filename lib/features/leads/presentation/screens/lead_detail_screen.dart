@@ -21,6 +21,7 @@ import '../widgets/lead_activity_tabs.dart';
 import '../widgets/lead_notes_section.dart';
 import '../widgets/lead_products_editor_sheet.dart';
 import '../widgets/lead_quick_actions.dart';
+import '../../../products/presentation/widgets/product_share_sheet.dart';
 
 const _brandColor = Color(0xFF9654B5);
 
@@ -558,6 +559,19 @@ class LeadDetailScreen extends ConsumerWidget {
                                 p.price.toStringAsFixed(0),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: 'Share product',
+                                visualDensity: VisualDensity.compact,
+                                icon: const Icon(Icons.share_outlined, size: 18),
+                                onPressed: () => showProductShareSheet(
+                                  context,
+                                  productId: p.productId,
+                                  productName: p.customName ?? p.product?.name ?? 'Product',
+                                  leadId: leadId,
+                                  leadPhone: lead.phone,
+                                  leadEmail: lead.email,
                                 ),
                               ),
                             ],

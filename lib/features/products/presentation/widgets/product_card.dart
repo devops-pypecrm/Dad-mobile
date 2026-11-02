@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/currency_formatter.dart';
 import '../../domain/product.dart';
+import 'product_share_sheet.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({super.key, required this.product, this.onEdit, this.onDelete});
@@ -116,6 +117,15 @@ class ProductCard extends StatelessWidget {
                   side: BorderSide.none,
                 ),
                 const Spacer(),
+                IconButton(
+                  tooltip: 'Share product',
+                  icon: const Icon(Icons.share_outlined, size: 20),
+                  onPressed: () => showProductShareSheet(
+                    context,
+                    productId: product.id,
+                    productName: product.name,
+                  ),
+                ),
                 if (product.brochureUrl != null && product.brochureUrl!.isNotEmpty)
                   IconButton(
                     tooltip: 'View brochure',
