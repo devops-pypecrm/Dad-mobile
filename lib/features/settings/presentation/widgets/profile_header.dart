@@ -5,7 +5,6 @@ import '../../../../core/router/app_router.dart';
 import '../../../auth/domain/user_session.dart';
 import 'authenticated_avatar.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Tappable profile card at the top of Settings — decorative green-blob
 /// background, avatar with a ring + edit badge, name/role/tagline/
@@ -21,23 +20,23 @@ class ProfileHeader extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.circular(20),
       child: Material(
-        color: _brandColor.withValues(alpha: 0.05),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
         child: InkWell(
           onTap: () => context.push(AppRoutes.account),
           child: Stack(
             children: [
               // Decorative organic blobs — purely background, behind
               // everything else in the stack.
-              Positioned(top: -36, left: -40, child: _blob(96, 0.14)),
-              Positioned(bottom: -50, left: -30, child: _blob(120, 0.10)),
-              Positioned(top: -16, right: 30, child: _blob(56, 0.08)),
+              Positioned(top: -36, left: -40, child: _blob(theme.colorScheme.primary, 96, 0.14)),
+              Positioned(bottom: -50, left: -30, child: _blob(theme.colorScheme.primary, 120, 0.10)),
+              Positioned(top: -16, right: 30, child: _blob(theme.colorScheme.primary, 56, 0.08)),
               Positioned(
                 right: 14,
                 bottom: 10,
-                child: Icon(Icons.auto_awesome, size: 14, color: _brandColor.withValues(alpha: 0.55)),
+                child: Icon(Icons.auto_awesome, size: 14, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.55)),
               ),
-              Positioned(right: 30, bottom: 22, child: _blob(5, 0.5)),
-              Positioned(right: 20, bottom: 8, child: _blob(4, 0.4)),
+              Positioned(right: 30, bottom: 22, child: _blob(theme.colorScheme.primary, 5, 0.5)),
+              Positioned(right: 20, bottom: 8, child: _blob(theme.colorScheme.primary, 4, 0.4)),
 
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 40, 16),
@@ -62,7 +61,7 @@ class ProfileHeader extends StatelessWidget {
                             width: 22,
                             height: 22,
                             decoration: BoxDecoration(
-                              color: _brandColor,
+                              color: Theme.of(context).colorScheme.primary,
                               shape: BoxShape.circle,
                               border: Border.all(color: theme.colorScheme.surface, width: 2),
                             ),
@@ -91,7 +90,7 @@ class ProfileHeader extends StatelessWidget {
                           Text(
                             'Build. Manage. Grow.',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: _brandColor,
+                              color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -122,11 +121,11 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
-  Widget _blob(double size, double alpha) {
+  Widget _blob(Color color, double size, double alpha) {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(shape: BoxShape.circle, color: _brandColor.withValues(alpha: alpha)),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: color.withValues(alpha: alpha)),
     );
   }
 }

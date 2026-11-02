@@ -8,7 +8,6 @@ import '../../providers/bulk_lead_actions_controller.dart';
 import 'bulk_assign_sheet.dart';
 import 'bulk_status_sheet.dart';
 
-const _brandColor = Color(0xFF9654B5);
 const _coral = Color(0xFFFF6B4A);
 
 /// Floating toolbar shown while the Leads list is in bulk-selection mode —
@@ -113,21 +112,22 @@ class _ActionIcon extends StatelessWidget {
     required this.label,
     required this.onTap,
     required this.enabled,
-    this.color = _brandColor,
+    this.color,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
   final bool enabled;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = color ?? Theme.of(context).colorScheme.primary;
     return IconButton(
       tooltip: label,
       onPressed: enabled ? onTap : null,
-      icon: Icon(icon, color: enabled ? color : Theme.of(context).disabledColor),
+      icon: Icon(icon, color: enabled ? resolvedColor : Theme.of(context).disabledColor),
     );
   }
 }

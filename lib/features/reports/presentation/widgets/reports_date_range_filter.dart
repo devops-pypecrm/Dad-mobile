@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../dashboard/presentation/widgets/date_range_filter_sheet.dart';
 import '../../providers/reports_providers.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Same preset list/UI as the Dashboard's date filter (All Time / This
 /// Month / Last Month / Custom Range) — shared here via
@@ -40,13 +39,13 @@ class ReportsDateRangeFilter extends ConsumerWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.calendar_today_outlined, size: 15, color: _brandColor),
+                Icon(Icons.calendar_today_outlined, size: 15, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 6),
                 Text(
                   selected.label,
-                  style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600, color: _brandColor),
+                  style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.primary),
                 ),
-                const Icon(Icons.keyboard_arrow_down, size: 16, color: _brandColor),
+                Icon(Icons.keyboard_arrow_down, size: 16, color: Theme.of(context).colorScheme.primary),
               ],
             ),
           ),

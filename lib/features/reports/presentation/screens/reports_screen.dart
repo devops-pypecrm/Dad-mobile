@@ -22,7 +22,6 @@ const _managerRoles = {
   'branch_manager',
   'org_admin',
 };
-const _brandColor = Color(0xFF9654B5);
 
 Widget _divider() =>
     Container(width: 1, height: 44, color: Colors.grey.withValues(alpha: 0.2));
@@ -51,7 +50,7 @@ class _SectionHeader extends StatelessWidget {
           width: 28,
           height: 3,
           decoration: BoxDecoration(
-            color: _brandColor,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -253,16 +252,16 @@ class ReportsScreen extends ConsumerWidget {
           children: [
             const ReportsDateRangeFilter(),
             if (showTeamTab) ...[
-              const Material(
+              Material(
                 child: TabBar(
-                  tabs: [
+                  tabs: const [
                     Tab(text: 'Me'),
                     Tab(text: 'Team'),
                   ],
                   indicatorSize: TabBarIndicatorSize.label,
-                  indicatorColor: _brandColor,
+                  indicatorColor: Theme.of(context).colorScheme.primary,
                   indicatorWeight: 3,
-                  labelColor: _brandColor,
+                  labelColor: Theme.of(context).colorScheme.primary,
                   unselectedLabelColor: Colors.grey,
                   labelStyle: TextStyle(fontWeight: FontWeight.bold),
                   unselectedLabelStyle: TextStyle(
@@ -313,8 +312,8 @@ class _CallReportEntry extends StatelessWidget {
             Container(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(color: _brandColor.withValues(alpha: 0.12), shape: BoxShape.circle),
-              child: const Icon(Icons.call_outlined, color: _brandColor, size: 22),
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12), shape: BoxShape.circle),
+              child: Icon(Icons.call_outlined, color: Theme.of(context).colorScheme.primary, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -330,7 +329,7 @@ class _CallReportEntry extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: _brandColor),
+            Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.primary),
           ],
         ),
       ),
@@ -392,7 +391,7 @@ class _MyPerformanceTab extends ConsumerWidget {
                     label: 'Leads Assigned',
                     value: '${metrics.leadsAssigned}',
                     icon: Icons.person_outline,
-                    color: _brandColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   _StatCard(
                     label: 'Leads Converted',
@@ -416,7 +415,7 @@ class _MyPerformanceTab extends ConsumerWidget {
                     label: 'Meetings Held',
                     value: '${metrics.meetingsHeld}',
                     icon: Icons.calendar_today_outlined,
-                    color: _brandColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ],
               );
@@ -610,13 +609,13 @@ class _TeamSummaryCard extends StatelessWidget {
           label: 'Team Size',
           value: '${entries.length}',
           icon: Icons.groups_outlined,
-          color: _brandColor,
+          color: Theme.of(context).colorScheme.primary,
         ),
         _StatCard(
           label: 'Leads Assigned',
           value: '$totalAssigned',
           icon: Icons.person_outline,
-          color: _brandColor,
+          color: Theme.of(context).colorScheme.primary,
         ),
         _StatCard(
           label: 'Leads Converted',
@@ -640,7 +639,7 @@ class _TeamSummaryCard extends StatelessWidget {
           label: 'Meetings Held',
           value: '$totalMeetings',
           icon: Icons.calendar_today_outlined,
-          color: _brandColor,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ],
     );
@@ -682,24 +681,24 @@ class _TeamPerformanceTile extends StatelessWidget {
                 children: [
                   // Purely decorative — a fixed flourish echoing the real
                   // percentage ring below, not itself data-bound.
-                  const _ArcRing(
+                  _ArcRing(
                     size: 52,
                     strokeWidth: 2.5,
                     progress: 0.22,
-                    color: _brandColor,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   Container(
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: _brandColor.withValues(alpha: 0.12),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       '$rank',
                       style: theme.textTheme.titleMedium?.copyWith(
-                        color: _brandColor,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -720,7 +719,7 @@ class _TeamPerformanceTile extends StatelessWidget {
               Text(
                 '${metrics.conversionRate.toStringAsFixed(0)}%',
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: _brandColor,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -729,7 +728,7 @@ class _TeamPerformanceTile extends StatelessWidget {
                 size: 34,
                 strokeWidth: 3,
                 progress: progress,
-                color: _brandColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ],
           ),
@@ -739,7 +738,7 @@ class _TeamPerformanceTile extends StatelessWidget {
               Expanded(
                 child: _MiniStat(
                   icon: Icons.person_outline,
-                  color: _brandColor,
+                  color: Theme.of(context).colorScheme.primary,
                   value: '${metrics.leadsAssigned}',
                   label: 'Assigned',
                 ),
@@ -935,17 +934,17 @@ class _SalesBookMetric extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _brandColor.withValues(alpha: 0.12),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: _brandColor, size: 20),
+                child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
               ),
               const SizedBox(height: 8),
               Text(
                 value,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: _brandColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -966,7 +965,7 @@ class _SalesBookMetric extends StatelessWidget {
         Positioned(
           right: 0,
           bottom: 0,
-          child: _Sparkline(color: _brandColor, width: 48, height: 16),
+          child: _Sparkline(color: Theme.of(context).colorScheme.primary, width: 48, height: 16),
         ),
       ],
     );

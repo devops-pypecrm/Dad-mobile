@@ -9,7 +9,6 @@ import '../../domain/whatsapp_template.dart';
 import '../../providers/whatsapp_templates_provider.dart';
 import '../widgets/whatsapp_template_form_sheet.dart';
 
-const _brandColor = Color(0xFF9654B5);
 const _whatsAppGreen = Color(0xFF25D366);
 
 /// Private, per-user WhatsApp templates. Nobody else — including org
@@ -50,7 +49,7 @@ class WhatsAppTemplatesScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('WhatsApp Templates')),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: _brandColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         onPressed: () => showWhatsAppTemplateFormSheet(context),
         child: const Icon(Icons.add, color: Colors.white),
       ),

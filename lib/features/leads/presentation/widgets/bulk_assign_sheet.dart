@@ -7,7 +7,6 @@ import '../../../auth/providers/session_provider.dart';
 import '../../../users/providers/users_provider.dart';
 import '../../providers/bulk_lead_actions_controller.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Bulk "Assign" picker — same subordinate-scoping rule as the single-lead
 /// `AssignLeadSheet`: admins/super_admins can assign to anyone, everyone
@@ -94,7 +93,7 @@ class _BulkAssignSheetState extends ConsumerState<_BulkAssignSheet> {
               onChanged: (value) => setState(() => _query = value),
               decoration: InputDecoration(
                 hintText: 'Search users…',
-                prefixIcon: const Icon(Icons.search, color: _brandColor),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
                 isDense: true,
                 filled: true,
                 fillColor: theme.colorScheme.surface,

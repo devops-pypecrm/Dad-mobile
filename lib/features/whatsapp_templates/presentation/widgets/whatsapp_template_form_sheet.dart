@@ -6,7 +6,6 @@ import '../../../../core/widgets/app_snackbar.dart';
 import '../../domain/whatsapp_template.dart';
 import '../../providers/whatsapp_templates_provider.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Bottom sheet for creating or editing a single WhatsApp template. Pass
 /// [existing] to edit; omit it to create a new one.
@@ -112,7 +111,7 @@ class _WhatsAppTemplateFormSheetState extends ConsumerState<_WhatsAppTemplateFor
             child: FilledButton(
               onPressed: _saving ? null : _save,
               style: FilledButton.styleFrom(
-                backgroundColor: _brandColor,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               child: _saving

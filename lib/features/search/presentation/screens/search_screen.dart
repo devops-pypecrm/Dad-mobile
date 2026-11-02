@@ -15,7 +15,6 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/search_result.dart';
 import '../../providers/search_controller.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Same type -> icon/color mapping as `getIcon` in
 /// Dad-frontend/src/components/shared/GlobalSearch.tsx:122-131.
@@ -250,7 +249,7 @@ class _SectionHeader extends StatelessWidget {
           width: 24,
           height: 3,
           decoration: BoxDecoration(
-            color: _brandColor,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -303,10 +302,10 @@ class _SimpleResultTile extends StatelessWidget {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: _brandColor.withValues(alpha: 0.1),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 17, color: _brandColor),
+                  child: Icon(icon, size: 17, color: Theme.of(context).colorScheme.primary),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

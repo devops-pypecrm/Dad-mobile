@@ -22,7 +22,6 @@ import '../widgets/opportunity_timeline_section.dart';
 /// FABs, Follow Ups stat cards). This screen previously used a leftover
 /// purple (`#5B21B6`) from before the app-wide recolor; every accent here
 /// now matches.
-const _brandColor = Color(0xFF9654B5);
 
 /// Fallback pipeline when the org hasn't configured
 /// `Organisation.opportunityLeadStatuses` — same idea as leads' fallback
@@ -163,7 +162,7 @@ class OpportunityDetailScreen extends ConsumerWidget {
               SizedBox(
                 width: double.infinity,
                 child: FilledButton(
-                  style: FilledButton.styleFrom(backgroundColor: _brandColor),
+                  style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
                   onPressed: () => Navigator.of(context).pop(true),
                   child: const Text('Save'),
                 ),
@@ -264,9 +263,9 @@ class OpportunityDetailScreen extends ConsumerWidget {
               ),
           ],
           bottom: TabBar(
-            labelColor: _brandColor,
+            labelColor: Theme.of(context).colorScheme.primary,
             unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
-            indicatorColor: _brandColor,
+            indicatorColor: Theme.of(context).colorScheme.primary,
             tabs: const [
               Tab(text: 'Details'),
               Tab(text: 'Timeline & Files'),
@@ -435,7 +434,7 @@ class _AddNoteComposerState extends ConsumerState<_AddNoteComposer> {
           ),
           const SizedBox(height: 8),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: _brandColor),
+            style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary),
             onPressed: isSaving || _controller.text.trim().isEmpty
                 ? null
                 : () async {
@@ -477,7 +476,7 @@ class _StageAndActionsCard extends StatelessWidget {
     final (bg, fg) = switch (opportunity.stage) {
       'closed_won' => (const Color(0xFF9654B5), Colors.white),
       'closed_lost' => (const Color(0xFFFF6B4A), Colors.white),
-      _ => (_brandColor.withValues(alpha: 0.12), _brandColor),
+      _ => (Theme.of(context).colorScheme.primary.withValues(alpha: 0.12), Theme.of(context).colorScheme.primary),
     };
 
     return Card(
@@ -530,7 +529,7 @@ class _StageAndActionsCard extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.track_changes, size: 16, color: _brandColor),
+                        Icon(Icons.track_changes, size: 16, color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 4),
                         Text(
                           '${opportunity.probability.toStringAsFixed(0)}%',
@@ -560,8 +559,8 @@ class _StageAndActionsCard extends StatelessWidget {
               const Divider(height: 24),
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: _brandColor,
-                  side: const BorderSide(color: _brandColor),
+                  foregroundColor: Theme.of(context).colorScheme.primary,
+                  side: BorderSide(color: Theme.of(context).colorScheme.primary),
                   minimumSize: const Size.fromHeight(44),
                 ),
                 onPressed: actionState.isLoading ? null : onChangeStage,
@@ -722,16 +721,16 @@ class _OwnerCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _brandColor.withValues(alpha: 0.08),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _brandColor.withValues(alpha: 0.2)),
+        border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.person_outline, size: 16, color: _brandColor),
+              Icon(Icons.person_outline, size: 16, color: Theme.of(context).colorScheme.primary),
               const SizedBox(width: 6),
               Text(
                 'Opportunity Owner',
@@ -745,10 +744,10 @@ class _OwnerCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: _brandColor.withValues(alpha: 0.15),
+                backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                 child: Text(
                   initials,
-                  style: const TextStyle(color: _brandColor, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700),
                 ),
               ),
               const SizedBox(width: 12),
@@ -924,7 +923,7 @@ class _AssociatedProductsSection extends ConsumerWidget {
           children: [
             Row(
               children: [
-                const Icon(Icons.inventory_2_outlined, size: 18, color: _brandColor),
+                Icon(Icons.inventory_2_outlined, size: 18, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Text('Associated Products', style: theme.textTheme.titleMedium),
               ],
@@ -1078,13 +1077,13 @@ class _EmiScheduleSection extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: emi.status == 'completed'
                     ? const Color(0xFF9654B5).withValues(alpha: 0.12)
-                    : _brandColor.withValues(alpha: 0.12),
+                    : Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 humanizeSnakeCase(emi.status),
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: emi.status == 'completed' ? const Color(0xFF9654B5) : _brandColor,
+                  color: emi.status == 'completed' ? const Color(0xFF9654B5) : Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w700,
                 ),
               ),

@@ -10,12 +10,6 @@ import '../widgets/app_drawer.dart';
 import '../widgets/curved_nav_bar/curved_navigation_bar.dart';
 import 'app_router.dart';
 
-/// Bar fill + selected-tab text/icon color (`#79BC46`) — a fixed brand
-/// color, not theme-derived, per explicit request. Kept as a named
-/// constant so `_NavItem`'s "contrast against the white circle" color
-/// stays in sync with the bar automatically if this ever changes.
-const _navBarColor = Color(0xFF9654B5);
-
 /// A blanket floor here (tried and reverted — see git history) forced a
 /// visible dead gap under the bar on any device correctly reporting a
 /// near-zero inset (plain gesture mode with nothing to clear, or no system
@@ -173,7 +167,7 @@ class AppShell extends StatelessWidget {
                 // curved shape itself a drop shadow, drawn on its own path via
                 // `canvas.drawShadow` (see the vendored painter's file header).
                 color: Theme.of(context).colorScheme.surface,
-                buttonBackgroundColor: _navBarColor,
+                buttonBackgroundColor: Theme.of(context).colorScheme.primary,
                 backgroundColor: Colors.transparent,
                 // Rounds all 4 corners of the bar itself (see the vendored
                 // painter's file header) so it reads as a floating rounded box
@@ -204,12 +198,12 @@ class AppShell extends StatelessWidget {
 }
 
 /// The tab currently risen into the curved bar's floating circle shows just
-/// a plain icon (white, to contrast against the now-purple circle) — no
-/// room for a label once it's lifted, same as the reference screenshot's
-/// center button has none. Every other tab shows a small purple icon +
-/// label (purple to read against the bar's white fill) so all 5
-/// destinations stay identifiable at a glance, not just whichever one
-/// happens to be active.
+/// a plain icon (white, to contrast against the circle, which is always
+/// filled with the user's selected theme color) — no room for a label once
+/// it's lifted, same as the reference screenshot's center button has none.
+/// Every other tab shows a small icon + label tinted the same theme color
+/// (to read against the bar's white fill) so all 5 destinations stay
+/// identifiable at a glance, not just whichever one happens to be active.
 class _NavItem extends StatelessWidget {
   const _NavItem({required this.tab, required this.selected});
 
@@ -223,14 +217,15 @@ class _NavItem extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
+    final navColor = theme.colorScheme.primary;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(tab.icon, color: _navBarColor, size: 22),
+        Icon(tab.icon, color: navColor, size: 22),
         const SizedBox(height: 2),
         Text(
           tab.label,
-          style: theme.textTheme.labelSmall?.copyWith(color: _navBarColor),
+          style: theme.textTheme.labelSmall?.copyWith(color: navColor),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

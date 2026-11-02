@@ -6,7 +6,6 @@ import '../../../../core/widgets/app_snackbar.dart';
 import '../../../auth/providers/session_provider.dart';
 import '../../providers/change_password_controller.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Change Password form — `POST /api/profile/change-password`
 /// (Dad-backend/src/controllers/profileController.ts). Requires the
@@ -183,7 +182,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
               ),
               const SizedBox(height: 24),
               FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: _brandColor, minimumSize: const Size.fromHeight(48)),
+                style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary, minimumSize: const Size.fromHeight(48)),
                 onPressed: state.isLoading ? null : _submit,
                 child: state.isLoading
                     ? const SizedBox(

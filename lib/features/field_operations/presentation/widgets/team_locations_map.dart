@@ -4,7 +4,6 @@ import 'package:latlong2/latlong.dart' as ll;
 
 import '../../domain/field_team_member.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// "Live Team Locations" — OpenStreetMap tiles via `flutter_map`, the same
 /// no-API-key approach as Dad-frontend's Leaflet-based `MapComponent.tsx`.
@@ -64,7 +63,7 @@ class _MemberPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = member.isCheckedIn ? _brandColor : Colors.grey;
+    final color = member.isCheckedIn ? Theme.of(context).colorScheme.primary : Colors.grey;
     return Tooltip(
       message: '${member.name}\n${member.location}',
       child: Column(

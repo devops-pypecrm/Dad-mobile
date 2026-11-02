@@ -4,7 +4,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/utils/url_launch_helper.dart';
 import '../../../whatsapp_templates/presentation/widgets/whatsapp_send_sheet.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Call / Email / WhatsApp buttons on the Lead Detail screen — launches the
 /// native dialer/mail client/WhatsApp rather than doing anything in-app.
@@ -26,7 +25,7 @@ class LeadQuickActions extends StatelessWidget {
       children: [
         Expanded(
           child: _ActionButton(
-            icon: const Icon(Icons.call, size: 18, color: _brandColor),
+            icon: Icon(Icons.call, size: 18, color: Theme.of(context).colorScheme.primary),
             label: 'Call',
             onTap: () =>
                 launchUriWithFeedback(context, Uri(scheme: 'tel', path: phone)),
@@ -38,10 +37,10 @@ class LeadQuickActions extends StatelessWidget {
             // `FontAwesomeIcons.whatsapp` is an `FaIconData`, not a plain
             // `IconData` (font_awesome_flutter 11+), so it needs the
             // dedicated `FaIcon` widget rather than a plain `Icon`.
-            icon: const FaIcon(
+            icon: FaIcon(
               FontAwesomeIcons.whatsapp,
               size: 17,
-              color: _brandColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             label: 'WhatsApp',
             onTap: () => showWhatsAppSendSheet(context, phone: phone, phoneCountryCode: phoneCountryCode),
@@ -51,7 +50,7 @@ class LeadQuickActions extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: _ActionButton(
-              icon: const Icon(Icons.email, size: 18, color: _brandColor),
+              icon: Icon(Icons.email, size: 18, color: Theme.of(context).colorScheme.primary),
               label: 'Email',
               onTap: () => launchUriWithFeedback(
                 context,
@@ -96,7 +95,7 @@ class _ActionButton extends StatelessWidget {
               label,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelLarge?.copyWith(
-                color: _brandColor,
+                color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),

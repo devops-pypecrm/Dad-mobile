@@ -15,10 +15,9 @@ import '../widgets/opportunities_filter_sheet.dart';
 import '../widgets/opportunity_card.dart';
 
 // Matches the green accent used across the rest of the app's tab-root
-// screens (see Leads' `_brandColor` in leads_list_screen.dart) — the
+// screens (see Leads' `Theme.of(context).colorScheme.primary` in leads_list_screen.dart) — the
 // reference design uses this same green for the Team/Mine toggle, the
 // filter button, and status accents.
-const _brandColor = Color(0xFF9654B5);
 
 const _tileStageTitles = {
   'expected': 'Pipeline',
@@ -251,18 +250,18 @@ class _ScopeSegment extends StatelessWidget {
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? _brandColor.withValues(alpha: 0.12) : Colors.transparent,
+          color: selected ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12) : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 18, color: selected ? _brandColor : Colors.black54),
+            Icon(icon, size: 18, color: selected ? Theme.of(context).colorScheme.primary : Colors.black54),
             const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                color: selected ? _brandColor : Colors.black54,
+                color: selected ? Theme.of(context).colorScheme.primary : Colors.black54,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
@@ -350,21 +349,21 @@ class _SquareIconButton extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: _brandColor.withValues(alpha: 0.12),
-            border: Border.all(color: _brandColor.withValues(alpha: 0.3)),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+            border: Border.all(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              Center(child: Icon(icon, color: _brandColor)),
+              Center(child: Icon(icon, color: Theme.of(context).colorScheme.primary)),
               if (badgeCount != null)
                 Positioned(
                   top: -6,
                   right: -6,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(color: _brandColor, shape: BoxShape.circle),
+                    decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, shape: BoxShape.circle),
                     constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
                     child: Text(
                       '$badgeCount',

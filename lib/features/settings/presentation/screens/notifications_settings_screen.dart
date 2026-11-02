@@ -5,7 +5,6 @@ import '../../../../core/widgets/app_snackbar.dart';
 import '../../../../core/widgets/error_state_view.dart';
 import '../../providers/profile_controller.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Real per-user notification preferences, backed by `User.notification
 /// Preferences` — a field `notificationService.ts` already reads to gate
@@ -45,7 +44,7 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                 ),
               ),
               SwitchListTile(
-                activeColor: _brandColor,
+                activeColor: Theme.of(context).colorScheme.primary,
                 title: const Text('Push Notifications'),
                 subtitle: const Text('Alerts on this device'),
                 value: prefs.pushNotifications,
@@ -55,7 +54,7 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                 ),
               ),
               SwitchListTile(
-                activeColor: _brandColor,
+                activeColor: Theme.of(context).colorScheme.primary,
                 title: const Text('Email Notifications'),
                 subtitle: const Text('Important updates sent to your inbox'),
                 value: prefs.emailNotifications,
@@ -65,7 +64,7 @@ class NotificationsSettingsScreen extends ConsumerWidget {
                 ),
               ),
               SwitchListTile(
-                activeColor: _brandColor,
+                activeColor: Theme.of(context).colorScheme.primary,
                 title: const Text('WhatsApp Notifications'),
                 subtitle: const Text('High-priority alerts sent to your WhatsApp'),
                 value: prefs.whatsAppNotifications,

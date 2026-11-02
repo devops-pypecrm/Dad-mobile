@@ -8,7 +8,6 @@ import '../../../../core/widgets/error_state_view.dart';
 import '../../../auth/domain/user_device_session.dart';
 import '../../../auth/providers/devices_provider.dart';
 
-const _brandColor = kBrandColor;
 
 /// "Devices" — every device this account is currently logged into, with a
 /// remote sign-out per device. Backed by `UserSession` rows created at
@@ -123,10 +122,10 @@ class _DeviceTile extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: (session.isCurrentDevice ? _brandColor : Colors.blueGrey).withValues(alpha: 0.12),
+          color: (session.isCurrentDevice ? Theme.of(context).colorScheme.primary : Colors.blueGrey).withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(11),
         ),
-        child: Icon(_icon, color: session.isCurrentDevice ? _brandColor : Colors.blueGrey, size: 20),
+        child: Icon(_icon, color: session.isCurrentDevice ? Theme.of(context).colorScheme.primary : Colors.blueGrey, size: 20),
       ),
       title: Row(
         children: [
@@ -135,10 +134,10 @@ class _DeviceTile extends StatelessWidget {
             const SizedBox(width: 6),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(color: _brandColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
               child: Text(
                 'This device',
-                style: theme.textTheme.labelSmall?.copyWith(color: _brandColor, fontWeight: FontWeight.w600),
+                style: theme.textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
               ),
             ),
           ],

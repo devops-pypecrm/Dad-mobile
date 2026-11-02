@@ -7,7 +7,6 @@ import '../../domain/opportunity_timeline_item.dart';
 import '../../providers/opportunity_timeline_provider.dart';
 import '../../../leads/presentation/widgets/lead_recording_player_sheet.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// The "Timeline & Files" tab's activity feed — a merged, newest-first list
 /// of Interactions/Tasks/Events/AuditLogs/CallRecordings/FollowUps/Documents
@@ -65,18 +64,19 @@ class OpportunityTimelineSection extends ConsumerWidget {
   }
 }
 
-(IconData, Color) _iconAndColor(OpportunityTimelineItem item) {
+(IconData, Color) _iconAndColor(BuildContext context, OpportunityTimelineItem item) {
+  final brandColor = Theme.of(context).colorScheme.primary;
   switch (item.type) {
     case 'interaction':
-      if (item.subType == 'call') return (Icons.call, _brandColor);
-      if (item.subType == 'whatsapp') return (Icons.chat_bubble_outline, const Color(0xFF9654B5));
-      return (Icons.mail_outline, _brandColor);
+      if (item.subType == 'call') return (Icons.call, brandColor);
+      if (item.subType == 'whatsapp') return (Icons.chat_bubble_outline, brandColor);
+      return (Icons.mail_outline, brandColor);
     case 'task':
       return (Icons.check_box_outlined, const Color(0xFFF5B82E));
     case 'followUp':
-      return (Icons.schedule, const Color(0xFF9654B5));
+      return (Icons.schedule, brandColor);
     case 'event':
-      return (Icons.event_outlined, const Color(0xFF9654B5));
+      return (Icons.event_outlined, brandColor);
     case 'audit':
       return (Icons.shield_outlined, Colors.grey);
     case 'recording':
@@ -96,7 +96,7 @@ class _TimelineTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final (icon, color) = _iconAndColor(item);
+    final (icon, color) = _iconAndColor(context, item);
     final dateStr = _formatDate(item.date);
 
     return Padding(
@@ -204,8 +204,8 @@ class _CallMeta extends StatelessWidget {
         if (recordingUrl != null && recordingUrl.isNotEmpty)
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-              foregroundColor: _brandColor,
-              side: const BorderSide(color: _brandColor),
+              foregroundColor: Theme.of(context).colorScheme.primary,
+              side: BorderSide(color: Theme.of(context).colorScheme.primary),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,

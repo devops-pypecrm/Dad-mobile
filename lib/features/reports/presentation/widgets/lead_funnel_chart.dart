@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Best-effort icon per stage, matched by keyword rather than an exact
 /// lookup table — stage names are org-configurable (`Organisation.
@@ -59,12 +58,12 @@ class LeadFunnelChart extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: _brandColor.withValues(alpha: 0.1),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 'Total Leads $total',
-                style: theme.textTheme.labelMedium?.copyWith(color: _brandColor, fontWeight: FontWeight.w700),
+                style: theme.textTheme.labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700),
               ),
             ),
           ),
@@ -78,10 +77,10 @@ class LeadFunnelChart extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: _brandColor.withValues(alpha: 0.1),
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(_iconForStage(entry.key), size: 16, color: _brandColor),
+                    child: Icon(_iconForStage(entry.key), size: 16, color: Theme.of(context).colorScheme.primary),
                   ),
                   const SizedBox(width: 10),
                   SizedBox(
@@ -99,10 +98,10 @@ class LeadFunnelChart extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                       child: Stack(
                         children: [
-                          Container(height: 8, color: _brandColor.withValues(alpha: 0.12)),
+                          Container(height: 8, color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)),
                           FractionallySizedBox(
                             widthFactor: maxValue == 0 ? 0 : entry.value / maxValue,
-                            child: Container(height: 8, color: _brandColor),
+                            child: Container(height: 8, color: Theme.of(context).colorScheme.primary),
                           ),
                         ],
                       ),
@@ -114,7 +113,7 @@ class LeadFunnelChart extends StatelessWidget {
                     child: Text(
                       '${entry.value}',
                       textAlign: TextAlign.end,
-                      style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold, color: _brandColor),
+                      style: theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                   const SizedBox(width: 6),

@@ -5,7 +5,6 @@ import '../../../../core/utils/url_launch_helper.dart';
 import '../../../leads/domain/phone_number_utils.dart';
 import '../../providers/whatsapp_templates_provider.dart';
 
-const _brandColor = Color(0xFF9654B5);
 const _whatsAppGreen = Color(0xFF25D366);
 
 /// Shown when the WhatsApp quick action is tapped anywhere in the app
@@ -100,7 +99,7 @@ class _WhatsAppSendSheet extends ConsumerWidget {
                       final template = templates[index];
                       return ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.description_outlined, color: _brandColor),
+                        leading: Icon(Icons.description_outlined, color: Theme.of(context).colorScheme.primary),
                         title: Text(template.title, style: const TextStyle(fontWeight: FontWeight.w600)),
                         subtitle: Text(template.body, maxLines: 1, overflow: TextOverflow.ellipsis),
                         onTap: () {

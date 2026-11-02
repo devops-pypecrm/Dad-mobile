@@ -8,7 +8,6 @@ import '../../domain/installment_input.dart';
 import '../../domain/opportunity.dart';
 import '../../providers/opportunity_actions_controller.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Close Won — mirrors Dad-frontend's `CloseWonDialog.tsx`: a payment-type
 /// choice (Fully Paid / Partially Paid / Full EMI), a down-payment field
@@ -204,7 +203,7 @@ class _CloseWonFormState extends ConsumerState<_CloseWonForm> {
             for (final option in _PaymentType.values)
               RadioListTile<_PaymentType>(
                 contentPadding: EdgeInsets.zero,
-                activeColor: _brandColor,
+                activeColor: Theme.of(context).colorScheme.primary,
                 value: option,
                 groupValue: _paymentType,
                 title: Text(switch (option) {

@@ -33,7 +33,6 @@ import '../widgets/target_progress_card.dart';
 /// instead of `theme.colorScheme.primary` (a Material3-seeded blue, not this
 /// brand color) so the Today card and Exp. Revenue tile read as on-brand
 /// rather than an accidental off-shade.
-const _brandColor = Color(0xFF9654B5);
 
 /// The primary landing screen. Layout mirrors
 /// Dad-frontend/src/pages/Dashboard.tsx: a branch+month filter row driving
@@ -180,8 +179,8 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                     leading: CircleAvatar(
                       radius: 20,
-                      backgroundColor: _brandColor.withValues(alpha: 0.12),
-                      child: Icon(Icons.checklist, color: _brandColor),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                      child: Icon(Icons.checklist, color: Theme.of(context).colorScheme.primary),
                     ),
                     title: Text(
                       '$pendingToday follow-up${pendingToday == 1 ? '' : 's'} need attention',
@@ -192,10 +191,10 @@ class DashboardScreen extends ConsumerWidget {
                     ),
                     trailing: CircleAvatar(
                       radius: 16,
-                      backgroundColor: _brandColor.withValues(alpha: 0.12),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                       child: Icon(
                         Icons.chevron_right,
-                        color: _brandColor,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 20,
                       ),
                     ),
@@ -308,7 +307,7 @@ class DashboardScreen extends ConsumerWidget {
                             )
                           : '—',
                       icon: Icons.trending_up,
-                      color: _brandColor,
+                      color: Theme.of(context).colorScheme.primary,
                       onTap: () => openWithFilters(AppRoutes.expectedRevenue),
                     ),
                     StatTile(

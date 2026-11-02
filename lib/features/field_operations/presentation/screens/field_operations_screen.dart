@@ -19,7 +19,6 @@ import '../../providers/field_operations_provider.dart';
 import '../widgets/field_stat_card.dart';
 import '../widgets/team_locations_map.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// "Field Operations" — the mobile counterpart to Dad-frontend's
 /// `/field-force` page: live team-location map, KPI stat cards, a team
@@ -122,7 +121,7 @@ class _FieldOperationsScreenState extends ConsumerState<FieldOperationsScreen> {
       children: [
         FilledButton.icon(
           onPressed: _isCheckingIn ? null : _quickCheckIn,
-          style: FilledButton.styleFrom(backgroundColor: _brandColor, minimumSize: const Size.fromHeight(48)),
+          style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary, minimumSize: const Size.fromHeight(48)),
           icon: _isCheckingIn
               ? const SizedBox(
                   width: 18,
@@ -224,7 +223,7 @@ class _SectionCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
             child: Row(
               children: [
-                Icon(icon, size: 20, color: _brandColor),
+                Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -263,8 +262,8 @@ class _TeamActivityTile extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           CircleAvatar(
-            backgroundColor: _brandColor.withValues(alpha: 0.12),
-            child: Text(member.initials, style: const TextStyle(color: _brandColor, fontWeight: FontWeight.w600)),
+            backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+            child: Text(member.initials, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600)),
           ),
           Positioned(
             bottom: -1,
@@ -383,8 +382,8 @@ class _HistoryTile extends StatelessWidget {
 
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: _brandColor.withValues(alpha: 0.12),
-        child: Icon(Icons.person_outline, color: _brandColor, size: 20),
+        backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+        child: Icon(Icons.person_outline, color: Theme.of(context).colorScheme.primary, size: 20),
       ),
       title: Text(userName.isEmpty ? 'Unknown' : userName, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Column(
@@ -410,11 +409,11 @@ class _HistoryTile extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.navigation_outlined, size: 12, color: _brandColor),
+                    Icon(Icons.navigation_outlined, size: 12, color: Theme.of(context).colorScheme.primary),
                     const SizedBox(width: 4),
                     Text(
                       'View on Map',
-                      style: theme.textTheme.labelSmall?.copyWith(color: _brandColor, fontWeight: FontWeight.w600),
+                      style: theme.textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),

@@ -10,7 +10,6 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/lead.dart';
 import '../../domain/lead_status_options.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Short "2h ago"/"1d ago" form — distinct from `formatRelativeDate`
 /// (which does day-level "Today"/"Yesterday"/"N days ago" for the search
@@ -110,7 +109,7 @@ class LeadCard extends ConsumerWidget {
                     padding: const EdgeInsets.only(left: 6),
                     child: Checkbox(
                       value: selected,
-                      activeColor: _brandColor,
+                      activeColor: Theme.of(context).colorScheme.primary,
                       onChanged: (_) => onSelectToggle?.call(),
                     ),
                   ),
@@ -234,12 +233,12 @@ class LeadCard extends ConsumerWidget {
                             ),
                             const SizedBox(width: 8),
                             _RoundIconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.call,
                                 size: 18,
-                                color: _brandColor,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
-                              background: _brandColor.withValues(alpha: 0.12),
+                              background: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                               onTap: () => launchUriWithFeedback(
                                 context,
                                 Uri(scheme: 'tel', path: lead.phone),

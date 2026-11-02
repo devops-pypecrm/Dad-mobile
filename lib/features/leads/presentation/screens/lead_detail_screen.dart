@@ -23,7 +23,6 @@ import '../widgets/lead_products_editor_sheet.dart';
 import '../widgets/lead_quick_actions.dart';
 import '../../../products/presentation/widgets/product_share_sheet.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 class LeadDetailScreen extends ConsumerWidget {
   const LeadDetailScreen({super.key, required this.leadId});
@@ -69,7 +68,7 @@ class LeadDetailScreen extends ConsumerWidget {
       title: 'Status',
       items: statusIds,
       initialIndex: activeIndex,
-      accentColor: _brandColor,
+      accentColor: Theme.of(context).colorScheme.primary,
     );
     // Same value back means either the sheet was dismissed without
     // confirming, or the user confirmed the status they already had —
@@ -159,16 +158,16 @@ class LeadDetailScreen extends ConsumerWidget {
           if (leadAsync.hasValue) ...[
             IconButton(
               tooltip: 'Assign',
-              icon: const Icon(
+              icon: Icon(
                 Icons.person_add_alt_outlined,
-                color: _brandColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
               onPressed: () =>
                   showAssignLeadSheet(context, ref, leadAsync.value!),
             ),
             IconButton(
               tooltip: 'Edit',
-              icon: const Icon(Icons.edit_outlined, color: _brandColor),
+              icon: Icon(Icons.edit_outlined, color: Theme.of(context).colorScheme.primary),
               onPressed: () =>
                   context.push('/leads/$leadId/edit', extra: leadAsync.value),
             ),
@@ -201,13 +200,13 @@ class LeadDetailScreen extends ConsumerWidget {
                   children: [
                     CircleAvatar(
                       radius: 32,
-                      backgroundColor: _brandColor.withValues(alpha: 0.15),
+                      backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                       child: Text(
                         lead.firstName.isNotEmpty
                             ? lead.firstName[0].toUpperCase()
                             : '?',
                         style: theme.textTheme.headlineMedium?.copyWith(
-                          color: _brandColor,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -317,7 +316,7 @@ class LeadDetailScreen extends ConsumerWidget {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: _brandColor,
+                        foregroundColor: Theme.of(context).colorScheme.primary,
                         side: BorderSide(
                           color: theme.colorScheme.outlineVariant,
                         ),
@@ -498,7 +497,7 @@ class LeadDetailScreen extends ConsumerWidget {
                         Text(
                           lead.potentialValue.toStringAsFixed(0),
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: _brandColor,
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -518,7 +517,7 @@ class LeadDetailScreen extends ConsumerWidget {
                   icon: Icons.inventory_2_outlined,
                   title: 'Products',
                   trailing: TextButton.icon(
-                    style: TextButton.styleFrom(foregroundColor: _brandColor),
+                    style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.primary),
                     onPressed: () => showLeadProductsEditorSheet(
                       context,
                       ref,
@@ -613,10 +612,10 @@ class _IconBadge extends StatelessWidget {
       width: 36,
       height: 36,
       decoration: BoxDecoration(
-        color: _brandColor.withValues(alpha: 0.12),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
         shape: BoxShape.circle,
       ),
-      child: Icon(icon, size: 18, color: _brandColor),
+      child: Icon(icon, size: 18, color: Theme.of(context).colorScheme.primary),
     );
   }
 }
@@ -815,7 +814,7 @@ class _ChevronButton extends StatelessWidget {
         if (leadingIcon != null) ...[
           Icon(
             leadingIcon,
-            color: filled ? Colors.white : _brandColor,
+            color: filled ? Colors.white : Theme.of(context).colorScheme.primary,
             size: 20,
           ),
           const SizedBox(width: 10),
@@ -824,12 +823,12 @@ class _ChevronButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: filled ? Colors.white : _brandColor,
+              color: filled ? Colors.white : Theme.of(context).colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),
         ),
-        Icon(Icons.chevron_right, color: filled ? Colors.white : _brandColor),
+        Icon(Icons.chevron_right, color: filled ? Colors.white : Theme.of(context).colorScheme.primary),
       ],
     );
 
@@ -838,7 +837,7 @@ class _ChevronButton extends StatelessWidget {
         width: double.infinity,
         child: FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: _brandColor,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
@@ -854,7 +853,7 @@ class _ChevronButton extends StatelessWidget {
       width: double.infinity,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: _brandColor),
+          side: BorderSide(color: Theme.of(context).colorScheme.primary),
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),

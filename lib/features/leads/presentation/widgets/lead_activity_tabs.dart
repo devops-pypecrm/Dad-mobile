@@ -9,7 +9,6 @@ import '../../providers/lead_activity_providers.dart';
 import '../../providers/lead_re_enquiry_split_controller.dart';
 import 'lead_recording_player_sheet.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 enum _ActivityTab {
   timeline,
@@ -120,10 +119,10 @@ class _TabChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: selected ? _brandColor : theme.colorScheme.surface,
+          color: selected ? Theme.of(context).colorScheme.primary : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? _brandColor : theme.colorScheme.outlineVariant,
+            color: selected ? Theme.of(context).colorScheme.primary : theme.colorScheme.outlineVariant,
           ),
         ),
         child: Text(
@@ -307,18 +306,19 @@ class _TabError extends StatelessWidget {
 // Timeline
 // ---------------------------------------------------------------------------
 
-(IconData, Color) _timelineIconFor(String type, String subType) {
+(IconData, Color) _timelineIconFor(BuildContext context, String type, String subType) {
+  final brandColor = Theme.of(context).colorScheme.primary;
   switch (type) {
     case 'interaction':
       switch (subType) {
         case 'call':
           return (Icons.call_outlined, const Color(0xFF00A8D6));
         case 'email':
-          return (Icons.email_outlined, const Color(0xFF9654B5));
+          return (Icons.email_outlined, brandColor);
         case 'meeting':
-          return (Icons.groups_outlined, const Color(0xFF9654B5));
+          return (Icons.groups_outlined, brandColor);
         case 'note':
-          return (Icons.note_outlined, _brandColor);
+          return (Icons.note_outlined, brandColor);
         default:
           return (Icons.chat_bubble_outline, _neutralGrey);
       }
@@ -333,7 +333,7 @@ class _TabError extends StatelessWidget {
     case 'document':
       return (Icons.insert_drive_file_outlined, _neutralGrey);
     case 'followUp':
-      return (Icons.flag_outlined, _brandColor);
+      return (Icons.flag_outlined, brandColor);
     default:
       return (Icons.circle_outlined, _neutralGrey);
   }
@@ -379,6 +379,7 @@ class _TimelineTab extends ConsumerWidget {
                         Builder(
                           builder: (context) {
                             final (icon, color) = _timelineIconFor(
+                              context,
                               item.type,
                               item.subType,
                             );
@@ -585,7 +586,7 @@ class _WhatsAppCallsTab extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: _brandColor.withValues(alpha: 0.08),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -702,7 +703,7 @@ class _WhatsAppCallsTab extends ConsumerWidget {
                           const SizedBox(height: 8),
                           OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: _brandColor,
+                              foregroundColor: Theme.of(context).colorScheme.primary,
                             ),
                             onPressed: () => showLeadRecordingPlayer(
                               context,
@@ -741,7 +742,7 @@ class _SummaryStat extends StatelessWidget {
           value,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: _brandColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         const SizedBox(height: 2),
@@ -861,7 +862,7 @@ class _CallHistoryTab extends ConsumerWidget {
                           const SizedBox(height: 8),
                           OutlinedButton.icon(
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: _brandColor,
+                              foregroundColor: Theme.of(context).colorScheme.primary,
                             ),
                             onPressed: () => showLeadRecordingPlayer(
                               context,
@@ -934,12 +935,12 @@ class _OwnershipHistoryTab extends ConsumerWidget {
                                     : 'Unassigned',
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 6),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 6),
                               child: Icon(
                                 Icons.arrow_forward,
                                 size: 16,
-                                color: _brandColor,
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                             Expanded(
@@ -991,7 +992,7 @@ class _OwnerPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: _brandColor.withValues(alpha: 0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -999,7 +1000,7 @@ class _OwnerPill extends StatelessWidget {
         textAlign: TextAlign.center,
         overflow: TextOverflow.ellipsis,
         style: theme.textTheme.labelMedium?.copyWith(
-          color: _brandColor,
+          color: Theme.of(context).colorScheme.primary,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -1084,9 +1085,9 @@ class _ReEnquiryEventCard extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const _IconCircle(
+              _IconCircle(
                 icon: Icons.replay_outlined,
-                color: _brandColor,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(width: 10),
               Expanded(

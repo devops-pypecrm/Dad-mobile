@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../providers/lead_notes_controller.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Notes/activity card on the Lead Detail screen — matches Dad-frontend's
 /// "Note" quick-action (`LogNoteDialog`, a bare textarea → `POST
@@ -49,13 +48,13 @@ class LeadNotesSection extends ConsumerWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: _brandColor.withValues(alpha: 0.12),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.description_outlined,
                   size: 18,
-                  color: _brandColor,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(width: 12),
@@ -68,7 +67,7 @@ class LeadNotesSection extends ConsumerWidget {
                 ),
               ),
               TextButton.icon(
-                style: TextButton.styleFrom(foregroundColor: _brandColor),
+                style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.primary),
                 onPressed: () => _showAddNoteDialog(context, ref),
                 icon: const Icon(Icons.add, size: 18),
                 label: const Text('Add Note'),

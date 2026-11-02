@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_router.dart';
 import '../../domain/sales_target.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 class TargetProgressCard extends StatelessWidget {
   const TargetProgressCard({super.key, required this.target});
@@ -49,8 +48,8 @@ class TargetProgressCard extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: t.achievementPercent / 100,
                 minHeight: 10,
-                backgroundColor: _brandColor.withValues(alpha: 0.15),
-                valueColor: const AlwaysStoppedAnimation(_brandColor),
+                backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.primary),
               ),
             ),
             const SizedBox(height: 12),
@@ -59,14 +58,14 @@ class TargetProgressCard extends StatelessWidget {
                 Text(
                   '${t.achievedValue.toStringAsFixed(0)} / ${t.targetValue.toStringAsFixed(0)} '
                   '(${t.achievementPercent.toStringAsFixed(0)}%)',
-                  style: theme.textTheme.bodyMedium?.copyWith(color: _brandColor, fontWeight: FontWeight.bold),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 OutlinedButton(
                   onPressed: () => context.push(AppRoutes.targets),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: _brandColor,
-                    side: const BorderSide(color: _brandColor),
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    side: BorderSide(color: Theme.of(context).colorScheme.primary),
                     shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     visualDensity: VisualDensity.compact,

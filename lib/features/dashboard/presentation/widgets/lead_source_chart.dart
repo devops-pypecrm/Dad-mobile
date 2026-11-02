@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../domain/lead_source_stat.dart';
 
-const _brandColor = kBrandColor;
 
 // Brand palette, cycled the same way (`palette[index % palette.length]`) as
 // before. No longer matches Dad-frontend's own LeadSourcesWidget.tsx COLORS
@@ -72,7 +71,7 @@ class LeadSourceChart extends StatelessWidget {
                       Text(
                         '$total',
                         style: theme.textTheme.titleLarge
-                            ?.copyWith(color: _brandColor, fontWeight: FontWeight.bold),
+                            ?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         'leads',
@@ -127,7 +126,7 @@ class LeadSourceChart extends StatelessWidget {
             Text('Total leads', style: theme.textTheme.bodyMedium),
             Text(
               '$total',
-              style: theme.textTheme.titleMedium?.copyWith(color: _brandColor, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
             ),
           ],
         ),

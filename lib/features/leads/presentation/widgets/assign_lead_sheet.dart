@@ -8,7 +8,6 @@ import '../../../users/providers/users_provider.dart';
 import '../../domain/lead.dart';
 import '../../providers/assign_lead_controller.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// "Assign Lead" bottom sheet — same picker + subordinate-scoping rule as
 /// Dad-frontend's `AssignLeadDialog.tsx`: admins/super_admins can assign to
@@ -129,7 +128,7 @@ class _AssignLeadSheetState extends ConsumerState<_AssignLeadSheet> {
               onChanged: (value) => setState(() => _query = value),
               decoration: InputDecoration(
                 hintText: 'Search users…',
-                prefixIcon: const Icon(Icons.search, color: _brandColor),
+                prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.primary),
                 suffixIcon: _query.isEmpty
                     ? null
                     : IconButton(
@@ -157,7 +156,7 @@ class _AssignLeadSheetState extends ConsumerState<_AssignLeadSheet> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: _brandColor, width: 1.5),
+                  borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 1.5),
                 ),
               ),
             ),
@@ -201,10 +200,10 @@ class _AssignLeadSheetState extends ConsumerState<_AssignLeadSheet> {
                         title: Text(user.fullName),
                         subtitle: user.role != null ? Text(user.role!) : null,
                         trailing: isCurrent
-                            ? const Icon(Icons.check, color: _brandColor)
+                            ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
                             : null,
                         selected: isCurrent,
-                        selectedTileColor: _brandColor.withValues(alpha: 0.08),
+                        selectedTileColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                         onTap: assignState.isLoading
                             ? null
                             : () => ref

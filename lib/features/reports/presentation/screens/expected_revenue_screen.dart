@@ -9,7 +9,6 @@ import '../../../auth/providers/session_provider.dart';
 import '../../domain/expected_revenue_report.dart';
 import '../../providers/reports_providers.dart';
 
-const _brandColor = Color(0xFF9654B5);
 final _closeDateFormat = DateFormat('MMM d, yyyy');
 
 const _statusMeta = {
@@ -96,7 +95,7 @@ class _ReportBody extends StatelessWidget {
               label: 'Total Expected',
               value: CurrencyFormatter.compact(summary.totalExpectedRevenue, currency),
               sub: '${report.deals.length} open deals',
-              color: _brandColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             _SummaryCard(
               label: 'This Period',
@@ -235,7 +234,7 @@ class _DealCard extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 CurrencyFormatter.format(deal.amount, currency),
-                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800, color: _brandColor),
+                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.primary),
               ),
             ],
           ),

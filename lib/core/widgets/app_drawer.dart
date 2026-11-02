@@ -8,11 +8,6 @@ import '../router/app_router.dart';
 import '../theme/app_theme.dart';
 import '../utils/role_utils.dart';
 
-/// Brand purple — matches the nav bar/login button/greeting card, used here
-/// instead of `theme.colorScheme.primary` (a Material3-seeded blue, not
-/// this brand color).
-const _brandColor = Color(0xFF9654B5);
-
 /// Grouped app-wide navigation drawer. Reference structure only, not a
 /// literal port, from Dad-frontend/src/components/shared/Sidebar.tsx's
 /// `menuGroups` — that sidebar has ~9 groups covering the whole web app
@@ -26,6 +21,7 @@ class AppDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final brandColor = Theme.of(context).colorScheme.primary;
     final session = ref.watch(sessionControllerProvider).valueOrNull;
     final canSeeReEnquiries = isManagerRole(session?.role);
     // Only asked for once the drawer is actually open (this provider isn't
@@ -51,7 +47,7 @@ class AppDrawer extends ConsumerWidget {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
-              decoration: const BoxDecoration(color: _brandColor),
+              decoration: BoxDecoration(color: brandColor),
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Column(
@@ -218,7 +214,7 @@ class _SectionLabel extends StatelessWidget {
       child: Text(
         label.toUpperCase(),
         style: theme.textTheme.labelSmall?.copyWith(
-          color: _brandColor,
+          color: theme.colorScheme.primary,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.6,
         ),

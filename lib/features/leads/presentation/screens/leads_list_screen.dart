@@ -20,7 +20,6 @@ import '../widgets/lead_card.dart';
 import '../widgets/leads_filter_sheet.dart';
 import 'create_lead_screen.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 const _sortOptions = [
   ('createdAt', 'desc', 'Newest'),
@@ -180,7 +179,7 @@ class _LeadsListScreenState extends ConsumerState<LeadsListScreen> {
                 bottom: math.max(MediaQuery.paddingOf(context).bottom + 12, 95),
               ),
               child: FloatingActionButton(
-                backgroundColor: _brandColor,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 onPressed: () => showQuickAddLeadSheet(context),
                 child: const Icon(Icons.add, color: Colors.white),
               ),
@@ -433,8 +432,8 @@ class _SquareIconButton extends StatelessWidget {
                   right: -6,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: _brandColor,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
                     constraints: const BoxConstraints(

@@ -11,7 +11,6 @@ import '../../domain/daily_report.dart';
 import '../../providers/reports_providers.dart';
 import '../widgets/daily_report_pdf.dart';
 
-const _brandColor = Color(0xFF9654B5);
 final _dateFormat = DateFormat('yyyy-MM-dd');
 
 const _periods = [
@@ -184,7 +183,7 @@ class _CallReportScreenState extends ConsumerState<CallReportScreen> {
               const SizedBox(height: 6),
               Text(
                 _periodLabel(_period, _customRange),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: _brandColor, fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600),
               ),
             ],
             if (isAdmin && (branchesAsync?.valueOrNull?.isNotEmpty ?? false)) ...[
@@ -263,7 +262,7 @@ class _FilterChipRow extends StatelessWidget {
                 label: Text(label),
                 selected: selected == value,
                 onSelected: (_) => onSelected(value),
-                selectedColor: _brandColor,
+                selectedColor: Theme.of(context).colorScheme.primary,
                 labelStyle: TextStyle(
                   color: selected == value ? Colors.white : theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -300,7 +299,7 @@ class _BranchDropdown extends StatelessWidget {
         child: DropdownButton<String?>(
           value: selected,
           isExpanded: true,
-          icon: const Icon(Icons.expand_more, color: _brandColor),
+          icon: Icon(Icons.expand_more, color: Theme.of(context).colorScheme.primary),
           hint: Row(
             children: [
               Icon(Icons.apartment_outlined, size: 18, color: theme.colorScheme.onSurfaceVariant),
@@ -334,10 +333,10 @@ class _CallReportCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isSelf ? _brandColor.withValues(alpha: 0.06) : Colors.white,
+        color: isSelf ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isSelf ? _brandColor.withValues(alpha: 0.35) : theme.colorScheme.outlineVariant,
+          color: isSelf ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.35) : theme.colorScheme.outlineVariant,
         ),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 3)),
@@ -351,8 +350,8 @@ class _CallReportCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: _brandColor.withValues(alpha: 0.15),
-                child: Text(initials, style: const TextStyle(color: _brandColor, fontWeight: FontWeight.w700)),
+                backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
+                child: Text(initials, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w700)),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -372,7 +371,7 @@ class _CallReportCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-                            decoration: BoxDecoration(color: _brandColor, borderRadius: BorderRadius.circular(8)),
+                            decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary, borderRadius: BorderRadius.circular(8)),
                             child: const Text(
                               'You',
                               style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w700),

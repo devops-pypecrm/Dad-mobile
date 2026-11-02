@@ -9,7 +9,6 @@ import '../../../../core/widgets/error_state_view.dart';
 import '../../providers/profile_controller.dart';
 import '../widgets/authenticated_avatar.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// "Account" — photo, name, phone, position/title, plus a read-only email
 /// (email changes aren't supported; `profileController.ts`'s `updateProfile`
@@ -122,7 +121,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
                           width: 30,
                           height: 30,
                           decoration: BoxDecoration(
-                            color: _brandColor,
+                            color: Theme.of(context).colorScheme.primary,
                             shape: BoxShape.circle,
                             border: Border.all(color: Theme.of(context).colorScheme.surface, width: 2),
                           ),
@@ -170,7 +169,7 @@ class _AccountScreenState extends ConsumerState<AccountScreen> {
               ),
               const SizedBox(height: 24),
               FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: _brandColor, minimumSize: const Size.fromHeight(48)),
+                style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primary, minimumSize: const Size.fromHeight(48)),
                 onPressed: _isSaving ? null : _save,
                 child: _isSaving
                     ? const SizedBox(

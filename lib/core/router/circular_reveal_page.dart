@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 /// corner-wipe — you see a solid colored blob balloon out from the bell
 /// first, and only once it's grown do the (white-background) notifications
 /// settle in on top of it.
-const _brandColor = Color(0xFF9654B5);
 
 /// A page transition that pops a colored circle open from [origin] (screen
 /// coordinates — typically wherever the user tapped to navigate, e.g. the
@@ -46,7 +45,7 @@ class CircularRevealPage extends CustomTransitionPage<void> {
             return ClipPath(
               clipper: _CircleRevealClipper(center: center, maxRadius: maxRadius, reveal: reveal),
               child: ColoredBox(
-                color: _brandColor,
+                color: Theme.of(context).colorScheme.primary,
                 child: FadeTransition(
                   opacity: contentIn,
                   child: SlideTransition(

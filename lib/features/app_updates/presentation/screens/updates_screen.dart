@@ -7,7 +7,6 @@ import '../../providers/apk_download_controller.dart';
 import '../../providers/apk_download_state.dart';
 import '../../providers/app_update_provider.dart';
 
-const _brandColor = Color(0xFF9654B5);
 
 /// Sidebar/Settings-only destination, reached via `context.push` (not a
 /// bottom-nav tab root) — shows the running build's own version alongside
@@ -50,10 +49,10 @@ class UpdatesScreen extends ConsumerWidget {
                               width: 44,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: _brandColor.withValues(alpha: 0.12),
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.smartphone_outlined, color: _brandColor),
+                              child: Icon(Icons.smartphone_outlined, color: Theme.of(context).colorScheme.primary),
                             ),
                             const SizedBox(width: 14),
                             Expanded(
@@ -79,14 +78,14 @@ class UpdatesScreen extends ConsumerWidget {
             updateAsync.when(
               data: (update) {
                 if (update == null) {
-                  return const Card(
+                  return Card(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
-                          Icon(Icons.check_circle_outline, color: Color(0xFF9654B5)),
-                          SizedBox(width: 12),
-                          Expanded(child: Text("You're up to date.")),
+                          Icon(Icons.check_circle_outline, color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 12),
+                          const Expanded(child: Text("You're up to date.")),
                         ],
                       ),
                     ),
@@ -100,7 +99,7 @@ class UpdatesScreen extends ConsumerWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.new_releases_outlined, color: _brandColor),
+                            Icon(Icons.new_releases_outlined, color: Theme.of(context).colorScheme.primary),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
