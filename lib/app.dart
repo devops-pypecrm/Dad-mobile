@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_provider.dart';
+import 'core/widgets/keyboard_metrics_resync.dart';
 
 class App extends ConsumerWidget {
   const App({super.key});
@@ -20,6 +21,7 @@ class App extends ConsumerWidget {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
       routerConfig: router,
+      builder: (context, child) => KeyboardMetricsResync(child: child ?? const SizedBox.shrink()),
     );
   }
 }
