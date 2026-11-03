@@ -395,11 +395,21 @@ class LeadsRepository {
   /// backing BOTH the "WhatsApp Messages" and "WhatsApp Calls" tabs; the
   /// backend does not split messages from calls itself. Callers split it
   /// client-side with [isWhatsAppCall], matching web's own classifier.
+  ///
+  /// [limit]/[offset] back the "Show more" button on those two tabs — the
+  /// backend used to hard-cap this feed at 100 items with no way to reach
+  /// older ones. A page that comes back shorter than [limit] means there's
+  /// nothing older left to fetch.
   Future<List<LeadWhatsAppActivity>> getLeadWhatsAppActivity(
-    String leadId,
-  ) async {
+    String leadId, {
+    int limit = 100,
+    int offset = 0,
+  }) async {
     try {
-      final response = await _dio.get<List<dynamic>>('/whatsapp/lead/$leadId');
+      final response = await _dio.get<List<dynamic>>(
+        '/whatsapp/lead/$leadId',
+        queryParameters: {'limit': limit, 'offset': offset},
+      );
       return response.data!
           .cast<Map<String, dynamic>>()
           .map(LeadWhatsAppActivity.fromJson)

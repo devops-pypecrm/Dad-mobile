@@ -3,11 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/ist_format.dart';
 import '../../../../core/widgets/app_snackbar.dart';
+import '../../data/leads_repository.dart';
 import '../../domain/lead_re_enquiry_history.dart';
 import '../../domain/lead_whatsapp_activity.dart';
 import '../../providers/lead_activity_providers.dart';
 import '../../providers/lead_re_enquiry_split_controller.dart';
 import 'lead_recording_player_sheet.dart';
+
+/// Page size for the "Show more" button on the WhatsApp Messages/Calls tabs —
+/// matches the backend's default page size in `getLeadWhatsAppMessages`.
+const _whatsAppPageSize = 100;
 
 
 enum _ActivityTab {
@@ -461,21 +466,134 @@ class _TimelineTab extends ConsumerWidget {
 // WhatsApp Messages
 // ---------------------------------------------------------------------------
 
-class _WhatsAppMessagesTab extends ConsumerWidget {
+/// Shared pagination plumbing for the WhatsApp Messages/Calls tabs — both
+/// read the same merged feed (split client-side by [isWhatsAppCall]), and
+/// both need the same "Show more" behavior since the backend's page size
+/// applies to the merged feed, not to either tab's filtered view.
+class _WhatsAppActivityPaginated extends ConsumerStatefulWidget {
+  const _WhatsAppActivityPaginated({
+    required this.leadId,
+    required this.errorPrefix,
+    required this.builder,
+  });
+
+  final String leadId;
+  final String errorPrefix;
+  final Widget Function(
+    BuildContext context,
+    List<LeadWhatsAppActivity> items,
+    bool hasMore,
+    bool loadingMore,
+    VoidCallback onLoadMore,
+  )
+  builder;
+
+  @override
+  ConsumerState<_WhatsAppActivityPaginated> createState() =>
+      _WhatsAppActivityPaginatedState();
+}
+
+class _WhatsAppActivityPaginatedState
+    extends ConsumerState<_WhatsAppActivityPaginated> {
+  final List<LeadWhatsAppActivity> _extraItems = [];
+  bool _hasMore = false;
+  bool _loadingMore = false;
+  int _basePageLength = 0;
+
+  Future<void> _loadMore() async {
+    if (_loadingMore) return;
+    setState(() => _loadingMore = true);
+    try {
+      final offset = _basePageLength + _extraItems.length;
+      final nextPage = await ref
+          .read(leadsRepositoryProvider)
+          .getLeadWhatsAppActivity(widget.leadId, offset: offset);
+      if (!mounted) return;
+      setState(() {
+        _extraItems.addAll(nextPage);
+        _hasMore = nextPage.length >= _whatsAppPageSize;
+      });
+    } catch (_) {
+      if (mounted) {
+        showAppSnackBar(
+          context,
+          "Couldn't load more — check your connection.",
+          isError: true,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loadingMore = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ref
+        .watch(leadWhatsAppActivityProvider(widget.leadId))
+        .when(
+          loading: () => const _TabLoading(),
+          error: (error, stack) =>
+              _TabError(message: '${widget.errorPrefix}: $error'),
+          data: (baseItems) {
+            _basePageLength = baseItems.length;
+            if (_extraItems.isEmpty) {
+              _hasMore = baseItems.length >= _whatsAppPageSize;
+            }
+            final combined = [...baseItems, ..._extraItems];
+            return widget.builder(
+              context,
+              combined,
+              _hasMore,
+              _loadingMore,
+              _loadMore,
+            );
+          },
+        );
+  }
+}
+
+class _ShowMoreButton extends StatelessWidget {
+  const _ShowMoreButton({required this.loading, required this.onTap});
+
+  final bool loading;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Center(
+        child: OutlinedButton.icon(
+          onPressed: loading ? null : onTap,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          icon: loading
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.expand_more, size: 18),
+          label: Text(loading ? 'Loading…' : 'Show more'),
+        ),
+      ),
+    );
+  }
+}
+
+class _WhatsAppMessagesTab extends StatelessWidget {
   const _WhatsAppMessagesTab({required this.leadId});
 
   final String leadId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    return ref
-        .watch(leadWhatsAppActivityProvider(leadId))
-        .when(
-          loading: () => const _TabLoading(),
-          error: (error, stack) =>
-              _TabError(message: "Couldn't load WhatsApp messages: $error"),
-          data: (items) {
+  Widget build(BuildContext context) {
+    return _WhatsAppActivityPaginated(
+      leadId: leadId,
+      errorPrefix: "Couldn't load WhatsApp messages",
+      builder: (context, items, hasMore, loadingMore, onLoadMore) {
+            final theme = Theme.of(context);
             final messages = items.where((i) => !isWhatsAppCall(i)).toList();
             if (messages.isEmpty) {
               return const _EmptyState(
@@ -533,10 +651,12 @@ class _WhatsAppMessagesTab extends ConsumerWidget {
                       ],
                     ),
                   ),
+                if (hasMore)
+                  _ShowMoreButton(loading: loadingMore, onTap: onLoadMore),
               ],
             );
-          },
-        );
+      },
+    );
   }
 }
 
@@ -544,21 +664,18 @@ class _WhatsAppMessagesTab extends ConsumerWidget {
 // WhatsApp Calls
 // ---------------------------------------------------------------------------
 
-class _WhatsAppCallsTab extends ConsumerWidget {
+class _WhatsAppCallsTab extends StatelessWidget {
   const _WhatsAppCallsTab({required this.leadId});
 
   final String leadId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    return ref
-        .watch(leadWhatsAppActivityProvider(leadId))
-        .when(
-          loading: () => const _TabLoading(),
-          error: (error, stack) =>
-              _TabError(message: "Couldn't load WhatsApp calls: $error"),
-          data: (items) {
+  Widget build(BuildContext context) {
+    return _WhatsAppActivityPaginated(
+      leadId: leadId,
+      errorPrefix: "Couldn't load WhatsApp calls",
+      builder: (context, items, hasMore, loadingMore, onLoadMore) {
+            final theme = Theme.of(context);
             final calls = items.where(isWhatsAppCall).toList();
             if (calls.isEmpty) {
               return const _EmptyState(
@@ -720,10 +837,12 @@ class _WhatsAppCallsTab extends ConsumerWidget {
                       ],
                     ),
                   ),
+                if (hasMore)
+                  _ShowMoreButton(loading: loadingMore, onTap: onLoadMore),
               ],
             );
-          },
-        );
+      },
+    );
   }
 }
 
