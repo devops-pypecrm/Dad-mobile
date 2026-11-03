@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/url_launch_helper.dart';
 import '../../../leads/domain/phone_number_utils.dart';
+import '../../domain/whatsapp_template_placeholders.dart';
 import '../../providers/whatsapp_templates_provider.dart';
 
 const _whatsAppGreen = Color(0xFF25D366);
@@ -16,13 +17,18 @@ const _whatsAppGreen = Color(0xFF25D366);
 Future<void> showWhatsAppSendSheet(
   BuildContext context, {
   required String phone,
+  required String leadName,
   String? phoneCountryCode,
 }) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    builder: (context) => _WhatsAppSendSheet(phone: phone, phoneCountryCode: phoneCountryCode),
+    builder: (context) => _WhatsAppSendSheet(
+      phone: phone,
+      leadName: leadName,
+      phoneCountryCode: phoneCountryCode,
+    ),
   );
 }
 
@@ -37,9 +43,14 @@ void _openWhatsApp(BuildContext context, String phone, String? phoneCountryCode,
 }
 
 class _WhatsAppSendSheet extends ConsumerWidget {
-  const _WhatsAppSendSheet({required this.phone, this.phoneCountryCode});
+  const _WhatsAppSendSheet({
+    required this.phone,
+    required this.leadName,
+    this.phoneCountryCode,
+  });
 
   final String phone;
+  final String leadName;
   final String? phoneCountryCode;
 
   @override
@@ -104,7 +115,12 @@ class _WhatsAppSendSheet extends ConsumerWidget {
                         subtitle: Text(template.body, maxLines: 1, overflow: TextOverflow.ellipsis),
                         onTap: () {
                           Navigator.of(context).pop();
-                          _openWhatsApp(context, phone, phoneCountryCode, template.body);
+                          final filled = fillWhatsAppTemplate(
+                            template.body,
+                            leadName: leadName,
+                            leadPhone: phone,
+                          );
+                          _openWhatsApp(context, phone, phoneCountryCode, filled);
                         },
                       );
                     },

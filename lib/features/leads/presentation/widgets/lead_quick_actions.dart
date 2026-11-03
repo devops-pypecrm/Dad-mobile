@@ -11,11 +11,13 @@ class LeadQuickActions extends StatelessWidget {
   const LeadQuickActions({
     super.key,
     required this.phone,
+    required this.leadName,
     this.phoneCountryCode,
     this.email,
   });
 
   final String phone;
+  final String leadName;
   final String? phoneCountryCode;
   final String? email;
 
@@ -43,7 +45,12 @@ class LeadQuickActions extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             label: 'WhatsApp',
-            onTap: () => showWhatsAppSendSheet(context, phone: phone, phoneCountryCode: phoneCountryCode),
+            onTap: () => showWhatsAppSendSheet(
+              context,
+              phone: phone,
+              leadName: leadName,
+              phoneCountryCode: phoneCountryCode,
+            ),
           ),
         ),
         if (email != null && email!.isNotEmpty) ...[

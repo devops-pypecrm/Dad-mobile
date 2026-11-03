@@ -267,6 +267,7 @@ class LeadCard extends ConsumerWidget {
                               onTap: () => showWhatsAppSendSheet(
                                 context,
                                 phone: lead.phone,
+                                leadName: lead.fullName,
                                 phoneCountryCode: lead.phoneCountryCode,
                               ),
                             ),

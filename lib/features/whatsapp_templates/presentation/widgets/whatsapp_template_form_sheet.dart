@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/safe_bottom_padding.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../domain/whatsapp_template.dart';
+import '../../domain/whatsapp_template_placeholders.dart';
 import '../../providers/whatsapp_templates_provider.dart';
 
 
@@ -31,6 +32,19 @@ class _WhatsAppTemplateFormSheetState extends ConsumerState<_WhatsAppTemplateFor
   late final _titleController = TextEditingController(text: widget.existing?.title);
   late final _bodyController = TextEditingController(text: widget.existing?.body);
   bool _saving = false;
+
+  /// Inserts [token] into the message body at the current cursor position
+  /// (or appends it if the field doesn't have focus/a selection yet).
+  void _insertPlaceholder(String token) {
+    final text = _bodyController.text;
+    final selection = _bodyController.selection;
+    final insertAt = selection.isValid ? selection.start : text.length;
+    final newText = text.replaceRange(insertAt, selection.isValid ? selection.end : text.length, token);
+    _bodyController.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: insertAt + token.length),
+    );
+  }
 
   @override
   void dispose() {
@@ -67,7 +81,12 @@ class _WhatsAppTemplateFormSheetState extends ConsumerState<_WhatsAppTemplateFor
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
-    return Padding(
+    return SingleChildScrollView(
+      // Lets the sheet scroll once the keyboard eats into the available
+      // height — without this, the title field, the 4-6 line message
+      // field, and the submit button together overflow past the screen
+      // as soon as the keyboard opens, pushing the button off-screen and
+      // making it un-tappable until the keyboard is dismissed first.
       padding: EdgeInsets.fromLTRB(
         20,
         20,
@@ -104,6 +123,26 @@ class _WhatsAppTemplateFormSheetState extends ConsumerState<_WhatsAppTemplateFor
               border: OutlineInputBorder(),
               alignLabelWithHint: true,
             ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Tap to insert a placeholder — it gets replaced with the real lead\'s details when this template is used:',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final placeholder in whatsAppTemplatePlaceholders)
+                ActionChip(
+                  label: Text(placeholder.label),
+                  avatar: const Icon(Icons.add, size: 16),
+                  onPressed: () => _insertPlaceholder(placeholder.token),
+                ),
+            ],
           ),
           const SizedBox(height: 20),
           SizedBox(

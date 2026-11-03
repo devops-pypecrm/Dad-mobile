@@ -306,6 +306,7 @@ class LeadDetailScreen extends ConsumerWidget {
                 // --- Quick actions: Call / WhatsApp / Email ---------------
                 LeadQuickActions(
                   phone: lead.phone,
+                  leadName: lead.fullName,
                   phoneCountryCode: lead.phoneCountryCode,
                   email: lead.email,
                 ),
