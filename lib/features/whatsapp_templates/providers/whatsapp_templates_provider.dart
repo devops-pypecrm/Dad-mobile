@@ -16,8 +16,17 @@ class WhatsAppTemplatesList extends _$WhatsAppTemplatesList {
   }
 
   Future<void> refresh() async {
-    ref.invalidateSelf();
-    await future;
+    // `invalidateSelf()` + `await future` can hang forever here: if nothing
+    // else is actively watching this (autoDispose) provider at the moment
+    // of invalidation — e.g. the templates list screen isn't mounted while
+    // this is called from the create/edit bottom sheet — the provider can
+    // get disposed before the rebuilt future resolves, so this await never
+    // completes and the caller (the sheet's "Create template" button) spins
+    // forever even though the save itself already succeeded. Fetching and
+    // setting state directly avoids relying on self-invalidation timing.
+    state = AsyncValue.data(
+      await ref.read(whatsAppTemplatesRepositoryProvider).getTemplates(),
+    );
   }
 }
 
