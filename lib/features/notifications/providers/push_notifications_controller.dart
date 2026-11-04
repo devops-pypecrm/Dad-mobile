@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/config/play_build.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/startup/app_bootstrap.dart';
 import '../../app_updates/providers/app_update_provider.dart';
@@ -164,6 +165,8 @@ class PushNotificationsController extends _$PushNotificationsController {
     final relatedId = data['relatedId'] as String?;
 
     if (data['type'] == 'app_update') {
+      // Google Play build: updates come through Play, there is no in-app Updates screen.
+      if (kPlayStore) return;
       // Tapped an update-available notification while backgrounded/killed
       // (the foreground case is handled directly in `onMessage` above,
       // without needing a tap at all) — go straight to the Updates screen

@@ -93,3 +93,6 @@ android/key.properties
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 macos/Runner/GoogleService-Info.plist
+
+# local build scripts
+local_builds/

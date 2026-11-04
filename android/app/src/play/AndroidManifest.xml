@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Merged ONLY into the Google Play build (see app/build.gradle.kts, PLAY_STORE=true).
+         Google Play forbids an app from downloading and installing its own APK, so the in-app
+         updater's install permission and its APK FileProvider are removed here. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" tools:node="remove" />
+    <application>
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            tools:node="remove" />
+    </application>
+</manifest>

@@ -12,6 +12,7 @@ import '../../../auth/providers/session_provider.dart';
 import '../../../calls/presentation/screens/call_recording_settings_screen.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/settings_row.dart';
+import '../../../../core/config/play_build.dart';
 
 /// Profile-header + grouped colored-icon-tile pattern (avatar/name up top,
 /// then card-grouped rows with a tinted icon, bold title, and a one-line
@@ -111,13 +112,14 @@ class SettingsScreen extends ConsumerWidget {
                 const SettingsSectionLabel('App'),
                 SettingsGroup(
                   children: [
-                    SettingsRow(
-                      icon: Icons.file_download_outlined,
-                      iconColor: const Color(0xFF00A8D6),
-                      title: 'Updates',
-                      subtitle: 'Check for the latest app version',
-                      onTap: () => context.push(AppRoutes.updates),
-                    ),
+                    if (!kPlayStore)
+                      SettingsRow(
+                        icon: Icons.file_download_outlined,
+                        iconColor: const Color(0xFF00A8D6),
+                        title: 'Updates',
+                        subtitle: 'Check for the latest app version',
+                        onTap: () => context.push(AppRoutes.updates),
+                      ),
                     Consumer(
                       builder: (context, ref, _) {
                         final mode = ref.watch(appThemeModeProvider);

@@ -12,3 +12,7 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Google Play build: derived Firebase config + real Play Firebase file
+app/src/release/google-services.json
+app/google-services-play.json

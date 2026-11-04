@@ -7,6 +7,7 @@ import '../../features/auth/providers/session_provider.dart';
 import '../router/app_router.dart';
 import '../theme/app_theme.dart';
 import '../utils/role_utils.dart';
+import '../config/play_build.dart';
 
 /// Grouped app-wide navigation drawer. Reference structure only, not a
 /// literal port, from Dad-frontend/src/components/shared/Sidebar.tsx's
@@ -184,11 +185,12 @@ class AppDrawer extends ConsumerWidget {
               onTap: () => goTab(AppRoutes.reports),
             ),
             _SectionLabel('System'),
-            _DrawerItem(
-              icon: Icons.system_update_outlined,
-              label: 'Updates',
-              onTap: () => push(AppRoutes.updates),
-            ),
+            if (!kPlayStore)
+              _DrawerItem(
+                icon: Icons.system_update_outlined,
+                label: 'Updates',
+                onTap: () => push(AppRoutes.updates),
+              ),
             _DrawerItem(
               icon: Icons.settings_outlined,
               label: 'Settings',

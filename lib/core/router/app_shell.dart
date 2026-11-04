@@ -9,6 +9,7 @@ import '../../features/notifications/presentation/widgets/notification_panel.dar
 import '../widgets/app_drawer.dart';
 import '../widgets/curved_nav_bar/curved_navigation_bar.dart';
 import 'app_router.dart';
+import '../config/play_build.dart';
 
 /// A blanket floor here (tried and reverted — see git history) forced a
 /// visible dead gap under the bar on any device correctly reporting a
@@ -80,7 +81,7 @@ class AppShell extends StatelessWidget {
       children: [
         _buildScaffold(context, currentIndex),
         const NotificationPanel(),
-        const UpdateChecker(),
+        if (!kPlayStore) const UpdateChecker(),
         // Disabled on request: Pype Dialer isn't rolled out to users yet, so
         // this "set as default dialer" prompt was popping up on every app
         // open with nothing for users to actually act on. The feature
