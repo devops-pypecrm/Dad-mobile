@@ -59,6 +59,16 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
     super.dispose();
   }
 
+  String? _resolveAssignee() {
+    final session = ref.read(sessionControllerProvider).valueOrNull;
+    final users = ref.read(scopedUsersProvider).valueOrNull ?? const [];
+    final canPick = users.length > 1;
+    if (!canPick) return session?.id;
+    // Only honour a picked assignee that is actually in the current user's list.
+    if (_assignedTo != null && users.any((u) => u.id == _assignedTo)) return _assignedTo;
+    return null;
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
@@ -76,7 +86,10 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
           enquiryAbout: _enquiryAboutController.text.trim(),
           source: _source,
           status: _status,
-          assignedTo: _assignedTo,
+          // Resolved at submit time from the CURRENT session, never from a field cached while
+          // another account (e.g. the manager, on a shared phone) was active — a stale value
+          // here saved the lead under someone else.
+          assignedTo: _resolveAssignee(),
           potentialValue: double.tryParse(
             _potentialValueController.text.trim(),
           ),
