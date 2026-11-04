@@ -27,6 +27,24 @@ const appThemeOptions = [
   AppThemeOption(name: 'Cyan', seedColor: kCyan),
   AppThemeOption(name: 'Yellow', seedColor: kYellow),
   AppThemeOption(name: 'Midnight', seedColor: kMidnight),
+  // Extra variety beyond the core brand palette — plain hand-picked swatches
+  // (not tied to any brand-identity constant) spanning the rest of the hue
+  // wheel, so "Theme Color" has a real gallery to pick from rather than
+  // just the 6 colors the brand/chart palette happens to define.
+  AppThemeOption(name: 'Blue', seedColor: Color(0xFF2563EB)),
+  AppThemeOption(name: 'Indigo', seedColor: Color(0xFF4F46E5)),
+  AppThemeOption(name: 'Violet', seedColor: Color(0xFF8B5CF6)),
+  AppThemeOption(name: 'Sky', seedColor: Color(0xFF0EA5E9)),
+  AppThemeOption(name: 'Teal', seedColor: Color(0xFF14B8A6)),
+  AppThemeOption(name: 'Emerald', seedColor: Color(0xFF10B981)),
+  AppThemeOption(name: 'Lime', seedColor: Color(0xFF84CC16)),
+  AppThemeOption(name: 'Amber', seedColor: Color(0xFFF59E0B)),
+  AppThemeOption(name: 'Orange', seedColor: Color(0xFFF97316)),
+  AppThemeOption(name: 'Rose', seedColor: Color(0xFFE11D48)),
+  AppThemeOption(name: 'Pink', seedColor: Color(0xFFEC4899)),
+  AppThemeOption(name: 'Fuchsia', seedColor: Color(0xFFD946EF)),
+  AppThemeOption(name: 'Slate', seedColor: Color(0xFF475569)),
+  AppThemeOption(name: 'Brown', seedColor: Color(0xFF8D6E63)),
 ];
 
 /// User's chosen theme color, persisted across launches via

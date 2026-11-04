@@ -144,7 +144,7 @@ class SettingsScreen extends ConsumerWidget {
                           iconColor: seedColor,
                           title: 'Theme Color',
                           subtitle: current.name,
-                          onTap: () => _showThemeColorPicker(context, ref, seedColor),
+                          onTap: () => context.push(AppRoutes.themeColor),
                         );
                       },
                     ),
@@ -186,39 +186,6 @@ void _showThemeModePicker(BuildContext context, WidgetRef ref, ThemeMode current
               title: Text(_themeModeLabel(mode)),
               onChanged: (value) {
                 if (value != null) ref.read(appThemeModeProvider.notifier).setMode(value);
-                Navigator.of(sheetContext).pop();
-              },
-            ),
-          const SizedBox(height: 8),
-        ],
-      ),
-    ),
-  );
-}
-
-void _showThemeColorPicker(BuildContext context, WidgetRef ref, Color current) {
-  showModalBottomSheet<void>(
-    context: context,
-    builder: (sheetContext) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text('Theme Color', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-            ),
-          ),
-          for (final option in appThemeOptions)
-            RadioListTile<Color>(
-              value: option.seedColor,
-              groupValue: current,
-              activeColor: option.seedColor,
-              secondary: CircleAvatar(backgroundColor: option.seedColor, radius: 12),
-              title: Text(option.name),
-              onChanged: (value) {
-                if (value != null) ref.read(appSeedColorProvider.notifier).setColor(value);
                 Navigator.of(sheetContext).pop();
               },
             ),
