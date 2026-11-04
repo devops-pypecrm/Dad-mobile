@@ -10,8 +10,8 @@ import '../../providers/bulk_lead_actions_controller.dart';
 /// this sheet is only ever opened from the bulk action bar after the same
 /// check client-side, so a non-admin never sees the option, but the real
 /// enforcement is the backend's 403.
-Future<void> showBulkStatusSheet(BuildContext context, WidgetRef ref, List<String> leadIds) {
-  return showModalBottomSheet<void>(
+Future<bool?> showBulkStatusSheet(BuildContext context, WidgetRef ref, List<String> leadIds) {
+  return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
@@ -32,7 +32,7 @@ class _BulkStatusSheet extends ConsumerWidget {
         .run(action: 'update-status', leadIds: leadIds, data: {'status': status});
     if (!context.mounted) return;
     if (success) {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
       showAppSnackBar(context, '${leadIds.length} lead(s) updated.');
     } else {
       final error = ref.read(bulkLeadActionsControllerProvider).error;

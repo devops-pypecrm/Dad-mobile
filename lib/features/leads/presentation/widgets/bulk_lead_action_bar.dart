@@ -81,14 +81,20 @@ class BulkLeadActionBar extends ConsumerWidget {
                 icon: Icons.person_add_alt_outlined,
                 label: 'Assign',
                 enabled: !isLoading && selectedIds.isNotEmpty,
-                onTap: () => showBulkAssignSheet(context, ref, selectedIds),
+                onTap: () async {
+                  final done = await showBulkAssignSheet(context, ref, selectedIds);
+                  if (done == true) onDone();
+                },
               ),
               if (canManage)
                 _ActionIcon(
                   icon: Icons.flag_outlined,
                   label: 'Status',
                   enabled: !isLoading && selectedIds.isNotEmpty,
-                  onTap: () => showBulkStatusSheet(context, ref, selectedIds),
+                  onTap: () async {
+                    final done = await showBulkStatusSheet(context, ref, selectedIds);
+                    if (done == true) onDone();
+                  },
                 ),
               if (canManage)
                 _ActionIcon(

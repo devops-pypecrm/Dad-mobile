@@ -11,8 +11,10 @@ import '../../providers/bulk_lead_actions_controller.dart';
 /// Bulk "Assign" picker — same subordinate-scoping rule as the single-lead
 /// `AssignLeadSheet`: admins/super_admins can assign to anyone, everyone
 /// else only to themself or a descendant in the reporting hierarchy.
-Future<void> showBulkAssignSheet(BuildContext context, WidgetRef ref, List<String> leadIds) {
-  return showModalBottomSheet<void>(
+/// Resolves to true when the assignment succeeded, so the caller can clear its selection
+/// (otherwise the same leads stay selected and get re-assigned to the next person picked).
+Future<bool?> showBulkAssignSheet(BuildContext context, WidgetRef ref, List<String> leadIds) {
+  return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
@@ -48,7 +50,7 @@ class _BulkAssignSheetState extends ConsumerState<_BulkAssignSheet> {
         .run(action: 'assign', leadIds: widget.leadIds, data: {'assignedToId': userId});
     if (!mounted) return;
     if (success) {
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
       showAppSnackBar(context, '${widget.leadIds.length} lead(s) assigned.');
     } else {
       final error = ref.read(bulkLeadActionsControllerProvider).error;
