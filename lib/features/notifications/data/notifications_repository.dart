@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/config/app_config.dart';
@@ -24,7 +26,7 @@ class NotificationsRepository {
 
   Future<void> registerDeviceToken(String fcmToken) async {
     try {
-      await _dio.post<void>('/users/device-token', data: {'fcmToken': fcmToken});
+      await _dio.post<void>('/users/device-token', data: {'fcmToken': fcmToken, 'platform': defaultTargetPlatform.name});
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
@@ -39,7 +41,15 @@ class NotificationsRepository {
   /// there, so an authenticated call here would just 401 again — pointless.
   Future<void> clearDeviceToken() async {
     try {
-      await _dio.post<void>('/users/device-token/clear');
+      // Tell the server WHICH device is signing out so the account's other phones keep
+      // receiving push (an account can be logged in on several at once).
+      String? token;
+      if (!kIsWeb) {
+        try {
+          token = await FirebaseMessaging.instance.getToken();
+        } catch (_) {}
+      }
+      await _dio.post<void>('/users/device-token/clear', data: {if (token != null) 'fcmToken': token});
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
