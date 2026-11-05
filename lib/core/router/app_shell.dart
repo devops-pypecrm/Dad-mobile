@@ -6,6 +6,7 @@ import '../../features/app_updates/presentation/widgets/update_checker.dart';
 // rather than removed so re-enabling is a 2-line uncomment.
 // import '../../features/dialer_setup/presentation/dialer_setup_checker.dart';
 import '../../features/notifications/presentation/widgets/notification_panel.dart';
+import '../../features/notifications/presentation/widgets/push_reliability_checker.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/curved_nav_bar/curved_navigation_bar.dart';
 import 'app_router.dart';
@@ -82,6 +83,11 @@ class AppShell extends StatelessWidget {
         _buildScaffold(context, currentIndex),
         const NotificationPanel(),
         if (!kPlayStore) const UpdateChecker(),
+        // Re-registers the FCM token on every foreground and asks once to be
+        // exempt from battery optimisation (the usual reason pushes are
+        // accepted by Firebase but never appear). Not on Play builds, where
+        // that permission is policy-restricted.
+        if (!kPlayStore) const PushReliabilityChecker(),
         // Disabled on request: Pype Dialer isn't rolled out to users yet, so
         // this "set as default dialer" prompt was popping up on every app
         // open with nothing for users to actually act on. The feature

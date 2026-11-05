@@ -4,6 +4,9 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Lets the app ask to be exempt from battery optimisation so Xiaomi/Oppo/Vivo/
+         Samsung don't suppress push notifications while the app is in the background. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <!-- In-app update flow: this app downloads its own update .apk and hands
          it to the system package installer directly (instead of bouncing to
          a browser). REQUEST_INSTALL_PACKAGES is the runtime-grantable

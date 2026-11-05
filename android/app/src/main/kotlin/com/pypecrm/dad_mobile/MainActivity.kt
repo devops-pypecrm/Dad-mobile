@@ -94,6 +94,32 @@ class MainActivity : FlutterActivity() {
                     )
                 }
 
+                // Push reliability: is this app exempt from battery optimisation?
+                "isIgnoringBatteryOptimizations" -> {
+                    val pm = getSystemService(POWER_SERVICE) as android.os.PowerManager
+                    result.success(pm.isIgnoringBatteryOptimizations(packageName))
+                }
+
+                // Shows the system "Allow app to always run in background?" dialog;
+                // falls back to the general battery-optimisation settings list.
+                "requestIgnoreBatteryOptimizations" -> {
+                    try {
+                        startActivity(
+                            Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = Uri.parse("package:$packageName")
+                            }
+                        )
+                        result.success(true)
+                    } catch (e: Exception) {
+                        try {
+                            startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+                            result.success(true)
+                        } catch (e2: Exception) {
+                            result.success(false)
+                        }
+                    }
+                }
+
                 "openDialer" -> {
                     val launch = packageManager.getLaunchIntentForPackage(DIALER_PACKAGE)
                     if (launch != null) {
