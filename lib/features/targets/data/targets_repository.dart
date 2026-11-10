@@ -5,6 +5,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_provider.dart';
 import '../../dashboard/domain/sales_target.dart';
 import '../domain/daily_achievement.dart';
+import '../domain/target_won_deal.dart';
 import '../domain/team_target.dart';
 
 part 'targets_repository.g.dart';
@@ -22,9 +23,9 @@ class TargetsRepository {
 
   final Dio _dio;
 
-  Future<List<SalesTarget>> getMyTargets() async {
+  Future<List<SalesTarget>> getMyTargets({String? month}) async {
     try {
-      final response = await _dio.get<Map<String, dynamic>>('/sales-targets');
+      final response = await _dio.get<Map<String, dynamic>>('/sales-targets', queryParameters: {if (month != null) 'month': month});
       final list = (response.data!['targets'] as List).cast<Map<String, dynamic>>();
       return list.map(SalesTarget.fromJson).toList();
     } on DioException catch (e) {
@@ -34,11 +35,22 @@ class TargetsRepository {
 
   /// Only meaningful for managers/admins — the backend scopes this to the
   /// caller's subordinates regardless of who calls it.
-  Future<List<TeamTarget>> getTeamTargets() async {
+  Future<List<TeamTarget>> getTeamTargets({String? month}) async {
     try {
-      final response = await _dio.get<Map<String, dynamic>>('/sales-targets/team');
+      final response = await _dio.get<Map<String, dynamic>>('/sales-targets/team', queryParameters: {if (month != null) 'month': month});
       final list = (response.data!['targets'] as List).cast<Map<String, dynamic>>();
       return list.map(TeamTarget.fromJson).toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// Won deals that count toward one target (`GET /sales-targets/:id/won-deals`).
+  Future<List<TargetWonDeal>> getTargetWonDeals(String targetId) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/sales-targets/$targetId/won-deals');
+      final list = (response.data!['deals'] as List).cast<Map<String, dynamic>>();
+      return list.map(TargetWonDeal.fromJson).toList();
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }
