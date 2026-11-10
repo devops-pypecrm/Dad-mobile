@@ -4,9 +4,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../auth/providers/session_provider.dart';
 import '../../dashboard/domain/dashboard_date_range.dart';
 import '../data/reports_repository.dart';
+import '../domain/audit_log_entry.dart';
 import '../domain/call_report_row.dart';
+import '../domain/campaign_report_row.dart';
 import '../domain/daily_report.dart';
 import '../domain/expected_revenue_report.dart';
+import '../domain/lead_distribution_report.dart';
 import '../domain/leads_report_summary.dart';
 import '../domain/sales_book_summary.dart';
 import '../domain/user_performance.dart';
@@ -127,4 +130,49 @@ Future<ExpectedRevenueReport> expectedRevenueReport(
         endDate: endDate,
         branchId: branchId,
       );
+}
+
+/// Backs the Lead Distribution report screen.
+@riverpod
+Future<LeadDistributionReport> leadDistributionReport(
+  AutoDisposeFutureProviderRef<LeadDistributionReport> ref, {
+  String? startDate,
+  String? endDate,
+  String? branchId,
+}) {
+  return ref.watch(reportsRepositoryProvider).getLeadDistributionReport(
+        startDate: startDate,
+        endDate: endDate,
+        branchId: branchId,
+      );
+}
+
+/// Backs the Audit Logs report screen. Admin/manager-only — the backend
+/// returns 403 for any other role, surfaced as a normal `ApiException` by
+/// the repository (no client-side role guard duplicates it here beyond
+/// what the Reports hub already does to decide whether to show the tile).
+@riverpod
+Future<AuditLogsReport> auditLogsReport(
+  AutoDisposeFutureProviderRef<AuditLogsReport> ref, {
+  String? startDate,
+  String? endDate,
+  String? entity,
+  String? action,
+  String? userId,
+  String? branchId,
+}) {
+  return ref.watch(reportsRepositoryProvider).getAuditLogs(
+        startDate: startDate,
+        endDate: endDate,
+        entity: entity,
+        action: action,
+        userId: userId,
+        branchId: branchId,
+      );
+}
+
+/// Backs the Campaigns report screen — no filters, same as web's page.
+@riverpod
+Future<List<CampaignReportRow>> campaignsReport(AutoDisposeFutureProviderRef<List<CampaignReportRow>> ref) {
+  return ref.watch(reportsRepositoryProvider).getCampaigns();
 }

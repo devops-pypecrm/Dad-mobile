@@ -74,6 +74,18 @@ class OpportunityActionsController extends _$OpportunityActionsController {
     });
   }
 
+  /// Returns `true` on success so the detail screen knows to navigate back
+  /// to the list — same success-signal pattern as [closeWon]/[closeLost].
+  Future<bool> delete() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(opportunitiesRepositoryProvider);
+      await repository.deleteOpportunity(opportunityId);
+      ref.read(opportunitiesListProvider.notifier).refresh();
+    });
+    return !state.hasError;
+  }
+
   Future<void> deleteInstallment(String installmentId) async {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {

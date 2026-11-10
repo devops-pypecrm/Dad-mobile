@@ -21,14 +21,17 @@ LeadReEnquiryEvent _$LeadReEnquiryEventFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LeadReEnquiryEvent {
-  int get eventIndex => throw _privateConstructorUsedError;
+  int? get eventIndex => throw _privateConstructorUsedError;
   DateTime get date => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get source => throw _privateConstructorUsedError;
+  String? get enquiryAbout => throw _privateConstructorUsedError;
   bool get hasFullSnapshot => throw _privateConstructorUsedError;
   String? get alreadySplitLeadId => throw _privateConstructorUsedError;
+  ReEnquiryFollowUpRef? get followUp => throw _privateConstructorUsedError;
 
   /// Serializes this LeadReEnquiryEvent to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -48,15 +51,20 @@ abstract class $LeadReEnquiryEventCopyWith<$Res> {
   ) = _$LeadReEnquiryEventCopyWithImpl<$Res, LeadReEnquiryEvent>;
   @useResult
   $Res call({
-    int eventIndex,
+    int? eventIndex,
     DateTime date,
+    String type,
     String? name,
     String? phone,
     String? email,
     String? source,
+    String? enquiryAbout,
     bool hasFullSnapshot,
     String? alreadySplitLeadId,
+    ReEnquiryFollowUpRef? followUp,
   });
+
+  $ReEnquiryFollowUpRefCopyWith<$Res>? get followUp;
 }
 
 /// @nodoc
@@ -74,25 +82,32 @@ class _$LeadReEnquiryEventCopyWithImpl<$Res, $Val extends LeadReEnquiryEvent>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? eventIndex = null,
+    Object? eventIndex = freezed,
     Object? date = null,
+    Object? type = null,
     Object? name = freezed,
     Object? phone = freezed,
     Object? email = freezed,
     Object? source = freezed,
+    Object? enquiryAbout = freezed,
     Object? hasFullSnapshot = null,
     Object? alreadySplitLeadId = freezed,
+    Object? followUp = freezed,
   }) {
     return _then(
       _value.copyWith(
-            eventIndex: null == eventIndex
+            eventIndex: freezed == eventIndex
                 ? _value.eventIndex
                 : eventIndex // ignore: cast_nullable_to_non_nullable
-                      as int,
+                      as int?,
             date: null == date
                 ? _value.date
                 : date // ignore: cast_nullable_to_non_nullable
                       as DateTime,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String,
             name: freezed == name
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
@@ -109,6 +124,10 @@ class _$LeadReEnquiryEventCopyWithImpl<$Res, $Val extends LeadReEnquiryEvent>
                 ? _value.source
                 : source // ignore: cast_nullable_to_non_nullable
                       as String?,
+            enquiryAbout: freezed == enquiryAbout
+                ? _value.enquiryAbout
+                : enquiryAbout // ignore: cast_nullable_to_non_nullable
+                      as String?,
             hasFullSnapshot: null == hasFullSnapshot
                 ? _value.hasFullSnapshot
                 : hasFullSnapshot // ignore: cast_nullable_to_non_nullable
@@ -117,9 +136,27 @@ class _$LeadReEnquiryEventCopyWithImpl<$Res, $Val extends LeadReEnquiryEvent>
                 ? _value.alreadySplitLeadId
                 : alreadySplitLeadId // ignore: cast_nullable_to_non_nullable
                       as String?,
+            followUp: freezed == followUp
+                ? _value.followUp
+                : followUp // ignore: cast_nullable_to_non_nullable
+                      as ReEnquiryFollowUpRef?,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of LeadReEnquiryEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $ReEnquiryFollowUpRefCopyWith<$Res>? get followUp {
+    if (_value.followUp == null) {
+      return null;
+    }
+
+    return $ReEnquiryFollowUpRefCopyWith<$Res>(_value.followUp!, (value) {
+      return _then(_value.copyWith(followUp: value) as $Val);
+    });
   }
 }
 
@@ -133,15 +170,21 @@ abstract class _$$LeadReEnquiryEventImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int eventIndex,
+    int? eventIndex,
     DateTime date,
+    String type,
     String? name,
     String? phone,
     String? email,
     String? source,
+    String? enquiryAbout,
     bool hasFullSnapshot,
     String? alreadySplitLeadId,
+    ReEnquiryFollowUpRef? followUp,
   });
+
+  @override
+  $ReEnquiryFollowUpRefCopyWith<$Res>? get followUp;
 }
 
 /// @nodoc
@@ -158,25 +201,32 @@ class __$$LeadReEnquiryEventImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? eventIndex = null,
+    Object? eventIndex = freezed,
     Object? date = null,
+    Object? type = null,
     Object? name = freezed,
     Object? phone = freezed,
     Object? email = freezed,
     Object? source = freezed,
+    Object? enquiryAbout = freezed,
     Object? hasFullSnapshot = null,
     Object? alreadySplitLeadId = freezed,
+    Object? followUp = freezed,
   }) {
     return _then(
       _$LeadReEnquiryEventImpl(
-        eventIndex: null == eventIndex
+        eventIndex: freezed == eventIndex
             ? _value.eventIndex
             : eventIndex // ignore: cast_nullable_to_non_nullable
-                  as int,
+                  as int?,
         date: null == date
             ? _value.date
             : date // ignore: cast_nullable_to_non_nullable
                   as DateTime,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String,
         name: freezed == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
@@ -193,6 +243,10 @@ class __$$LeadReEnquiryEventImplCopyWithImpl<$Res>
             ? _value.source
             : source // ignore: cast_nullable_to_non_nullable
                   as String?,
+        enquiryAbout: freezed == enquiryAbout
+            ? _value.enquiryAbout
+            : enquiryAbout // ignore: cast_nullable_to_non_nullable
+                  as String?,
         hasFullSnapshot: null == hasFullSnapshot
             ? _value.hasFullSnapshot
             : hasFullSnapshot // ignore: cast_nullable_to_non_nullable
@@ -201,6 +255,10 @@ class __$$LeadReEnquiryEventImplCopyWithImpl<$Res>
             ? _value.alreadySplitLeadId
             : alreadySplitLeadId // ignore: cast_nullable_to_non_nullable
                   as String?,
+        followUp: freezed == followUp
+            ? _value.followUp
+            : followUp // ignore: cast_nullable_to_non_nullable
+                  as ReEnquiryFollowUpRef?,
       ),
     );
   }
@@ -210,23 +268,29 @@ class __$$LeadReEnquiryEventImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LeadReEnquiryEventImpl implements _LeadReEnquiryEvent {
   const _$LeadReEnquiryEventImpl({
-    required this.eventIndex,
+    this.eventIndex,
     required this.date,
+    this.type = 're_enquiry',
     this.name,
     this.phone,
     this.email,
     this.source,
+    this.enquiryAbout,
     this.hasFullSnapshot = false,
     this.alreadySplitLeadId,
+    this.followUp,
   });
 
   factory _$LeadReEnquiryEventImpl.fromJson(Map<String, dynamic> json) =>
       _$$LeadReEnquiryEventImplFromJson(json);
 
   @override
-  final int eventIndex;
+  final int? eventIndex;
   @override
   final DateTime date;
+  @override
+  @JsonKey()
+  final String type;
   @override
   final String? name;
   @override
@@ -236,14 +300,18 @@ class _$LeadReEnquiryEventImpl implements _LeadReEnquiryEvent {
   @override
   final String? source;
   @override
+  final String? enquiryAbout;
+  @override
   @JsonKey()
   final bool hasFullSnapshot;
   @override
   final String? alreadySplitLeadId;
+  @override
+  final ReEnquiryFollowUpRef? followUp;
 
   @override
   String toString() {
-    return 'LeadReEnquiryEvent(eventIndex: $eventIndex, date: $date, name: $name, phone: $phone, email: $email, source: $source, hasFullSnapshot: $hasFullSnapshot, alreadySplitLeadId: $alreadySplitLeadId)';
+    return 'LeadReEnquiryEvent(eventIndex: $eventIndex, date: $date, type: $type, name: $name, phone: $phone, email: $email, source: $source, enquiryAbout: $enquiryAbout, hasFullSnapshot: $hasFullSnapshot, alreadySplitLeadId: $alreadySplitLeadId, followUp: $followUp)';
   }
 
   @override
@@ -254,14 +322,19 @@ class _$LeadReEnquiryEventImpl implements _LeadReEnquiryEvent {
             (identical(other.eventIndex, eventIndex) ||
                 other.eventIndex == eventIndex) &&
             (identical(other.date, date) || other.date == date) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.source, source) || other.source == source) &&
+            (identical(other.enquiryAbout, enquiryAbout) ||
+                other.enquiryAbout == enquiryAbout) &&
             (identical(other.hasFullSnapshot, hasFullSnapshot) ||
                 other.hasFullSnapshot == hasFullSnapshot) &&
             (identical(other.alreadySplitLeadId, alreadySplitLeadId) ||
-                other.alreadySplitLeadId == alreadySplitLeadId));
+                other.alreadySplitLeadId == alreadySplitLeadId) &&
+            (identical(other.followUp, followUp) ||
+                other.followUp == followUp));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -270,12 +343,15 @@ class _$LeadReEnquiryEventImpl implements _LeadReEnquiryEvent {
     runtimeType,
     eventIndex,
     date,
+    type,
     name,
     phone,
     email,
     source,
+    enquiryAbout,
     hasFullSnapshot,
     alreadySplitLeadId,
+    followUp,
   );
 
   /// Create a copy of LeadReEnquiryEvent
@@ -297,23 +373,28 @@ class _$LeadReEnquiryEventImpl implements _LeadReEnquiryEvent {
 
 abstract class _LeadReEnquiryEvent implements LeadReEnquiryEvent {
   const factory _LeadReEnquiryEvent({
-    required final int eventIndex,
+    final int? eventIndex,
     required final DateTime date,
+    final String type,
     final String? name,
     final String? phone,
     final String? email,
     final String? source,
+    final String? enquiryAbout,
     final bool hasFullSnapshot,
     final String? alreadySplitLeadId,
+    final ReEnquiryFollowUpRef? followUp,
   }) = _$LeadReEnquiryEventImpl;
 
   factory _LeadReEnquiryEvent.fromJson(Map<String, dynamic> json) =
       _$LeadReEnquiryEventImpl.fromJson;
 
   @override
-  int get eventIndex;
+  int? get eventIndex;
   @override
   DateTime get date;
+  @override
+  String get type;
   @override
   String? get name;
   @override
@@ -323,9 +404,13 @@ abstract class _LeadReEnquiryEvent implements LeadReEnquiryEvent {
   @override
   String? get source;
   @override
+  String? get enquiryAbout;
+  @override
   bool get hasFullSnapshot;
   @override
   String? get alreadySplitLeadId;
+  @override
+  ReEnquiryFollowUpRef? get followUp;
 
   /// Create a copy of LeadReEnquiryEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -333,6 +418,293 @@ abstract class _LeadReEnquiryEvent implements LeadReEnquiryEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LeadReEnquiryEventImplCopyWith<_$LeadReEnquiryEventImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+ReEnquiryFollowUpRef _$ReEnquiryFollowUpRefFromJson(Map<String, dynamic> json) {
+  return _ReEnquiryFollowUpRef.fromJson(json);
+}
+
+/// @nodoc
+mixin _$ReEnquiryFollowUpRef {
+  String get id => throw _privateConstructorUsedError;
+  String? get subject => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  String? get priority => throw _privateConstructorUsedError;
+  LeadAssignee? get assignedTo => throw _privateConstructorUsedError;
+
+  /// Serializes this ReEnquiryFollowUpRef to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of ReEnquiryFollowUpRef
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ReEnquiryFollowUpRefCopyWith<ReEnquiryFollowUpRef> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ReEnquiryFollowUpRefCopyWith<$Res> {
+  factory $ReEnquiryFollowUpRefCopyWith(
+    ReEnquiryFollowUpRef value,
+    $Res Function(ReEnquiryFollowUpRef) then,
+  ) = _$ReEnquiryFollowUpRefCopyWithImpl<$Res, ReEnquiryFollowUpRef>;
+  @useResult
+  $Res call({
+    String id,
+    String? subject,
+    String? description,
+    String? status,
+    String? priority,
+    LeadAssignee? assignedTo,
+  });
+
+  $LeadAssigneeCopyWith<$Res>? get assignedTo;
+}
+
+/// @nodoc
+class _$ReEnquiryFollowUpRefCopyWithImpl<$Res, $Val extends ReEnquiryFollowUpRef>
+    implements $ReEnquiryFollowUpRefCopyWith<$Res> {
+  _$ReEnquiryFollowUpRefCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? subject = freezed,
+    Object? description = freezed,
+    Object? status = freezed,
+    Object? priority = freezed,
+    Object? assignedTo = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            subject: freezed == subject
+                ? _value.subject
+                : subject // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: freezed == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            priority: freezed == priority
+                ? _value.priority
+                : priority // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            assignedTo: freezed == assignedTo
+                ? _value.assignedTo
+                : assignedTo // ignore: cast_nullable_to_non_nullable
+                      as LeadAssignee?,
+          )
+          as $Val,
+    );
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $LeadAssigneeCopyWith<$Res>? get assignedTo {
+    if (_value.assignedTo == null) {
+      return null;
+    }
+
+    return $LeadAssigneeCopyWith<$Res>(_value.assignedTo!, (value) {
+      return _then(_value.copyWith(assignedTo: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$ReEnquiryFollowUpRefImplCopyWith<$Res>
+    implements $ReEnquiryFollowUpRefCopyWith<$Res> {
+  factory _$$ReEnquiryFollowUpRefImplCopyWith(
+    _$ReEnquiryFollowUpRefImpl value,
+    $Res Function(_$ReEnquiryFollowUpRefImpl) then,
+  ) = __$$ReEnquiryFollowUpRefImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    String id,
+    String? subject,
+    String? description,
+    String? status,
+    String? priority,
+    LeadAssignee? assignedTo,
+  });
+
+  @override
+  $LeadAssigneeCopyWith<$Res>? get assignedTo;
+}
+
+/// @nodoc
+class __$$ReEnquiryFollowUpRefImplCopyWithImpl<$Res>
+    extends _$ReEnquiryFollowUpRefCopyWithImpl<$Res, _$ReEnquiryFollowUpRefImpl>
+    implements _$$ReEnquiryFollowUpRefImplCopyWith<$Res> {
+  __$$ReEnquiryFollowUpRefImplCopyWithImpl(
+    _$ReEnquiryFollowUpRefImpl _value,
+    $Res Function(_$ReEnquiryFollowUpRefImpl) _then,
+  ) : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? subject = freezed,
+    Object? description = freezed,
+    Object? status = freezed,
+    Object? priority = freezed,
+    Object? assignedTo = freezed,
+  }) {
+    return _then(
+      _$ReEnquiryFollowUpRefImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        subject: freezed == subject
+            ? _value.subject
+            : subject // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: freezed == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        priority: freezed == priority
+            ? _value.priority
+            : priority // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        assignedTo: freezed == assignedTo
+            ? _value.assignedTo
+            : assignedTo // ignore: cast_nullable_to_non_nullable
+                  as LeadAssignee?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ReEnquiryFollowUpRefImpl implements _ReEnquiryFollowUpRef {
+  const _$ReEnquiryFollowUpRefImpl({
+    required this.id,
+    this.subject,
+    this.description,
+    this.status,
+    this.priority,
+    this.assignedTo,
+  });
+
+  factory _$ReEnquiryFollowUpRefImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ReEnquiryFollowUpRefImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final String? subject;
+  @override
+  final String? description;
+  @override
+  final String? status;
+  @override
+  final String? priority;
+  @override
+  final LeadAssignee? assignedTo;
+
+  @override
+  String toString() {
+    return 'ReEnquiryFollowUpRef(id: $id, subject: $subject, description: $description, status: $status, priority: $priority, assignedTo: $assignedTo)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ReEnquiryFollowUpRefImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.subject, subject) || other.subject == subject) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.priority, priority) ||
+                other.priority == priority) &&
+            (identical(other.assignedTo, assignedTo) ||
+                other.assignedTo == assignedTo));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    subject,
+    description,
+    status,
+    priority,
+    assignedTo,
+  );
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ReEnquiryFollowUpRefImplCopyWith<_$ReEnquiryFollowUpRefImpl>
+  get copyWith =>
+      __$$ReEnquiryFollowUpRefImplCopyWithImpl<_$ReEnquiryFollowUpRefImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ReEnquiryFollowUpRefImplToJson(this);
+  }
+}
+
+abstract class _ReEnquiryFollowUpRef implements ReEnquiryFollowUpRef {
+  const factory _ReEnquiryFollowUpRef({
+    required final String id,
+    final String? subject,
+    final String? description,
+    final String? status,
+    final String? priority,
+    final LeadAssignee? assignedTo,
+  }) = _$ReEnquiryFollowUpRefImpl;
+
+  factory _ReEnquiryFollowUpRef.fromJson(Map<String, dynamic> json) =
+      _$ReEnquiryFollowUpRefImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  String? get subject;
+  @override
+  String? get description;
+  @override
+  String? get status;
+  @override
+  String? get priority;
+  @override
+  LeadAssignee? get assignedTo;
+
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ReEnquiryFollowUpRefImplCopyWith<_$ReEnquiryFollowUpRefImpl>
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 LeadReEnquiryHistory _$LeadReEnquiryHistoryFromJson(Map<String, dynamic> json) {

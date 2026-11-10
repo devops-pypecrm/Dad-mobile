@@ -11,16 +11,6 @@ import '../../../products/domain/product.dart' as catalog;
 import '../../domain/lead_product.dart';
 import '../../providers/lead_products_controller.dart';
 
-/// Edufolio (org id looked up from its `manager@edufolio.org` admin,
-/// confirmed against the live DB) is the only organisation, per explicit
-/// request, allowed to override a product's name/amount at the point of
-/// adding it to a lead — every other org gets the catalog's name/price as
-/// read-only here (Qty is unaffected either way). There's no general
-/// per-org feature-flag mechanism on the backend to key this off instead,
-/// so this is a deliberate one-off org-id gate rather than a reusable
-/// setting.
-const _kEdufolioOrgId = '85cc3715-7f8d-4f22-b0b0-a40a502bc6fa';
-
 /// Full-screen editor for a lead's product line items — matches Dad-frontend's
 /// `AddProductToLeadDialog` (full-screen on its own mobile breakpoint too):
 /// a searchable catalog to add from, and the current selection with
@@ -110,6 +100,7 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
             sku: product.sku,
             basePrice: product.basePrice,
             currency: product.currency,
+            isCustom: product.isCustom,
           ),
         ),
       ];
@@ -235,8 +226,6 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
     final saving = ref
         .watch(leadProductsControllerProvider(widget.leadId))
         .isLoading;
-    final canEditNameAndPrice =
-        ref.watch(sessionControllerProvider).valueOrNull?.organisation.id == _kEdufolioOrgId;
     final canQuickAddProduct = isOrgAdminRole(ref.watch(sessionControllerProvider).valueOrNull?.role);
 
     return DraggableScrollableSheet(
@@ -361,7 +350,10 @@ class _LeadProductsEditorState extends ConsumerState<_LeadProductsEditor> {
                 for (final item in _items)
                   _SelectedProductCard(
                     item: item,
-                    canEditNameAndPrice: canEditNameAndPrice,
+                    // Same semantics as web's `AddProductToLeadDialog`: a line
+                    // item is editable only when its catalog product is
+                    // flagged `isCustom`, not based on which org is logged in.
+                    canEditNameAndPrice: item.product?.isCustom ?? false,
                     onRemove: () => _removeProduct(item.productId),
                     onQuantityChanged: (q) => _updateQuantity(item.productId, q),
                     onPriceChanged: (p) => _updatePrice(item.productId, p),

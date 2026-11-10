@@ -56,6 +56,8 @@ mixin _$Lead {
   String? get branchId => throw _privateConstructorUsedError;
   LeadAssignee? get assignedTo => throw _privateConstructorUsedError;
   List<LeadProductItem>? get products => throw _privateConstructorUsedError;
+  String? get closedOpportunityStatus => throw _privateConstructorUsedError;
+  String? get wonTeamName => throw _privateConstructorUsedError;
 
   /// Serializes this Lead to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -98,6 +100,8 @@ abstract class $LeadCopyWith<$Res> {
     String? branchId,
     LeadAssignee? assignedTo,
     List<LeadProductItem>? products,
+    String? closedOpportunityStatus,
+    String? wonTeamName,
   });
 
   $LeadSourceDetailsCopyWith<$Res>? get sourceDetails;
@@ -145,6 +149,8 @@ class _$LeadCopyWithImpl<$Res, $Val extends Lead>
     Object? branchId = freezed,
     Object? assignedTo = freezed,
     Object? products = freezed,
+    Object? closedOpportunityStatus = freezed,
+    Object? wonTeamName = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -252,6 +258,14 @@ class _$LeadCopyWithImpl<$Res, $Val extends Lead>
                 ? _value.products
                 : products // ignore: cast_nullable_to_non_nullable
                       as List<LeadProductItem>?,
+            closedOpportunityStatus: freezed == closedOpportunityStatus
+                ? _value.closedOpportunityStatus
+                : closedOpportunityStatus // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            wonTeamName: freezed == wonTeamName
+                ? _value.wonTeamName
+                : wonTeamName // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -321,6 +335,8 @@ abstract class _$$LeadImplCopyWith<$Res> implements $LeadCopyWith<$Res> {
     String? branchId,
     LeadAssignee? assignedTo,
     List<LeadProductItem>? products,
+    String? closedOpportunityStatus,
+    String? wonTeamName,
   });
 
   @override
@@ -367,6 +383,8 @@ class __$$LeadImplCopyWithImpl<$Res>
     Object? branchId = freezed,
     Object? assignedTo = freezed,
     Object? products = freezed,
+    Object? closedOpportunityStatus = freezed,
+    Object? wonTeamName = freezed,
   }) {
     return _then(
       _$LeadImpl(
@@ -474,6 +492,14 @@ class __$$LeadImplCopyWithImpl<$Res>
             ? _value._products
             : products // ignore: cast_nullable_to_non_nullable
                   as List<LeadProductItem>?,
+        closedOpportunityStatus: freezed == closedOpportunityStatus
+            ? _value.closedOpportunityStatus
+            : closedOpportunityStatus // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        wonTeamName: freezed == wonTeamName
+            ? _value.wonTeamName
+            : wonTeamName // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -509,6 +535,8 @@ class _$LeadImpl extends _Lead {
     this.branchId,
     this.assignedTo,
     final List<LeadProductItem>? products,
+    this.closedOpportunityStatus,
+    this.wonTeamName,
   }) : _tags = tags,
        _products = products,
        super._();
@@ -602,8 +630,13 @@ class _$LeadImpl extends _Lead {
   }
 
   @override
+  final String? closedOpportunityStatus;
+  @override
+  final String? wonTeamName;
+
+  @override
   String toString() {
-    return 'Lead(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, phoneCountryCode: $phoneCountryCode, secondaryPhone: $secondaryPhone, company: $company, jobTitle: $jobTitle, enquiryAbout: $enquiryAbout, status: $status, source: $source, sourceDetails: $sourceDetails, potentialValue: $potentialValue, leadScore: $leadScore, isHotLead: $isHotLead, tags: $tags, isReEnquiry: $isReEnquiry, reEnquiryCount: $reEnquiryCount, lastEnquiryDate: $lastEnquiryDate, nextFollowUp: $nextFollowUp, createdAt: $createdAt, updatedAt: $updatedAt, branchId: $branchId, assignedTo: $assignedTo, products: $products)';
+    return 'Lead(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, phoneCountryCode: $phoneCountryCode, secondaryPhone: $secondaryPhone, company: $company, jobTitle: $jobTitle, enquiryAbout: $enquiryAbout, status: $status, source: $source, sourceDetails: $sourceDetails, potentialValue: $potentialValue, leadScore: $leadScore, isHotLead: $isHotLead, tags: $tags, isReEnquiry: $isReEnquiry, reEnquiryCount: $reEnquiryCount, lastEnquiryDate: $lastEnquiryDate, nextFollowUp: $nextFollowUp, createdAt: $createdAt, updatedAt: $updatedAt, branchId: $branchId, assignedTo: $assignedTo, products: $products, closedOpportunityStatus: $closedOpportunityStatus, wonTeamName: $wonTeamName)';
   }
 
   @override
@@ -654,7 +687,11 @@ class _$LeadImpl extends _Lead {
                 other.branchId == branchId) &&
             (identical(other.assignedTo, assignedTo) ||
                 other.assignedTo == assignedTo) &&
-            const DeepCollectionEquality().equals(other._products, _products));
+            const DeepCollectionEquality().equals(other._products, _products) &&
+            (identical(other.closedOpportunityStatus, closedOpportunityStatus) ||
+                other.closedOpportunityStatus == closedOpportunityStatus) &&
+            (identical(other.wonTeamName, wonTeamName) ||
+                other.wonTeamName == wonTeamName));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -687,6 +724,8 @@ class _$LeadImpl extends _Lead {
     branchId,
     assignedTo,
     const DeepCollectionEquality().hash(_products),
+    closedOpportunityStatus,
+    wonTeamName,
   ]);
 
   /// Create a copy of Lead
@@ -732,6 +771,8 @@ abstract class _Lead extends Lead {
     final String? branchId,
     final LeadAssignee? assignedTo,
     final List<LeadProductItem>? products,
+    final String? closedOpportunityStatus,
+    final String? wonTeamName,
   }) = _$LeadImpl;
   const _Lead._() : super._();
 
@@ -796,6 +837,10 @@ abstract class _Lead extends Lead {
   LeadAssignee? get assignedTo;
   @override
   List<LeadProductItem>? get products;
+  @override
+  String? get closedOpportunityStatus;
+  @override
+  String? get wonTeamName;
 
   /// Create a copy of Lead
   /// with the given fields replaced by the non-null parameter values.

@@ -681,5 +681,440 @@ class _ExpectedRevenueReportProviderElement
   String? get branchId => (origin as ExpectedRevenueReportProvider).branchId;
 }
 
+String _$leadDistributionReportHash() =>
+    r'a1b2c3d4e5f60718293a4b5c6d7e8f9011223344';
+
+/// Backs the Lead Distribution report screen.
+///
+/// Copied from [leadDistributionReport].
+@ProviderFor(leadDistributionReport)
+const leadDistributionReportProvider = LeadDistributionReportFamily();
+
+/// Backs the Lead Distribution report screen.
+///
+/// Copied from [leadDistributionReport].
+class LeadDistributionReportFamily
+    extends Family<AsyncValue<LeadDistributionReport>> {
+  /// Backs the Lead Distribution report screen.
+  ///
+  /// Copied from [leadDistributionReport].
+  const LeadDistributionReportFamily();
+
+  /// Backs the Lead Distribution report screen.
+  ///
+  /// Copied from [leadDistributionReport].
+  LeadDistributionReportProvider call({
+    String? startDate,
+    String? endDate,
+    String? branchId,
+  }) {
+    return LeadDistributionReportProvider(
+      startDate: startDate,
+      endDate: endDate,
+      branchId: branchId,
+    );
+  }
+
+  @override
+  LeadDistributionReportProvider getProviderOverride(
+    covariant LeadDistributionReportProvider provider,
+  ) {
+    return call(
+      startDate: provider.startDate,
+      endDate: provider.endDate,
+      branchId: provider.branchId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'leadDistributionReportProvider';
+}
+
+/// Backs the Lead Distribution report screen.
+///
+/// Copied from [leadDistributionReport].
+class LeadDistributionReportProvider
+    extends AutoDisposeFutureProvider<LeadDistributionReport> {
+  /// Backs the Lead Distribution report screen.
+  ///
+  /// Copied from [leadDistributionReport].
+  LeadDistributionReportProvider({
+    String? startDate,
+    String? endDate,
+    String? branchId,
+  }) : this._internal(
+         (ref) => leadDistributionReport(
+           ref as LeadDistributionReportRef,
+           startDate: startDate,
+           endDate: endDate,
+           branchId: branchId,
+         ),
+         from: leadDistributionReportProvider,
+         name: r'leadDistributionReportProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$leadDistributionReportHash,
+         dependencies: LeadDistributionReportFamily._dependencies,
+         allTransitiveDependencies:
+             LeadDistributionReportFamily._allTransitiveDependencies,
+         startDate: startDate,
+         endDate: endDate,
+         branchId: branchId,
+       );
+
+  LeadDistributionReportProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.startDate,
+    required this.endDate,
+    required this.branchId,
+  }) : super.internal();
+
+  final String? startDate;
+  final String? endDate;
+  final String? branchId;
+
+  @override
+  Override overrideWith(
+    FutureOr<LeadDistributionReport> Function(
+      LeadDistributionReportRef provider,
+    )
+    create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: LeadDistributionReportProvider._internal(
+        (ref) => create(ref as LeadDistributionReportRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        startDate: startDate,
+        endDate: endDate,
+        branchId: branchId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<LeadDistributionReport> createElement() {
+    return _LeadDistributionReportProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LeadDistributionReportProvider &&
+        other.startDate == startDate &&
+        other.endDate == endDate &&
+        other.branchId == branchId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, startDate.hashCode);
+    hash = _SystemHash.combine(hash, endDate.hashCode);
+    hash = _SystemHash.combine(hash, branchId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin LeadDistributionReportRef
+    on AutoDisposeFutureProviderRef<LeadDistributionReport> {
+  /// The parameter `startDate` of this provider.
+  String? get startDate;
+
+  /// The parameter `endDate` of this provider.
+  String? get endDate;
+
+  /// The parameter `branchId` of this provider.
+  String? get branchId;
+}
+
+class _LeadDistributionReportProviderElement
+    extends AutoDisposeFutureProviderElement<LeadDistributionReport>
+    with LeadDistributionReportRef {
+  _LeadDistributionReportProviderElement(super.provider);
+
+  @override
+  String? get startDate =>
+      (origin as LeadDistributionReportProvider).startDate;
+  @override
+  String? get endDate => (origin as LeadDistributionReportProvider).endDate;
+  @override
+  String? get branchId => (origin as LeadDistributionReportProvider).branchId;
+}
+
+String _$auditLogsReportHash() => r'b2c3d4e5f60718293a4b5c6d7e8f90112233445b';
+
+/// Backs the Audit Logs report screen. Admin/manager-only — the backend
+/// returns 403 for any other role, surfaced as a normal `ApiException` by
+/// the repository (no client-side role guard duplicates it here beyond
+/// what the Reports hub already does to decide whether to show the tile).
+///
+/// Copied from [auditLogsReport].
+@ProviderFor(auditLogsReport)
+const auditLogsReportProvider = AuditLogsReportFamily();
+
+/// Backs the Audit Logs report screen. Admin/manager-only — the backend
+/// returns 403 for any other role, surfaced as a normal `ApiException` by
+/// the repository (no client-side role guard duplicates it here beyond
+/// what the Reports hub already does to decide whether to show the tile).
+///
+/// Copied from [auditLogsReport].
+class AuditLogsReportFamily extends Family<AsyncValue<AuditLogsReport>> {
+  /// Backs the Audit Logs report screen.
+  ///
+  /// Copied from [auditLogsReport].
+  const AuditLogsReportFamily();
+
+  /// Backs the Audit Logs report screen.
+  ///
+  /// Copied from [auditLogsReport].
+  AuditLogsReportProvider call({
+    String? startDate,
+    String? endDate,
+    String? entity,
+    String? action,
+    String? userId,
+    String? branchId,
+  }) {
+    return AuditLogsReportProvider(
+      startDate: startDate,
+      endDate: endDate,
+      entity: entity,
+      action: action,
+      userId: userId,
+      branchId: branchId,
+    );
+  }
+
+  @override
+  AuditLogsReportProvider getProviderOverride(
+    covariant AuditLogsReportProvider provider,
+  ) {
+    return call(
+      startDate: provider.startDate,
+      endDate: provider.endDate,
+      entity: provider.entity,
+      action: provider.action,
+      userId: provider.userId,
+      branchId: provider.branchId,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'auditLogsReportProvider';
+}
+
+/// Backs the Audit Logs report screen.
+///
+/// Copied from [auditLogsReport].
+class AuditLogsReportProvider
+    extends AutoDisposeFutureProvider<AuditLogsReport> {
+  /// Backs the Audit Logs report screen.
+  ///
+  /// Copied from [auditLogsReport].
+  AuditLogsReportProvider({
+    String? startDate,
+    String? endDate,
+    String? entity,
+    String? action,
+    String? userId,
+    String? branchId,
+  }) : this._internal(
+         (ref) => auditLogsReport(
+           ref as AuditLogsReportRef,
+           startDate: startDate,
+           endDate: endDate,
+           entity: entity,
+           action: action,
+           userId: userId,
+           branchId: branchId,
+         ),
+         from: auditLogsReportProvider,
+         name: r'auditLogsReportProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$auditLogsReportHash,
+         dependencies: AuditLogsReportFamily._dependencies,
+         allTransitiveDependencies:
+             AuditLogsReportFamily._allTransitiveDependencies,
+         startDate: startDate,
+         endDate: endDate,
+         entity: entity,
+         action: action,
+         userId: userId,
+         branchId: branchId,
+       );
+
+  AuditLogsReportProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.startDate,
+    required this.endDate,
+    required this.entity,
+    required this.action,
+    required this.userId,
+    required this.branchId,
+  }) : super.internal();
+
+  final String? startDate;
+  final String? endDate;
+  final String? entity;
+  final String? action;
+  final String? userId;
+  final String? branchId;
+
+  @override
+  Override overrideWith(
+    FutureOr<AuditLogsReport> Function(AuditLogsReportRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: AuditLogsReportProvider._internal(
+        (ref) => create(ref as AuditLogsReportRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        startDate: startDate,
+        endDate: endDate,
+        entity: entity,
+        action: action,
+        userId: userId,
+        branchId: branchId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<AuditLogsReport> createElement() {
+    return _AuditLogsReportProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AuditLogsReportProvider &&
+        other.startDate == startDate &&
+        other.endDate == endDate &&
+        other.entity == entity &&
+        other.action == action &&
+        other.userId == userId &&
+        other.branchId == branchId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, startDate.hashCode);
+    hash = _SystemHash.combine(hash, endDate.hashCode);
+    hash = _SystemHash.combine(hash, entity.hashCode);
+    hash = _SystemHash.combine(hash, action.hashCode);
+    hash = _SystemHash.combine(hash, userId.hashCode);
+    hash = _SystemHash.combine(hash, branchId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin AuditLogsReportRef on AutoDisposeFutureProviderRef<AuditLogsReport> {
+  /// The parameter `startDate` of this provider.
+  String? get startDate;
+
+  /// The parameter `endDate` of this provider.
+  String? get endDate;
+
+  /// The parameter `entity` of this provider.
+  String? get entity;
+
+  /// The parameter `action` of this provider.
+  String? get action;
+
+  /// The parameter `userId` of this provider.
+  String? get userId;
+
+  /// The parameter `branchId` of this provider.
+  String? get branchId;
+}
+
+class _AuditLogsReportProviderElement
+    extends AutoDisposeFutureProviderElement<AuditLogsReport>
+    with AuditLogsReportRef {
+  _AuditLogsReportProviderElement(super.provider);
+
+  @override
+  String? get startDate => (origin as AuditLogsReportProvider).startDate;
+  @override
+  String? get endDate => (origin as AuditLogsReportProvider).endDate;
+  @override
+  String? get entity => (origin as AuditLogsReportProvider).entity;
+  @override
+  String? get action => (origin as AuditLogsReportProvider).action;
+  @override
+  String? get userId => (origin as AuditLogsReportProvider).userId;
+  @override
+  String? get branchId => (origin as AuditLogsReportProvider).branchId;
+}
+
+String _$campaignsReportHash() => r'c3d4e5f60718293a4b5c6d7e8f90112233445b2c';
+
+/// Backs the Campaigns report screen — no filters, same as web's page.
+///
+/// Copied from [campaignsReport].
+@ProviderFor(campaignsReport)
+final campaignsReportProvider =
+    AutoDisposeFutureProvider<List<CampaignReportRow>>.internal(
+      campaignsReport,
+      name: r'campaignsReportProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$campaignsReportHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CampaignsReportRef
+    = AutoDisposeFutureProviderRef<List<CampaignReportRow>>;
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

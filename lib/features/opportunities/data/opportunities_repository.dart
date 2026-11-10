@@ -19,7 +19,7 @@ OpportunitiesRepository opportunitiesRepository(ProviderRef<OpportunitiesReposit
 /// (Dad-backend/src/controllers/opportunityController.ts). Covers: stage
 /// change, edit (amount/probability/close date), inline linked-lead status
 /// sync, amount-sync-to-products, notes, and Close Won/Lost (including the
-/// payment-type/EMI side effects). Deliberately NOT covered: Create/Delete,
+/// payment-type/EMI side effects). Deliberately NOT covered: Create,
 /// Kanban drag-reorder, and EMI installment management AFTER closing
 /// (marking an installment paid/editing/deleting — those touch the
 /// separate `/emi/installments/:id` endpoints, a further pass once the
@@ -222,6 +222,17 @@ class OpportunitiesRepository {
           .map(OpportunityNote.fromJson)
           .where((note) => note.opportunityId == opportunityId)
           .toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `DELETE /api/opportunities/:id` — soft delete (Dad-backend's
+  /// `deleteOpportunity`). Mirrors web's delete action from the list page's
+  /// card menu.
+  Future<void> deleteOpportunity(String id) async {
+    try {
+      await _dio.delete<void>('/opportunities/$id');
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

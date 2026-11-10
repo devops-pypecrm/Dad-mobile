@@ -103,6 +103,13 @@ class Lead with _$Lead {
     String? branchId,
     LeadAssignee? assignedTo,
     List<LeadProductItem>? products,
+    // 'Won' | 'Lost' | null — derived server-side from any converted
+    // Opportunity's stage; not a real Lead-level status field.
+    String? closedOpportunityStatus,
+    // Snapshot of the winning Opportunity owner's team at the moment it was
+    // marked closed_won. Null for non-won leads AND for leads won before
+    // this field existed — never backfilled.
+    String? wonTeamName,
   }) = _Lead;
 
   factory Lead.fromJson(Map<String, dynamic> json) => _$LeadFromJson(json);

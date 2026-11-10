@@ -29,6 +29,7 @@ class Product with _$Product {
     String? sku,
     required double basePrice,
     @Default('INR') String currency,
+    @Default(false) bool isCustom,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) =>

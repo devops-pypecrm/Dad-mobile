@@ -50,6 +50,7 @@ class _FollowUpsScreenState extends ConsumerState<FollowUpsScreen> {
           status: state.status,
           branchId: state.branchId,
           userId: state.userId,
+          priority: state.priority,
           quickFilter: state.quickFilter,
           dueDateSingle: state.dueDateSingle,
           dueDateFrom: state.dueDateFrom,
@@ -517,6 +518,7 @@ class _ActiveFilterChips extends ConsumerWidget {
             status: state.status,
             branchId: state.branchId,
             userId: state.userId,
+            priority: state.priority,
             quickFilter: state.quickFilter,
             dueDateSingle: null,
             dueDateFrom: null,
@@ -536,6 +538,7 @@ class _ActiveFilterChips extends ConsumerWidget {
             status: state.status,
             branchId: state.branchId,
             userId: state.userId,
+            priority: state.priority,
             quickFilter: state.quickFilter,
             dueDateSingle: state.dueDateSingle,
             dueDateFrom: state.dueDateFrom,
@@ -557,6 +560,7 @@ class _ActiveFilterChips extends ConsumerWidget {
             status: null,
             branchId: state.branchId,
             userId: state.userId,
+            priority: state.priority,
             quickFilter: state.quickFilter,
             dueDateSingle: state.dueDateSingle,
             dueDateFrom: state.dueDateFrom,
@@ -576,6 +580,7 @@ class _ActiveFilterChips extends ConsumerWidget {
             status: state.status,
             branchId: null,
             userId: state.userId,
+            priority: state.priority,
             quickFilter: state.quickFilter,
             dueDateSingle: state.dueDateSingle,
             dueDateFrom: state.dueDateFrom,
@@ -595,6 +600,28 @@ class _ActiveFilterChips extends ConsumerWidget {
             status: state.status,
             branchId: state.branchId,
             userId: null,
+            priority: state.priority,
+            quickFilter: state.quickFilter,
+            dueDateSingle: state.dueDateSingle,
+            dueDateFrom: state.dueDateFrom,
+            dueDateTo: state.dueDateTo,
+            sortBy: state.sortBy,
+            sortOrder: state.sortOrder,
+          ),
+        ),
+      );
+    }
+
+    if (state.priority != null && state.priority!.isNotEmpty) {
+      chips.add(
+        _chip(
+          'Priority: ${state.priority![0].toUpperCase()}${state.priority!.substring(1)}',
+          () => notifier.applyFilters(
+            search: state.search,
+            status: state.status,
+            branchId: state.branchId,
+            userId: state.userId,
+            priority: null,
             quickFilter: state.quickFilter,
             dueDateSingle: state.dueDateSingle,
             dueDateFrom: state.dueDateFrom,

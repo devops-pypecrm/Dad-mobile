@@ -47,6 +47,8 @@ _$LeadImpl _$$LeadImplFromJson(Map<String, dynamic> json) => _$LeadImpl(
   products: (json['products'] as List<dynamic>?)
       ?.map((e) => LeadProductItem.fromJson(e as Map<String, dynamic>))
       .toList(),
+  closedOpportunityStatus: json['closedOpportunityStatus'] as String?,
+  wonTeamName: json['wonTeamName'] as String?,
 );
 
 Map<String, dynamic> _$$LeadImplToJson(_$LeadImpl instance) =>
@@ -77,4 +79,6 @@ Map<String, dynamic> _$$LeadImplToJson(_$LeadImpl instance) =>
       'branchId': instance.branchId,
       'assignedTo': instance.assignedTo,
       'products': instance.products,
+      'closedOpportunityStatus': instance.closedOpportunityStatus,
+      'wonTeamName': instance.wonTeamName,
     };

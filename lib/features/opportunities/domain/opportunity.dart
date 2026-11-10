@@ -18,6 +18,11 @@ const kTerminalOpportunityStages = {'closed_won', 'closed_lost'};
 /// (Lead.source): different backend field, different value set (this one
 /// includes `api`/`whatsapp`/`meta_leadgen`, which Lead's selectable list
 /// excludes as system-assigned).
+/// Human label for `Opportunity.type` — not a plain snake_case value (it's
+/// `NEW_BUSINESS`/`UPSALE`, all-caps and not matching `humanizeSnakeCase`'s
+/// expected casing), so this is a small dedicated map instead.
+String opportunityTypeLabel(String type) => type == 'UPSALE' ? 'Upsell' : 'New Business';
+
 const kSelectableOpportunitySources = [
   'website',
   'referral',

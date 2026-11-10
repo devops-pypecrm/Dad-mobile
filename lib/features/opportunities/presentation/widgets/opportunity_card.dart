@@ -113,6 +113,21 @@ class OpportunityCard extends StatelessWidget {
                               ],
                             ),
                           ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              opportunityTypeLabel(opportunity.type),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                           const Spacer(),
                           Text(
                             opportunity.amount.toStringAsFixed(0),
@@ -120,6 +135,40 @@ class OpportunityCard extends StatelessWidget {
                           ),
                         ],
                       ),
+                      if (opportunity.owner != null) ...[
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 11,
+                              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.15),
+                              child: Text(
+                                [
+                                  (opportunity.owner!.firstName?.isNotEmpty ?? false)
+                                      ? opportunity.owner!.firstName![0]
+                                      : '',
+                                  (opportunity.owner!.lastName?.isNotEmpty ?? false)
+                                      ? opportunity.owner!.lastName![0]
+                                      : '',
+                                ].join(),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              [opportunity.owner!.firstName, opportunity.owner!.lastName]
+                                  .where((p) => p != null && p.isNotEmpty)
+                                  .join(' '),
+                              style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),

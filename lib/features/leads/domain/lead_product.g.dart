@@ -37,6 +37,7 @@ _$ProductImpl _$$ProductImplFromJson(Map<String, dynamic> json) =>
       sku: json['sku'] as String?,
       basePrice: (json['basePrice'] as num).toDouble(),
       currency: json['currency'] as String? ?? 'INR',
+      isCustom: json['isCustom'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$ProductImplToJson(_$ProductImpl instance) =>
@@ -46,4 +47,5 @@ Map<String, dynamic> _$$ProductImplToJson(_$ProductImpl instance) =>
       'sku': instance.sku,
       'basePrice': instance.basePrice,
       'currency': instance.currency,
+      'isCustom': instance.isCustom,
     };

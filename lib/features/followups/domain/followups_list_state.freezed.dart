@@ -23,6 +23,7 @@ mixin _$FollowUpsListState {
   String? get status => throw _privateConstructorUsedError;
   String? get branchId => throw _privateConstructorUsedError;
   String? get userId => throw _privateConstructorUsedError;
+  String? get priority => throw _privateConstructorUsedError;
   FollowUpQuickFilter? get quickFilter =>
       throw _privateConstructorUsedError; // Custom due-date filter — mutually exclusive with [quickFilter] (picking
   // one clears the other, same as web's single `filter`/date concept).
@@ -53,6 +54,7 @@ abstract class $FollowUpsListStateCopyWith<$Res> {
     String? status,
     String? branchId,
     String? userId,
+    String? priority,
     FollowUpQuickFilter? quickFilter,
     DateTime? dueDateSingle,
     DateTime? dueDateFrom,
@@ -85,6 +87,7 @@ class _$FollowUpsListStateCopyWithImpl<$Res, $Val extends FollowUpsListState>
     Object? status = freezed,
     Object? branchId = freezed,
     Object? userId = freezed,
+    Object? priority = freezed,
     Object? quickFilter = freezed,
     Object? dueDateSingle = freezed,
     Object? dueDateFrom = freezed,
@@ -117,6 +120,10 @@ class _$FollowUpsListStateCopyWithImpl<$Res, $Val extends FollowUpsListState>
             userId: freezed == userId
                 ? _value.userId
                 : userId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            priority: freezed == priority
+                ? _value.priority
+                : priority // ignore: cast_nullable_to_non_nullable
                       as String?,
             quickFilter: freezed == quickFilter
                 ? _value.quickFilter
@@ -174,6 +181,7 @@ abstract class _$$FollowUpsListStateImplCopyWith<$Res>
     String? status,
     String? branchId,
     String? userId,
+    String? priority,
     FollowUpQuickFilter? quickFilter,
     DateTime? dueDateSingle,
     DateTime? dueDateFrom,
@@ -206,6 +214,7 @@ class __$$FollowUpsListStateImplCopyWithImpl<$Res>
     Object? status = freezed,
     Object? branchId = freezed,
     Object? userId = freezed,
+    Object? priority = freezed,
     Object? quickFilter = freezed,
     Object? dueDateSingle = freezed,
     Object? dueDateFrom = freezed,
@@ -238,6 +247,10 @@ class __$$FollowUpsListStateImplCopyWithImpl<$Res>
         userId: freezed == userId
             ? _value.userId
             : userId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        priority: freezed == priority
+            ? _value.priority
+            : priority // ignore: cast_nullable_to_non_nullable
                   as String?,
         quickFilter: freezed == quickFilter
             ? _value.quickFilter
@@ -278,6 +291,7 @@ class _$FollowUpsListStateImpl extends _FollowUpsListState {
     this.status,
     this.branchId,
     this.userId,
+    this.priority,
     this.quickFilter,
     this.dueDateSingle,
     this.dueDateFrom,
@@ -308,6 +322,8 @@ class _$FollowUpsListStateImpl extends _FollowUpsListState {
   @override
   final String? userId;
   @override
+  final String? priority;
+  @override
   final FollowUpQuickFilter? quickFilter;
   // Custom due-date filter — mutually exclusive with [quickFilter] (picking
   // one clears the other, same as web's single `filter`/date concept).
@@ -326,7 +342,7 @@ class _$FollowUpsListStateImpl extends _FollowUpsListState {
 
   @override
   String toString() {
-    return 'FollowUpsListState(allTasks: $allTasks, counts: $counts, search: $search, status: $status, branchId: $branchId, userId: $userId, quickFilter: $quickFilter, dueDateSingle: $dueDateSingle, dueDateFrom: $dueDateFrom, dueDateTo: $dueDateTo, sortBy: $sortBy, sortOrder: $sortOrder)';
+    return 'FollowUpsListState(allTasks: $allTasks, counts: $counts, search: $search, status: $status, branchId: $branchId, userId: $userId, priority: $priority, quickFilter: $quickFilter, dueDateSingle: $dueDateSingle, dueDateFrom: $dueDateFrom, dueDateTo: $dueDateTo, sortBy: $sortBy, sortOrder: $sortOrder)';
   }
 
   @override
@@ -341,6 +357,7 @@ class _$FollowUpsListStateImpl extends _FollowUpsListState {
             (identical(other.branchId, branchId) ||
                 other.branchId == branchId) &&
             (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.priority, priority) || other.priority == priority) &&
             (identical(other.quickFilter, quickFilter) ||
                 other.quickFilter == quickFilter) &&
             (identical(other.dueDateSingle, dueDateSingle) ||
@@ -363,6 +380,7 @@ class _$FollowUpsListStateImpl extends _FollowUpsListState {
     status,
     branchId,
     userId,
+    priority,
     quickFilter,
     dueDateSingle,
     dueDateFrom,
@@ -391,6 +409,7 @@ abstract class _FollowUpsListState extends FollowUpsListState {
     final String? status,
     final String? branchId,
     final String? userId,
+    final String? priority,
     final FollowUpQuickFilter? quickFilter,
     final DateTime? dueDateSingle,
     final DateTime? dueDateFrom,
@@ -412,6 +431,8 @@ abstract class _FollowUpsListState extends FollowUpsListState {
   String? get branchId;
   @override
   String? get userId;
+  @override
+  String? get priority;
   @override
   FollowUpQuickFilter? get quickFilter; // Custom due-date filter — mutually exclusive with [quickFilter] (picking
   // one clears the other, same as web's single `filter`/date concept).

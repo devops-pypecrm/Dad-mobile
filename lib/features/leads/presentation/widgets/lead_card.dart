@@ -138,6 +138,21 @@ class LeadCard extends ConsumerWidget {
                                 ),
                               ),
                             ),
+                            if (lead.closedOpportunityStatus == 'Won' &&
+                                (lead.wonTeamName?.isNotEmpty ?? false)) ...[
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  'Won · ${lead.wonTeamName}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: theme.colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
                             const Spacer(),
                             if (lead.isReEnquiry)
                               Text(
@@ -222,6 +237,35 @@ class LeadCard extends ConsumerWidget {
                                                       .colorScheme
                                                       .onSurfaceVariant,
                                                 ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                  if (lead.enquiryAbout != null &&
+                                      lead.enquiryAbout!.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.menu_book_outlined,
+                                          size: 15,
+                                          color: theme
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Expanded(
+                                          child: Text(
+                                            lead.enquiryAbout!,
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                                  color: theme
+                                                      .colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                            maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),

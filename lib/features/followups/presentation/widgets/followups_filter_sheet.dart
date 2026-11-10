@@ -26,6 +26,13 @@ const _statusLabels = {
   kFollowUpDeferred: 'Deferred',
 };
 
+const _priorityLabels = {
+  'all': 'All Priority',
+  'high': 'High',
+  'medium': 'Medium',
+  'low': 'Low',
+};
+
 /// Filter/sort sheet for the Follow Ups tab — same fields as
 /// Dad-frontend/src/pages/follow-ups/index.tsx's filter panel: Sort,
 /// Status, Branch (only if the caller has more than one to choose from),
@@ -60,6 +67,7 @@ class _FollowUpsFilterSheetState extends ConsumerState<_FollowUpsFilterSheet> {
   late String _sortBy = widget.current?.sortBy ?? 'dueDate';
   late String _sortOrder = widget.current?.sortOrder ?? 'asc';
   late String _status = widget.current?.status ?? 'all';
+  late String _priority = widget.current?.priority ?? 'all';
   late String? _branchId = widget.current?.branchId;
   late String? _userId = widget.current?.userId;
 
@@ -104,6 +112,7 @@ class _FollowUpsFilterSheetState extends ConsumerState<_FollowUpsFilterSheet> {
         .applyFilters(
           search: widget.current?.search,
           status: _status,
+          priority: _priority == 'all' ? null : _priority,
           branchId: _branchId,
           userId: _userId,
           quickFilter: null,
@@ -207,6 +216,25 @@ class _FollowUpsFilterSheetState extends ConsumerState<_FollowUpsFilterSheet> {
                     ),
                 ],
                 onChanged: (value) => setState(() => _status = value ?? 'all'),
+              ),
+              const SizedBox(height: 16),
+
+              Text('Priority', style: theme.textTheme.labelLarge),
+              const SizedBox(height: 6),
+              DropdownButtonFormField<String>(
+                initialValue: _priority,
+                decoration: const InputDecoration(
+                  isDense: true,
+                  border: OutlineInputBorder(),
+                ),
+                items: [
+                  for (final entry in _priorityLabels.entries)
+                    DropdownMenuItem(
+                      value: entry.key,
+                      child: Text(entry.value),
+                    ),
+                ],
+                onChanged: (value) => setState(() => _priority = value ?? 'all'),
               ),
               const SizedBox(height: 16),
 

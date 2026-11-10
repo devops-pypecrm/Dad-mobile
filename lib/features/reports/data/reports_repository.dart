@@ -3,9 +3,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../core/network/dio_provider.dart';
+import '../domain/audit_log_entry.dart';
 import '../domain/call_report_row.dart';
+import '../domain/campaign_report_row.dart';
 import '../domain/daily_report.dart';
 import '../domain/expected_revenue_report.dart';
+import '../domain/lead_distribution_report.dart';
 import '../domain/leads_report_summary.dart';
 import '../domain/sales_book_summary.dart';
 import '../domain/user_performance.dart';
@@ -173,6 +176,72 @@ class ReportsRepository {
         },
       );
       return ExpectedRevenueReport.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/reports/lead-distribution` — same endpoint as Dad-frontend's
+  /// `/reports/lead-distribution` page. [startDate]/[endDate] are
+  /// `yyyy-MM-dd`; the backend defaults to the last 30 days when both are
+  /// omitted.
+  Future<LeadDistributionReport> getLeadDistributionReport({
+    String? startDate,
+    String? endDate,
+    String? branchId,
+  }) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/reports/lead-distribution',
+        queryParameters: {
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
+          if (branchId != null) 'branchId': branchId,
+        },
+      );
+      return LeadDistributionReport.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/audit-logs` — admin/manager-only (backend returns 403
+  /// otherwise), same endpoint as Dad-frontend's Audit Logs report page.
+  Future<AuditLogsReport> getAuditLogs({
+    String? startDate,
+    String? endDate,
+    String? entity,
+    String? action,
+    String? userId,
+    String? branchId,
+    int limit = 100,
+  }) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/audit-logs',
+        queryParameters: {
+          'limit': limit,
+          if (startDate != null) 'startDate': startDate,
+          if (endDate != null) 'endDate': endDate,
+          if (entity != null) 'entity': entity,
+          if (action != null) 'action': action,
+          if (userId != null) 'userId': userId,
+          if (branchId != null) 'branchId': branchId,
+        },
+      );
+      return AuditLogsReport.fromJson(response.data!);
+    } on DioException catch (e) {
+      throw ApiException.fromDioException(e);
+    }
+  }
+
+  /// `GET /api/campaigns` — same endpoint as Dad-frontend's
+  /// `getEmailCampaigns`, response shape `{ campaigns: [...] }`.
+  Future<List<CampaignReportRow>> getCampaigns() async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>('/campaigns');
+      final list = (response.data?['campaigns'] as List?) ?? const [];
+      return list.map((e) => CampaignReportRow.fromJson(e as Map<String, dynamic>)).toList();
     } on DioException catch (e) {
       throw ApiException.fromDioException(e);
     }

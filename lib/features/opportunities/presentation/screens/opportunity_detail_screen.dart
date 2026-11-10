@@ -95,6 +95,24 @@ class OpportunityDetailScreen extends ConsumerWidget {
         .updateStage(idFor[selectedLabel] ?? selectedLabel);
   }
 
+  Future<void> _delete(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Delete opportunity?',
+      message: 'This cannot be undone.',
+      confirmLabel: 'Delete',
+      destructive: true,
+    );
+    if (!confirmed) return;
+
+    final success = await ref.read(opportunityActionsControllerProvider(opportunityId).notifier).delete();
+    if (!context.mounted || !success) return;
+    context.pop();
+  }
+
   Future<void> _editDetails(
     BuildContext context,
     WidgetRef ref,
@@ -260,6 +278,12 @@ class OpportunityDetailScreen extends ConsumerWidget {
                 onPressed: actionState.isLoading
                     ? null
                     : () => _editDetails(context, ref, opportunityAsync.value!),
+              ),
+            if (opportunityAsync.hasValue)
+              IconButton(
+                tooltip: 'Delete',
+                icon: const Icon(Icons.delete_outline),
+                onPressed: actionState.isLoading ? null : () => _delete(context, ref),
               ),
           ],
           bottom: TabBar(
@@ -540,6 +564,21 @@ class _StageAndActionsCard extends StatelessWidget {
                   ],
                 ),
               ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                opportunityTypeLabel(opportunity.type),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
             if (opportunity.stage == 'closed_lost' &&
                 opportunity.lostReason != null &&

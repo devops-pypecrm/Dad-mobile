@@ -427,6 +427,16 @@ class LeadDetailScreen extends ConsumerWidget {
                           ? null
                           : () => _pickStatus(context, ref, lead),
                     ),
+                    if (lead.closedOpportunityStatus == 'Won' &&
+                        (lead.wonTeamName?.isNotEmpty ?? false)) ...[
+                      const Divider(height: 28),
+                      _DetailRow(
+                        icon: Icons.emoji_events_outlined,
+                        label: 'Won by Team',
+                        value: lead.wonTeamName!,
+                        isLast: false,
+                      ),
+                    ],
                     const Divider(height: 28),
                     _DetailRow(
                       icon: Icons.calendar_today_outlined,

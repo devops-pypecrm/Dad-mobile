@@ -40,6 +40,7 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
   final _companyController = TextEditingController();
   final _enquiryAboutController = TextEditingController();
   final _potentialValueController = TextEditingController();
+  final _noteController = TextEditingController();
 
   String _source = 'manual';
   String? _status;
@@ -56,6 +57,7 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
     _companyController.dispose();
     _enquiryAboutController.dispose();
     _potentialValueController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
@@ -93,6 +95,9 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
           potentialValue: double.tryParse(
             _potentialValueController.text.trim(),
           ),
+          note: _noteController.text.trim().isEmpty
+              ? null
+              : _noteController.text.trim(),
         );
 
     final result = ref.read(createLeadControllerProvider).valueOrNull;
@@ -287,6 +292,16 @@ class _CreateLeadScreenState extends ConsumerState<CreateLeadScreen> {
                 error: (_, _) => const SizedBox.shrink(),
               ),
             ],
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: _noteController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Note (optional)',
+                hintText: 'Add a first note about this lead…',
+                alignLabelWithHint: true,
+              ),
+            ),
             const SizedBox(height: 24),
             FilledButton(
               onPressed: createState.isLoading ? null : _submit,

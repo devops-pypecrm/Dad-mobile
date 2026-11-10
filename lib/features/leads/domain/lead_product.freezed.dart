@@ -323,6 +323,7 @@ mixin _$Product {
   String? get sku => throw _privateConstructorUsedError;
   double get basePrice => throw _privateConstructorUsedError;
   String get currency => throw _privateConstructorUsedError;
+  bool get isCustom => throw _privateConstructorUsedError;
 
   /// Serializes this Product to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -344,6 +345,7 @@ abstract class $ProductCopyWith<$Res> {
     String? sku,
     double basePrice,
     String currency,
+    bool isCustom,
   });
 }
 
@@ -367,6 +369,7 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
     Object? sku = freezed,
     Object? basePrice = null,
     Object? currency = null,
+    Object? isCustom = null,
   }) {
     return _then(
       _value.copyWith(
@@ -390,6 +393,10 @@ class _$ProductCopyWithImpl<$Res, $Val extends Product>
                 ? _value.currency
                 : currency // ignore: cast_nullable_to_non_nullable
                       as String,
+            isCustom: null == isCustom
+                ? _value.isCustom
+                : isCustom // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -410,6 +417,7 @@ abstract class _$$ProductImplCopyWith<$Res> implements $ProductCopyWith<$Res> {
     String? sku,
     double basePrice,
     String currency,
+    bool isCustom,
   });
 }
 
@@ -432,6 +440,7 @@ class __$$ProductImplCopyWithImpl<$Res>
     Object? sku = freezed,
     Object? basePrice = null,
     Object? currency = null,
+    Object? isCustom = null,
   }) {
     return _then(
       _$ProductImpl(
@@ -455,6 +464,10 @@ class __$$ProductImplCopyWithImpl<$Res>
             ? _value.currency
             : currency // ignore: cast_nullable_to_non_nullable
                   as String,
+        isCustom: null == isCustom
+            ? _value.isCustom
+            : isCustom // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -469,6 +482,7 @@ class _$ProductImpl implements _Product {
     this.sku,
     required this.basePrice,
     this.currency = 'INR',
+    this.isCustom = false,
   });
 
   factory _$ProductImpl.fromJson(Map<String, dynamic> json) =>
@@ -485,10 +499,13 @@ class _$ProductImpl implements _Product {
   @override
   @JsonKey()
   final String currency;
+  @override
+  @JsonKey()
+  final bool isCustom;
 
   @override
   String toString() {
-    return 'Product(id: $id, name: $name, sku: $sku, basePrice: $basePrice, currency: $currency)';
+    return 'Product(id: $id, name: $name, sku: $sku, basePrice: $basePrice, currency: $currency, isCustom: $isCustom)';
   }
 
   @override
@@ -502,13 +519,15 @@ class _$ProductImpl implements _Product {
             (identical(other.basePrice, basePrice) ||
                 other.basePrice == basePrice) &&
             (identical(other.currency, currency) ||
-                other.currency == currency));
+                other.currency == currency) &&
+            (identical(other.isCustom, isCustom) ||
+                other.isCustom == isCustom));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, id, name, sku, basePrice, currency);
+      Object.hash(runtimeType, id, name, sku, basePrice, currency, isCustom);
 
   /// Create a copy of Product
   /// with the given fields replaced by the non-null parameter values.
@@ -531,6 +550,7 @@ abstract class _Product implements Product {
     final String? sku,
     required final double basePrice,
     final String currency,
+    final bool isCustom,
   }) = _$ProductImpl;
 
   factory _Product.fromJson(Map<String, dynamic> json) = _$ProductImpl.fromJson;
@@ -545,6 +565,8 @@ abstract class _Product implements Product {
   double get basePrice;
   @override
   String get currency;
+  @override
+  bool get isCustom;
 
   /// Create a copy of Product
   /// with the given fields replaced by the non-null parameter values.

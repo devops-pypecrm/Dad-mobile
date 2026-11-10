@@ -20,6 +20,11 @@ class FollowUpsListState with _$FollowUpsListState {
     String? status,
     String? branchId,
     String? userId,
+    // Purely client-side, like web's `priority` URL param — the backend
+    // doesn't support filtering on this, so it's applied in [displayedTasks]
+    // against the already-fetched [allTasks] rather than triggering a
+    // refetch.
+    String? priority,
     FollowUpQuickFilter? quickFilter,
     // Custom due-date filter — mutually exclusive with [quickFilter] (picking
     // one clears the other, same as web's single `filter`/date concept).
@@ -42,6 +47,7 @@ class FollowUpsListState with _$FollowUpsListState {
       status != null ||
       (branchId?.isNotEmpty ?? false) ||
       (userId?.isNotEmpty ?? false) ||
+      (priority?.isNotEmpty ?? false) ||
       sortBy != 'dueDate' ||
       sortOrder != 'asc';
 
@@ -100,6 +106,10 @@ class FollowUpsListState with _$FollowUpsListState {
       // status the server returned — including completed/deferred — is
       // shown as-is; this branch must NOT re-filter that back out.
       result = result.where((t) => !t.isCompleted);
+    }
+
+    if (priority != null && priority!.isNotEmpty) {
+      result = result.where((t) => t.priority == priority);
     }
 
     final sorted = result.toList()

@@ -337,6 +337,62 @@ class _CallReportEntry extends StatelessWidget {
   }
 }
 
+/// Same tappable-card shape as [_CallReportEntry], reused for every other
+/// report screen reached only via this hub (Lead Distribution, Audit Logs,
+/// Campaigns) rather than duplicating that layout per entry.
+class _ReportEntry extends StatelessWidget {
+  const _ReportEntry({required this.icon, required this.title, required this.subtitle, required this.route});
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final String route;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: () => context.push(route),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(color: Theme.of(context).shadowColor.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12), shape: BoxShape.circle),
+              child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 22),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+                    maxLines: 2,
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.primary),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _MyPerformanceTab extends ConsumerWidget {
   const _MyPerformanceTab();
 
@@ -347,6 +403,8 @@ class _MyPerformanceTab extends ConsumerWidget {
     final funnelAsync = ref.watch(myLeadsFunnelProvider);
     final salesBookAsync = ref.watch(reportsSalesBookProvider);
     final dateRangeLabel = ref.watch(reportsDateRangeProvider).label;
+    final role = ref.watch(sessionControllerProvider).valueOrNull?.role;
+    final canSeeAuditLogs = _managerRoles.any((r) => (role ?? '').toLowerCase().contains(r));
 
     return RefreshIndicator(
       onRefresh: () => Future.wait([
@@ -431,6 +489,29 @@ class _MyPerformanceTab extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           const _CallReportEntry(),
+          const SizedBox(height: 10),
+          const _ReportEntry(
+            icon: Icons.calendar_view_week_outlined,
+            title: 'Lead Distribution',
+            subtitle: 'Leads created per day and per rep',
+            route: AppRoutes.leadDistributionReport,
+          ),
+          const SizedBox(height: 10),
+          const _ReportEntry(
+            icon: Icons.campaign_outlined,
+            title: 'Campaign Reports',
+            subtitle: 'Email campaign status and recent activity',
+            route: AppRoutes.campaignsReport,
+          ),
+          if (canSeeAuditLogs) ...[
+            const SizedBox(height: 10),
+            const _ReportEntry(
+              icon: Icons.fact_check_outlined,
+              title: 'Audit Logs',
+              subtitle: 'System activity log, filterable by entity/action',
+              route: AppRoutes.auditLogsReport,
+            ),
+          ],
           const SizedBox(height: 24),
           const _SectionHeader('Lead Funnel'),
           const SizedBox(height: 12),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/ist_format.dart';
 import '../../../../core/widgets/app_snackbar.dart';
 import '../../data/leads_repository.dart';
@@ -1184,6 +1185,62 @@ class _ReEnquiryEventCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+
+    // Follow-up events are read-only timeline entries merged in from the
+    // same `/re-enquiry-history` endpoint — they're not re-enquiry
+    // submissions, so none of the split-into-lead machinery below applies.
+    if (event.type == 'follow_up') {
+      final followUp = event.followUp;
+      return _ActivityCard(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _IconCircle(icon: Icons.task_alt_outlined, color: kYellow),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    followUp?.subject?.isNotEmpty == true
+                        ? followUp!.subject!
+                        : 'Follow-up',
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    formatIST(event.date, 'MMM d, yyyy h:mm a'),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  if (followUp?.status != null ||
+                      followUp?.assignedTo != null) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: [
+                        if (followUp?.status != null)
+                          _StatusBadge(label: followUp!.status!),
+                        if (followUp?.assignedTo != null)
+                          _StatusBadge(
+                            label:
+                                '${followUp!.assignedTo!.firstName} ${followUp.assignedTo!.lastName}'
+                                    .trim(),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     final splitState = ref.watch(
       leadReEnquirySplitControllerProvider(leadId),
     );
@@ -1230,7 +1287,9 @@ class _ReEnquiryEventCard extends ConsumerWidget {
               ),
             ],
           ),
-          if (event.phone != null || event.email != null) ...[
+          if (event.phone != null ||
+              event.email != null ||
+              (event.enquiryAbout?.isNotEmpty ?? false)) ...[
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
@@ -1238,6 +1297,8 @@ class _ReEnquiryEventCard extends ConsumerWidget {
               children: [
                 if (event.phone != null) _StatusBadge(label: event.phone!),
                 if (event.email != null) _StatusBadge(label: event.email!),
+                if (event.enquiryAbout?.isNotEmpty ?? false)
+                  _StatusBadge(label: 'Course: ${event.enquiryAbout}'),
               ],
             ),
           ],
@@ -1315,7 +1376,10 @@ class _ReEnquiryEventCard extends ConsumerWidget {
 
     final newLeadId = await ref
         .read(leadReEnquirySplitControllerProvider(leadId).notifier)
-        .split(eventIndex: event.eventIndex);
+        // Only reachable for `type: 're_enquiry'` events (the follow_up
+        // branch above returns early with no split button), which always
+        // carry a non-null eventIndex.
+        .split(eventIndex: event.eventIndex!);
 
     if (newLeadId != null && context.mounted) {
       showAppSnackBar(context, 'Created new lead for "${event.name}"');

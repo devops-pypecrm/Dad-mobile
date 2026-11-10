@@ -27,6 +27,9 @@ import '../../features/leads/presentation/screens/re_enquiries_screen.dart';
 import '../../features/leads/providers/lead_health_list_provider.dart';
 import '../../features/notifications/presentation/screens/notifications_screen.dart';
 import '../../features/opportunities/presentation/screens/opportunities_list_screen.dart';
+import '../../features/reports/presentation/screens/audit_logs_screen.dart';
+import '../../features/reports/presentation/screens/campaigns_report_screen.dart';
+import '../../features/reports/presentation/screens/lead_distribution_screen.dart';
 import '../../features/opportunities/providers/opportunities_list_provider.dart';
 import '../../features/opportunities/presentation/screens/opportunity_detail_screen.dart';
 import '../../features/payments/presentation/screens/payments_list_screen.dart';
@@ -66,6 +69,9 @@ class AppRoutes {
   static const topPerformers = '/reports/leaderboard';
   static const callReport = '/reports/call-analytics';
   static const expectedRevenue = '/reports/expected-revenue';
+  static const leadDistributionReport = '/reports/lead-distribution';
+  static const auditLogsReport = '/reports/audit-logs';
+  static const campaignsReport = '/reports/campaigns';
   static const notifications = '/notifications';
   static const products = '/products';
   static const reEnquiries = '/re-enquiries';
@@ -259,6 +265,9 @@ GoRouter goRouter(ProviderRef<GoRouter> ref) {
           endDate: state.uri.queryParameters['endDate'],
         ),
       ),
+      GoRoute(path: AppRoutes.leadDistributionReport, builder: (context, state) => const LeadDistributionScreen()),
+      GoRoute(path: AppRoutes.auditLogsReport, builder: (context, state) => const AuditLogsScreen()),
+      GoRoute(path: AppRoutes.campaignsReport, builder: (context, state) => const CampaignsReportScreen()),
       GoRoute(
         path: AppRoutes.notifications,
         // Circular white reveal expanding from wherever the bell icon was
