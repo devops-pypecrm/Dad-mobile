@@ -103,6 +103,14 @@ class _MyTargetsTab extends ConsumerWidget {
   }
 }
 
+/// "November 2026" / "Q4 2026" / "2026" — which period a target covers.
+String _periodName(SalesTarget t) {
+  final d = t.startDate;
+  if (t.period == 'yearly') return '${d.year}';
+  if (t.period == 'quarterly') return 'Q${(d.month - 1) ~/ 3 + 1} ${d.year}';
+  return DateFormat('MMMM yyyy').format(d);
+}
+
 class _MyTargetCard extends StatelessWidget {
   const _MyTargetCard({required this.target});
 
@@ -121,7 +129,7 @@ class _MyTargetCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '${target.metric[0].toUpperCase()}${target.metric.substring(1)} · ${target.period}',
+                    '${target.metric[0].toUpperCase()}${target.metric.substring(1)} · ${_periodName(target)}',
                     style: theme.textTheme.titleMedium,
                   ),
                 ),
